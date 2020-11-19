@@ -2,3 +2,4 @@ node_modules
 *.vsix
 syntaxes/dbc.tmLanguage.json
 *.dbc
+test/

@@ -4,6 +4,9 @@ fileTypes: [dbc]
 
 firstLineMatch: 'VERSION ".*?"' # Match greedy
 
+foldingStartMarker: 'BO_ .*'
+foldingStopMarker: '^\s*$' # blank line
+
 patterns:
 - include: "#keywords"
 - include: "#strings"
