@@ -1,0 +1,37 @@
+{
+    "name": "dbc",
+    "displayName": "DBC",
+    "description": "Provides VSCode support for DBC files",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.51.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "dbc",
+                "aliases": [
+                    "DBC",
+                    "dbc"
+                ],
+                "extensions": [
+                    ".dbc"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "dbc",
+                "scopeName": "source.dbc",
+                "path": "./syntaxes/dbc.tmLanguage.json"
+            }
+        ]
+    },
+    "devDependencies": {
+        "js-yaml": "^3.14.0"
+    }
+}

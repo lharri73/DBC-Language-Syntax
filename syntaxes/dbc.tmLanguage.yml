@@ -1,0 +1,22 @@
+name: DBC
+scopeName: source.dbc
+fileTypes: [dbc]
+
+firstLineMatch: 'VERSION ".*?"' # Match greedy
+
+patterns:
+- include: "#keywords"
+- include: "#strings"
+
+repository:
+  keywords:
+    patterns:
+    - name: keyword.control.dbc
+      match: "\\b(if|while|for|return)\\b"
+  strings:
+    name: string.quoted.double.dbc
+    begin: "\""
+    end: "\""
+    patterns:
+    - name: constant.character.escape.dbc
+      match: "\\\\."
