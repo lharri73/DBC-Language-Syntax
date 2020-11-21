@@ -10,12 +10,18 @@ foldingStopMarker: '^\s*$' # blank line
 patterns:
 - include: "#keywords"
 - include: "#strings"
+- include: "#semicolon"
+- include: "#new_symbols"
 
 repository:
   keywords:
     patterns:
     - name: keyword.control.dbc
       match: "\\b(if|while|for|return)\\b"
+    - name: keyword.other.dbc
+      match: "^VERSION\\b" # match the version string at the start of DBC's
+    - name: entity.name.header.dbc
+      match: "^NS_\\b"
   strings:
     name: string.quoted.double.dbc
     begin: "\""
@@ -23,3 +29,43 @@ repository:
     patterns:
     - name: constant.character.escape.dbc
       match: "\\\\."
+  semicolon:
+    match: ".*?(;)\\s*$"
+    captures: 
+      1: 
+        name: punctuation.terminator.statement.dbc
+  new_symbols: 
+    match: "^\\s*(BA_|\
+                   NS_DESC_|\
+                   CM_|\
+                   BA_DEF_|\
+                   VAL_|\
+                   CAT_DEF_|\
+                   CAT_|\
+                   BA_DEF_DEF_|\
+                   EV_DATA_|\
+                   ENVVAR_DATA_|\
+                   SGTYPE_|\
+                   SGTYPE_VAL_|\
+                   BA_DEF_SGTYPE_|\
+                   BA_SGTYPE_|\
+                   SIG_TYPE_REF_|\
+                   VAL_TABLE_|\
+                   SIG_GROUP_|\
+                   SIG_VALTYPE_|\
+                   SIGTYPE_VALTYPE_|\
+                   BO_TX_BU_|\
+                   BA_DEF_REL_|\
+                   BA_REL_|\
+                   BA_DEF_DEF_REL_|\
+                   BU_SG_REL_|\
+                   BU_EV_REL_|\
+                   BU_BO_REL_|\
+                   FILTER|\
+                   SG_MUL_VAL_)\\s*$"
+    captures: 
+      1: 
+        name: keyword.control.symbols.dbc
+
+        
+
