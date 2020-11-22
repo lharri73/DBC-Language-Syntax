@@ -88,14 +88,16 @@ repository:
         name: constant.numeric.decimal.dbc
   
   nodeNames:
-    match: "^(BU_)\\s*(:?)\\s*?(\\s(\\w+))*"
+    match: "^(BU_)\\s*(:?)\\s*?((?:\\s\\w+)*)"
     captures:
       1:
         name: keyword.control.nodeNames.dbc
       2:
         name: punctuation.qualifier.dbc
-      4:
-        name: variable.parameter.dbc
+      3:
+        patterns:
+          - name: variable.parameter.dbc
+            match: "\\w+"
         
   valTable:
     match: "^(VAL_TABLE_)\\s*(\\w+)(.*?)\\s*(;?)$"
@@ -103,7 +105,7 @@ repository:
       1:
         name: keyword.control.valueTable.dbc
       2:
-        name: variable.valtable.dbc
+        name: variable.parameter.dbc
       3:
         patterns:
           - name: constant.numeric.decimal.dbc
