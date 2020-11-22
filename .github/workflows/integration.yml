@@ -16,6 +16,7 @@ jobs:
     - name: make
       run: make
   
+  # disabled because syntax not generated on master
   # syntax_tests:
   #   name: Run Syntax Tests
   #   runs-on: ubuntu-latest

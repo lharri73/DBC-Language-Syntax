@@ -19,8 +19,6 @@ patterns:
 repository:
   keywords:
     patterns:
-    - name: keyword.control.dbc
-      match: "\\b(if|while|for|return)\\b"
     - name: keyword.other.dbc
       match: "^VERSION\\b" # match the version string at the start of DBC's
     - name: entity.name.header.dbc
