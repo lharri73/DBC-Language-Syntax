@@ -15,6 +15,7 @@ patterns:
 - include: "#bitTiming"
 - include: "#nodeNames"
 - include: "#valTable"
+- include: "#messages"
 
 repository:
   keywords:
@@ -96,7 +97,7 @@ repository:
         name: punctuation.qualifier.dbc
       3:
         patterns:
-          - name: variable.parameter.dbc
+          - name: variable.parameter.nodeName.dbc
             match: "\\w+"
         
   valTable:
@@ -105,7 +106,7 @@ repository:
       1:
         name: keyword.control.valueTable.dbc
       2:
-        name: variable.parameter.dbc
+        name: variable.parameter.valTable.dbc
       3:
         patterns:
           - name: constant.numeric.decimal.dbc
@@ -114,5 +115,45 @@ repository:
       4: 
         name: punctuation.terminator.statement.dbc
     
-
-
+  messages:
+    begin: "^(BO_)\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d*)\\s*(\\w*)"
+    end: "^\\s*$"
+    contentName: meta.message
+    beginCaptures:
+      1: 
+        name: keyword.control.messageDef.dbc
+      2:
+        name: constant.numeric.decimal.dbc
+      3:
+        name: entity.name.msgName.dbc
+      4:
+        name: punctuation.qualifier.dbc
+      5:
+        name: constant.numeric.decimal.dbc
+      6:
+        name: variable.parameter.nodeName.dbc
+    patterns:
+      - match: "\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(\\d*)(\\|?)(\\d*)(@?)(\\d*)([+-]?)"
+        captures:
+          1:
+            name: keyword.control.signal.dbc
+          2: 
+            name: variable.parameter.sigName.dbc
+          3:
+            name: punctuation.qualifier.dbc
+          4:
+            name: constant.numeric.decimal.dbc
+          5:
+            name: punctuation.qualifier.dbc
+          6:
+            name: constant.numeric.decimal.dbc
+          7:
+            name: punctuation.at.dbc
+          8:
+            name: constant.numeric.decimal.dbc
+          9:
+            name: punctuation.sign.dbc
+    # captures:
+    # patterns:
+    #   - name: keyword.control.signal.dbc
+    #     match: "\\s*SG_"
