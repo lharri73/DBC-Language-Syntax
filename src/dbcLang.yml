@@ -14,6 +14,7 @@ patterns:
 - include: "#new_symbols"
 - include: "#bitTiming"
 - include: "#nodeNames"
+- include: "#valTable"
 
 repository:
   keywords:
@@ -31,11 +32,11 @@ repository:
     patterns:
     - name: constant.character.escape.dbc
       match: "\\\\."
-  semicolon:
-    match: ".*?(;)\\s*$"
-    captures: 
-      1: 
-        name: punctuation.terminator.statement.dbc
+  # semicolon:
+  #   match: ".*?(;)\\s*$"
+  #   captures: 
+  #     1: 
+  #       name: punctuation.terminator.statement.dbc
   new_symbols: 
     match: "^\\s*(BA_|\
                    NS_DESC_|\
@@ -98,4 +99,20 @@ repository:
       4:
         name: variable.parameter.dbc
         
+  valTable:
+    match: "^(VAL_TABLE_)\\s*(\\w+)(.*?)\\s*(;?)$"
+    captures:
+      1:
+        name: keyword.control.valueTable.dbc
+      2:
+        name: variable.valtable.dbc
+      3:
+        patterns:
+          - name: constant.numeric.decimal.dbc
+            match: "\\d+"
+          - include: "#strings"
+      4: 
+        name: punctuation.terminator.statement.dbc
+    
+
 
