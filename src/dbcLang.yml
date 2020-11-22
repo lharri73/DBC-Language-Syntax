@@ -89,6 +89,13 @@ repository:
         name: constant.numeric.decimal.dbc
   
   nodeNames:
-    nothing: nothing
+    match: "^(BU_)\\s*(:?)\\s*?(\\s(\\w+))*"
+    captures:
+      1:
+        name: keyword.control.nodeNames.dbc
+      2:
+        name: punctuation.qualifier.dbc
+      4:
+        name: variable.parameter.dbc
         
 

@@ -16,11 +16,11 @@ jobs:
     - name: make
       run: make
   
-  syntax_tests:
-    name: Run Syntax Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: SublimeText/syntax-test-action@v2
-        with:
-          build: latest
+  # syntax_tests:
+  #   name: Run Syntax Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: SublimeText/syntax-test-action@v2
+  #       with:
+  #         build: latest
