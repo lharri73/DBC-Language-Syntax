@@ -12,6 +12,7 @@ patterns:
 - include: "#strings"
 - include: "#semicolon"
 - include: "#new_symbols"
+- include: "#bitTiming"
 
 repository:
   keywords:
@@ -62,10 +63,27 @@ repository:
                    BU_EV_REL_|\
                    BU_BO_REL_|\
                    FILTER|\
-                   SG_MUL_VAL_)\\s*$"
+                   SG_MUL_VAL_)$"
     captures: 
       1: 
         name: keyword.control.symbols.dbc
+  bitTiming:
+    match: "^(BS_)\\s*(:?)\\s*(\\d*)\\s*(:?)\\s*(\\d*)\\s*(,?)\\s*(\\d*)"
+    captures:
+      1:
+        name: keyword.control.bitTiming.dbc
+      2:
+        name: punctuation.qualifier.dbc
+      3:
+        name: constant.numeric.decimal.dbc
+      4: 
+        name: punctuation.qualifier.dbc
+      5: 
+        name: constant.numeric.decimal.dbc
+      6: 
+        name: punctuation.qualifier.dbc
+      7: 
+        name: constant.numeric.decimal.dbc
 
         
 
