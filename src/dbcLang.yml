@@ -13,6 +13,7 @@ patterns:
 - include: "#semicolon"
 - include: "#new_symbols"
 - include: "#bitTiming"
+- include: "#nodeNames"
 
 repository:
   keywords:
@@ -67,6 +68,8 @@ repository:
     captures: 
       1: 
         name: keyword.control.symbols.dbc
+
+  ## This is probably terrible
   bitTiming:
     match: "^(BS_)\\s*(:?)\\s*(\\d*)\\s*(:?)\\s*(\\d*)\\s*(,?)\\s*(\\d*)"
     captures:
@@ -84,6 +87,8 @@ repository:
         name: punctuation.qualifier.dbc
       7: 
         name: constant.numeric.decimal.dbc
-
+  
+  nodeNames:
+    nothing: nothing
         
 
