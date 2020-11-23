@@ -16,6 +16,7 @@ patterns:
 - include: "#nodeNames"
 - include: "#valTable"
 - include: "#messages"
+- include: "#sigValType"
 - include: "#msgTransmitters"
 
 repository:
@@ -219,3 +220,16 @@ repository:
       - name: punctuation.comma.dbc
         match: ","
   
+  sigValType:
+    match: "^\\s*(SIG_VALTYPE)\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d?)\\s*(;?)"
+    captures:
+      1:
+        name: keyword.control.sigValType.dbc
+      2:
+        name: variable.parameter.sigName.dbc meta.signal.name.dbc
+      3:
+        name: punctuation.qualifier.dbc
+      4: 
+        name: constant.numeric.decimal.dbc meta.signal.valType.dbc
+      5:
+        name: punctuation.terminator.statement.dbc
