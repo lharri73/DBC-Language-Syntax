@@ -113,7 +113,7 @@ repository:
         name: punctuation.terminator.statement.dbc
     
   messages:
-    begin: "^(BO_)\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d*)\\s*(.*)"
+    begin: "^(BO_(?!\\w))\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d*)\\s*(.*)"
     end: "^\\s*$"
     contentName: meta.message
     beginCaptures:
