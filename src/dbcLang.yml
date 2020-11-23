@@ -16,6 +16,7 @@ patterns:
 - include: "#nodeNames"
 - include: "#valTable"
 - include: "#messages"
+- include: "#msgTransmitters"
 
 repository:
   keywords:
@@ -129,7 +130,7 @@ repository:
         name: constant.numeric.decimal.dbc
       6:
         patterns:
-        - name: variable.language.nodeName.dbc      ## using this tag simply because
+        - name: variable.language.nodeName.dbc      ## using this variable.language tag simply because
           match: "\\w*"                             ## it has a different style than
         - name: punctuation.comma.dbc               ## the regular parameter.
           match: ","
@@ -197,3 +198,19 @@ repository:
               match: "\\w+"
             - name: punctuation.comma.dbc
               match: ","
+  
+  msgTransmitters:
+    patterns:
+      - name: keyword.control.messageTx.dbc
+        match: "BO_TX_BU_(?!\\w)"
+      - name: storage.type.id.dbc
+        match: "\\d+"
+      - name: punctuation.qualifier.dbc
+        match: ":"
+      - name: variable.language.nodeName.dbc
+        match: "\\w+"
+      - name: punctuation.comma.dbc
+        match: ","
+      - name: punctuation.terminator.statement.dbc
+        match: ";"
+  
