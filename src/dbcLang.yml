@@ -200,9 +200,16 @@ repository:
               match: ","
   
   msgTransmitters:
+    contentName: meta.messageTx
+    begin: "(BO_TX_BU_(?!\\w))"
+    end: "(;)"
+    beginCaptures:
+      1:
+        name: keyword.control.messageTx.dbc
+    endCaptures:
+      1:
+        name: punctuation.terminator.statement.dbc
     patterns:
-      - name: keyword.control.messageTx.dbc
-        match: "BO_TX_BU_(?!\\w)"
       - name: storage.type.id.dbc
         match: "\\d+"
       - name: punctuation.qualifier.dbc
@@ -211,6 +218,4 @@ repository:
         match: "\\w+"
       - name: punctuation.comma.dbc
         match: ","
-      - name: punctuation.terminator.statement.dbc
-        match: ";"
   
