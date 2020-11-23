@@ -22,8 +22,9 @@ repository:
     patterns:
     - name: keyword.other.dbc
       match: "^VERSION\\b" # match the version string at the start of DBC's
-    - name: entity.name.header.dbc
+    - name: keyword.control.header.dbc
       match: "^NS_\\b"
+
   strings:
     name: string.quoted.double.dbc
     begin: "\""
@@ -31,11 +32,7 @@ repository:
     patterns:
     - name: constant.character.escape.dbc
       match: "\\\\."
-  # semicolon:
-  #   match: ".*?(;)\\s*$"
-  #   captures: 
-  #     1: 
-  #       name: punctuation.terminator.statement.dbc
+
   new_symbols: 
     match: "^\\s*(BA_|\
                    NS_DESC_|\
@@ -97,7 +94,7 @@ repository:
         name: punctuation.qualifier.dbc
       3:
         patterns:
-          - name: variable.parameter.nodeName.dbc
+          - name: variable.language.nodeName.dbc
             match: "\\w+"
         
   valTable:
@@ -116,14 +113,14 @@ repository:
         name: punctuation.terminator.statement.dbc
     
   messages:
-    begin: "^(BO_)\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d*)\\s*(\\w*)"
+    begin: "^(BO_)\\s*(\\d*)\\s*(\\w*)\\s*(:?)\\s*(\\d*)\\s*(.*)"
     end: "^\\s*$"
     contentName: meta.message
     beginCaptures:
       1: 
         name: keyword.control.messageDef.dbc
       2:
-        name: constant.numeric.decimal.dbc
+        name: storage.type.id.dbc
       3:
         name: entity.name.msgName.dbc
       4:
@@ -131,29 +128,72 @@ repository:
       5:
         name: constant.numeric.decimal.dbc
       6:
-        name: variable.parameter.nodeName.dbc
+        patterns:
+        - name: variable.language.nodeName.dbc      ## using this tag simply because
+          match: "\\w*"                             ## it has a different style than
+        - name: punctuation.comma.dbc               ## the regular parameter.
+          match: ","
+
     patterns:
-      - match: "\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(\\d*)(\\|?)(\\d*)(@?)(\\d*)([+-]?)"
+      - match: "^\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(.*?[+-])?\\s*(\\(-?\\d+\\.?\\d*,?-?\\d+\\.?\\d*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*((?(7).*|))$"
         captures:
           1:
             name: keyword.control.signal.dbc
           2: 
-            name: variable.parameter.sigName.dbc
+            name: variable.parameter.sigName.dbc meta.signal.name.dbc
           3:
             name: punctuation.qualifier.dbc
           4:
-            name: constant.numeric.decimal.dbc
+            patterns:
+              - match: "(\\d*)(\\|?)(\\d*)(@?)([01]?)([+-]?)"
+                captures:
+                  1:
+                    name: constant.numeric.decimal.dbc meta.signal.startBit.dbc
+                  2:
+                    name: punctuation.range.seperator.dbc
+                  3:
+                    name: constant.numeric.decimal.dbc meta.signal.length.dbc
+                  4: 
+                    name: punctuation.at.dbc
+                  5:
+                    name: constant.numeric.binary.dbc meta.signal.byteOrder.dbc
+                  6: 
+                    name: punctuation.sign.dbc meta.signal.signed.dbc
           5:
-            name: punctuation.qualifier.dbc
+            patterns:
+              - match: "(\\(?)((?>-?\\d*\\.?\\d+)?)\\s*(,?)\\s*((?>-?\\d*\\.?\\d+)?)\\s*(\\)?)"
+                captures:
+                  1:
+                    name: punctuation.definition.factorOffset.start.dbc
+                  2:
+                    name: constant.numeric.decimal.dbc meta.signal.factor.dbc
+                  3:
+                    name: punctuation.comma.dbc
+                  4:
+                    name: constant.numeric.decimal.dbc meta.signal.offset.dbc
+                  5:
+                    name: punctuation.definition.factorOffset.end.dbc
           6:
-            name: constant.numeric.decimal.dbc
+            patterns:
+              - match: "(\\[?)(-?\\d+\\.?\\d*)(\\|?)(-?\\d+\\.?\\d*)(\\]?)"
+                captures:
+                  1:
+                    name: punctuation.definition.minMax.start.dbc
+                  2:
+                    name: constant.numeric.decimal.dbc mata.signal.minimum.dbc
+                  3:
+                    name: punctuation.range.seperator.dbc
+                  4:
+                    name: constant.numeric.decimal.dbc meta.signal.maximum.dbc
+                  5:
+                    name: punctuation.definition.minMax.end.dbc
           7:
-            name: punctuation.at.dbc
+            name: meta.signal.unit.dbc
+            patterns:
+              - include: "#strings"
           8:
-            name: constant.numeric.decimal.dbc
-          9:
-            name: punctuation.sign.dbc
-    # captures:
-    # patterns:
-    #   - name: keyword.control.signal.dbc
-    #     match: "\\s*SG_"
+            patterns:
+            - name: variable.language.nodeName.dbc
+              match: "\\w+"
+            - name: punctuation.comma.dbc
+              match: ","
