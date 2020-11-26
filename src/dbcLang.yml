@@ -281,16 +281,25 @@ repository:
         name: variable.parameter.sigName.dbc
 
   officialComment:
-    begin: "^\\s*(CM_(?=\\s))" ##TODO: make this an or and add a pattern in the match
+    begin: "^\\s*(CM_)"
     end: "(;)"
     contentName: meta.cmComment.dbc
     beginCaptures:
       1:
-        name: keyword.control.comment.dbc
+        name: keyword.control.cmComment.generic.dbc
     endCaptures: 
       1:
         name: punctuation.terminator.statement.dbc
-    patterns:
-      - include: "#strings"
-      - name: keyword.
+    match: "((?'BU'BU_)|(?'BO'BO_)|(?'SG'SG_)|(?'EV'EV_))?\\s*(?(SG)(?'SGID'\\d*)|(?(BO)(?'MSGID'\\d*)|(?('BU')(?'NODE'\\w*)|(?'EVNAME'\\w*))))\\s*(?('SG')(?'SigName'\\w*)|)(;?)"
+    captures:
+      SG: 
+        name: keyword.control.cmComment.signalComment.dbc
+    # patterns:
+    #   - include: "#strings"
+
+    #         name: keyword.control.cmComment.environmentComment.dbc
+    #         name: keyword.control.cmComment.signalComment.dbc
+    #         name: keyword.control.cmComment.msgComment.dbc
+    #         name: keyword.control.cmComment.nodeComment.dbc
+
       # - match:
