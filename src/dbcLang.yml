@@ -20,6 +20,7 @@ patterns:
 - include: "#msgTransmitters"
 - include: "#valueDescriptions"
 - include: "#sigGroup"
+- include: "#officialComment"
 
 repository:
   keywords:
@@ -279,3 +280,17 @@ repository:
       - match: "\\w+"
         name: variable.parameter.sigName.dbc
 
+  officialComment:
+    begin: "^\\s*(CM_(?=\\s))" ##TODO: make this an or and add a pattern in the match
+    end: "(;)"
+    contentName: meta.cmComment.dbc
+    beginCaptures:
+      1:
+        name: keyword.control.comment.dbc
+    endCaptures: 
+      1:
+        name: punctuation.terminator.statement.dbc
+    patterns:
+      - include: "#strings"
+      - name: keyword.
+      # - match:
