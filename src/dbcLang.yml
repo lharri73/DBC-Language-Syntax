@@ -282,7 +282,7 @@ repository:
 
   officialComment:
     begin: "^\\s*(CM_)"
-    end: "(;)"
+    end: "$"
     contentName: meta.cmComment.dbc
     beginCaptures:
       1:
@@ -290,10 +290,33 @@ repository:
     endCaptures: 
       1:
         name: punctuation.terminator.statement.dbc
-    match: "((?'BU'BU_)|(?'BO'BO_)|(?'SG'SG_)|(?'EV'EV_))?\\s*(?(SG)(?'SGID'\\d*)|(?(BO)(?'MSGID'\\d*)|(?('BU')(?'NODE'\\w*)|(?'EVNAME'\\w*))))\\s*(?('SG')(?'SigName'\\w*)|)(;?)"
-    captures:
-      SG: 
-        name: keyword.control.cmComment.signalComment.dbc
+    patterns:
+      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*?)(;?)"
+        captures:
+          1:
+            patterns:
+              - match: "BO_"
+                name: keyword.control.cmComment.messageComment.dbc
+              - match: "BU_"
+                name: keyword.control.cmComment.nodeComment.dbc
+              - match: "SG_"
+                name: keyword.control.cmComment.signalComment.dbc
+              - match: "EV_"
+                name: keyword.control.cmComment.environmentComment.dbc
+              - match: "\\w+"
+                name: meta.dugg.dbc
+          2:
+            name: meta.something.theRest.dbc
+          # 'SG': 
+          #   name: keyword.control.cmComment.signalComment.dbc
+          # 'BU':
+          #   name: keyword.control.cmComment.nodeComment.dbc
+          # 'BO':
+          #   name: keyword.control.cmComment.messageComment.dbc
+          # 'EV':
+          #   name: keyword.control.cmComment.environmentComment.dbc
+        # 'MSGID':
+      
     # patterns:
     #   - include: "#strings"
 
