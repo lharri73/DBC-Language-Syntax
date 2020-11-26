@@ -19,6 +19,7 @@ patterns:
 - include: "#sigValType"
 - include: "#msgTransmitters"
 - include: "#valueDescriptions"
+- include: "#sigGroup"
 
 repository:
   keywords:
@@ -255,4 +256,26 @@ repository:
       - begin: "\""
         end: "\""
         name: meta.valueDescription.value.dbc string.quoted.double.dbc
+  
+  sigGroup:
+    begin: "^\\s*(SIG_GROUP_(?!\\w))\\s*(\\d*)\\s*(\\w*)\\s*(\\d*)\\s*(:?)"
+    end: "(;)"
+    contentName: meta.signalGroup.dbc
+    beginCaptures:
+      1:
+        name: keyword.control.signalGroup.dbc
+      2:
+        name: storage.type.id.dbc
+      3:
+        name: entity.name.signalGroup.dbc
+      4:
+        name: constant.numeric.decimal.dbc meta.signalGroup.repititions.dbc
+      5:
+        name: punctuation.qualifier.dbc
+    endCaptures:
+      1:
+        name: punctuation.terminator.statement.dbc
+    patterns:
+      - match: "\\w+"
+        name: variable.parameter.sigName.dbc
 
