@@ -280,6 +280,7 @@ repository:
       - match: "\\w+"
         name: variable.parameter.sigName.dbc
 
+  # This is a mess
   officialComment:
     begin: "^\\s*(CM_)"
     end: "$"
@@ -291,22 +292,31 @@ repository:
       1:
         name: punctuation.terminator.statement.dbc
     patterns:
-      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*?)(;?)"
+      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*)(;)"
         captures:
           1:
             patterns:
-              - match: "BO_"
+              - match: "(?<=CM_ )BO_"
                 name: keyword.control.cmComment.messageComment.dbc
-              - match: "BU_"
+              - match: "(?<=CM_ )BU_"
                 name: keyword.control.cmComment.nodeComment.dbc
-              - match: "SG_"
+              - match: "(?<=CM_ )SG_"
                 name: keyword.control.cmComment.signalComment.dbc
-              - match: "EV_"
+              - match: "(?<=CM_ )EV_"
                 name: keyword.control.cmComment.environmentComment.dbc
-              - match: "\\w+"
+              - match: "(?<=CM_ )(?!(BO_|BU_|SG_|EV_))\\w+"
                 name: meta.dugg.dbc
           2:
-            name: meta.something.theRest.dbc
+            patterns:
+              - match: "\\d+"
+                name: constant.numeric.decimal.dbc
+              - match: "\\w+"
+                name: variable.parameter.sigName.dbc
+              - begin: "\""
+                end: "\""
+                name: meta.cmComment.value.dbc string.quoted.double.dbc
+          3:
+            name: punctuation.terminator.statement.dbc
           # 'SG': 
           #   name: keyword.control.cmComment.signalComment.dbc
           # 'BU':
