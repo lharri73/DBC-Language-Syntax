@@ -4,7 +4,7 @@
     "description": "Provides VSCode support for DBC files",
     "repository": "https://github.com/lharri73/DBC-Language-Syntax",
     "license": "GPL-2.0-only",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.51.0"
     },
