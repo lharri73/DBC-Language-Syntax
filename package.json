@@ -5,9 +5,13 @@
     "repository": "https://github.com/lharri73/DBC-Language-Syntax",
     "license": "GPL-2.0-only",
     "version": "1.0.0",
+    "publisher": "lharri73",
     "engines": {
         "vscode": "^1.51.0"
     },
+    "scripts": {
+        "vscode:prepublish": "make"
+      },
     "categories": [
         "Programming Languages"
     ],
