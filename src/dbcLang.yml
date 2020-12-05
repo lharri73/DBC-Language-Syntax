@@ -22,6 +22,7 @@ patterns:
 - include: "#sigGroup"
 - include: "#officialComment"
 - include: "#sgType"
+- include: "#attribute"
 - include: "#attributeDef"
 - include: "#attributeDefDef"
 
@@ -419,17 +420,97 @@ repository:
       1:
         name: keyword.control.attributeDefaultDefault.dbc
     patterns:
-      - match: "(\".*\")\\s*(.*)\\s*(;)"
+      - match: "(\".*\")\\s+(.*)\\s*(;)"
         captures:
           1:
             name: variable.parameter.attributeDefault.dbc string.quoted.double.dbc meta.attributeDefaultDefault.name.dbc
           2:
             patterns:
-              - match: "(\\d*)?(\".*\")?"
+              - match: "((\\d+\\.?\\d*)|(\".*\"))"
                 captures:
-                  1:
-                    name: constant.numeric.decimal.dbc meta.attributeDefaultDefault.value.numeric.dbc
                   2:
+                    name: constant.numeric.decimal.dbc meta.attributeDefaultDefault.value.numeric.dbc
+                  3:
                     name: string.quoted.double.dbc meta.attributeDefaultDefault.value.string.dbc
+          3:
+            name: punctuation.terminator.statement.dbc
+  
+  attribute:
+    begin: "(BA_(?!\\w))"
+    end: "$"
+    contentName: meta.attribute.dbc
+    beginCaptures:
+      1:
+        name: keyword.control.attribute.dbc
+    patterns:
+      - match: "(\".*\")\\s+(.*?)\\s*(;)"
+        captures:
+          1:
+            name: variable.parameter.attribute.dbc string.quoted.double.dbc meta.attribute.key.dbc
+          2:
+            patterns:
+              - match: "((BU_(?!\\w))|(BO_(?!\\w))|(SG_(?!\\w))|(EV_(?!\\w))|(\".+\"|\\d+\\.?\\d*))\\s*\
+                        ((?(2).*|))((?(3).*|))((?(4).*|))((?(5).*|)((?(6).*|)))" # conditional expressions becase ba can change
+                                                                                 # depending on the argument after the attribute
+                captures:
+                  2:
+                    name: keyword.control.attributeObject.dbc meta.attributeObject.nodeName
+                  3:
+                    name: keyword.control.attributeObject.dbc meta.attributeObject.msgName
+                  4:
+                    name: keyword.control.attributeObject.dbc meta.attributeObject.signalName
+                  5:
+                    name: keyword.control.attributeObject.dbc meta.attributeObject.environmentVariable
+                  6: 
+                    patterns:
+                      - match: "\\d+\\.?\\d*"
+                        name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc
+                      - match: "\".*\""
+                        name: string.quoted.double.dbc meta.attribute.value.string.dbc
+                  7: # matched with BU_
+                    patterns:
+                      - include: "#strings"
+                      - match: "\\d+\\.?\\d*"
+                        name: constant.numeric.decimal.dbc meta.attribute.node.value.dbc
+                      - match: "\\w+"
+                        name: variable.language.nodeName.dbc
+                  8: # matched with BO_
+                    patterns:
+                      - match: "(\\d*)\\s*(.*)"
+                        captures:
+                          1:
+                            name: storage.type.id.dbc meta.attribute.describer.dbc
+                          2:
+                            patterns:
+                              - match: "\".*\""
+                                name: string.quoted.double.dbc meta.attribute.value.string.dbc
+                              - match: "\\d+\\.?\\d*"
+                                name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc
+                  9: # matched with SG_
+                    patterns:
+                      - match: "(\\d*)\\s*(\\w*)\\s*(.*)"
+                        captures:
+                          1:
+                            name: storage.type.id.dbc meta.attribute.signal.msgId.dbc
+                          2:
+                            name: variable.parameter.sigName.dbc meta.attribute.signal.msgName.dbc
+                          3:
+                            patterns:
+                              - match: "\".*\""
+                                name: string.quoted.double.dbc meta.attribute.value.string.dbc
+                              - match: "\\d+\\.?\\d*"
+                                name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc           
+                  10: # matched with EV_
+                    patterns:
+                      - match: "(\\w*)\\s*(.*)"  
+                        captures:
+                          1:
+                            name: variable.parameter.environmentVariable.dbc meta.attribute.environmentVariable.dbc
+                          2:
+                            patterns:
+                              - match: "\".*\""
+                                name: string.quoted.double.dbc meta.attribute.value.string.dbc
+                              - match: "\\d+\\.?\\d*"
+                                name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc  
           3:
             name: punctuation.terminator.statement.dbc
