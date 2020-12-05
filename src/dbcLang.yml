@@ -23,6 +23,7 @@ patterns:
 - include: "#officialComment"
 - include: "#sgType"
 - include: "#attributeDef"
+- include: "#attributeDefDef"
 
 repository:
   keywords:
@@ -408,4 +409,27 @@ repository:
                 name: constant.numeric.decimal.dbc
               - include: "#strings"
           5:
+            name: punctuation.terminator.statement.dbc
+
+  attributeDefDef:
+    begin: "^(BA_DEF_DEF_(?!\\w)|BA_DEF_DEF_REL_(?!\\w))"
+    end: "$"
+    contentName: meta.attributeDefDef.dbc # nope, not a typo. Just odd
+    beginCaptures: 
+      1:
+        name: keyword.control.attributeDefaultDefault.dbc
+    patterns:
+      - match: "(\".*\")\\s*(.*)\\s*(;)"
+        captures:
+          1:
+            name: variable.parameter.attributeDefault.dbc string.quoted.double.dbc meta.attributeDefaultDefault.name.dbc
+          2:
+            patterns:
+              - match: "(\\d*)?(\".*\")?"
+                captures:
+                  1:
+                    name: constant.numeric.decimal.dbc meta.attributeDefaultDefault.value.numeric.dbc
+                  2:
+                    name: string.quoted.double.dbc meta.attributeDefaultDefault.value.string.dbc
+          3:
             name: punctuation.terminator.statement.dbc
