@@ -21,6 +21,7 @@ patterns:
 - include: "#valueDescriptions"
 - include: "#sigGroup"
 - include: "#officialComment"
+- include: "#sgType"
 
 repository:
   keywords:
@@ -288,9 +289,6 @@ repository:
     beginCaptures:
       1:
         name: keyword.control.cmComment.generic.dbc
-    endCaptures: 
-      1:
-        name: punctuation.terminator.statement.dbc
     patterns:
       - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*)(;)"
         captures:
@@ -317,6 +315,76 @@ repository:
                 name: meta.cmComment.value.dbc string.quoted.double.dbc
           3:
             name: punctuation.terminator.statement.dbc
+
+  sgType:
+    begin: "^(SGTYPE)"
+    end: "$"
+    contentName: meta.signalType.dbc
+    beginCaptures:
+      1:
+        name: keyword.control.signaltype.dbc
+    patterns:
+      - match: "(\\w*)\\s*(:?)\\s*(.*?[+-])?\\s*(\\(-?\\d+\\.?\\d*,?-?\\d+\\.?\\d*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*(\\d+\\.?\\d*)\\s*(,?)\\s*(\\w*)\\s*(;?)$"
+        captures:
+          # 1:
+          #   name: keyword.control.signal.dbc
+          1: 
+            name: variable.parameter.sigTypeName.dbc meta.signalType.name.dbc
+          2:
+            name: punctuation.qualifier.dbc
+          3:
+            patterns:
+              - match: "(\\d*)(\\|?)([10]?)([+-]?)"
+                captures:
+                  1:
+                    name: constant.numeric.decimal.dbc meta.signalType.signalSize.dbc
+                  2:
+                    name: punctuation.range.seperator.dbc
+                  3:
+                    name: constant.numeric.binary.dbc meta.signalType.byteOrder.dbc
+                  4: 
+                    name: punctuation.sign.dbc meta.signal.signed.dbc
+          4:
+            patterns:
+              - match: "(\\(?)((?>-?\\d*\\.?\\d+)?)\\s*(,?)\\s*((?>-?\\d*\\.?\\d+)?)\\s*(\\)?)"
+                captures:
+                  1:
+                    name: punctuation.definition.factorOffset.start.dbc
+                  2:
+                    name: constant.numeric.decimal.dbc meta.signalType.factor.dbc
+                  3:
+                    name: punctuation.comma.dbc
+                  4:
+                    name: constant.numeric.decimal.dbc meta.signalType.offset.dbc
+                  5:
+                    name: punctuation.definition.factorOffset.end.dbc
+          5:
+            patterns:
+              - match: "(\\[?)(-?\\d+\\.?\\d*)(\\|?)(-?\\d+\\.?\\d*)(\\]?)"
+                captures:
+                  1:
+                    name: punctuation.definition.minMax.start.dbc
+                  2:
+                    name: constant.numeric.decimal.dbc mata.signalType.minimum.dbc
+                  3:
+                    name: punctuation.range.seperator.dbc
+                  4:
+                    name: constant.numeric.decimal.dbc meta.signalType.maximum.dbc
+                  5:
+                    name: punctuation.definition.minMax.end.dbc
+          6:
+            name: meta.signal.unit.dbc
+            patterns:
+              - include: "#strings"
+          7:
+            name: constant.numeric.decimal.dbc meta.signalType.defaultVale
+          8:
+            name: punctuation.comma.dbc
+          9:
+            name: variable.parameter.valTable.dbc meta.signalType.valTable
+          10:
+            name: punctuation.terminator.statement.dbc
+
           # 'SG': 
           #   name: keyword.control.cmComment.signalComment.dbc
           # 'BU':
