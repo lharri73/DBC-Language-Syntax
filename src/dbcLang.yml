@@ -8,6 +8,7 @@ foldingStartMarker: 'BO_ .*'
 foldingStopMarker: '^\s*$' # blank line
 
 patterns:
+- include: "#nonParsedComment"
 - include: "#keywords"
 # - include: "#strings"
 - include: "#semicolon"
@@ -589,3 +590,14 @@ repository:
 
           3:
             name: punctuation.terminator.statement.dbc
+
+  nonParsedComment:
+    begin: "(\\(\\*)"
+    end: "(\\*\\))"
+    contentName: comment.block.dbc
+    beginCaptures:
+      1:
+        name: comment.block.open.dbc
+    endCaptures:
+      1:
+        name: comment.block.close.dbc
