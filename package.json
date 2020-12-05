@@ -1,7 +1,7 @@
 {
     "name": "dbc",
-    "displayName": "DBC",
-    "description": "Provides VSCode support for DBC files",
+    "displayName": "DBC Language Syntax",
+    "description": "Provides VSCode support for CAN DBC files",
     "repository": "https://github.com/lharri73/DBC-Language-Syntax",
     "license": "GPL-2.0-only",
     "version": "1.0.0",
