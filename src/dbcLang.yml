@@ -22,6 +22,7 @@ patterns:
 - include: "#sigGroup"
 - include: "#officialComment"
 - include: "#sgType"
+- include: "#attributeDef"
 
 repository:
   keywords:
@@ -385,22 +386,26 @@ repository:
           10:
             name: punctuation.terminator.statement.dbc
 
-          # 'SG': 
-          #   name: keyword.control.cmComment.signalComment.dbc
-          # 'BU':
-          #   name: keyword.control.cmComment.nodeComment.dbc
-          # 'BO':
-          #   name: keyword.control.cmComment.messageComment.dbc
-          # 'EV':
-          #   name: keyword.control.cmComment.environmentComment.dbc
-        # 'MSGID':
-      
-    # patterns:
-    #   - include: "#strings"
-
-    #         name: keyword.control.cmComment.environmentComment.dbc
-    #         name: keyword.control.cmComment.signalComment.dbc
-    #         name: keyword.control.cmComment.msgComment.dbc
-    #         name: keyword.control.cmComment.nodeComment.dbc
-
-      # - match:
+  attributeDef:
+    begin: "^(BA_DEF_(?!\\w))"
+    end: "$"
+    contentName: meta.attributeDef.dbc
+    beginCaptures:
+      1:
+        name: keyword.control.attributeDefault.dbc
+    patterns:
+      - match: "(BU_|BO_|SG_|EV_|BU_EV_REL_|BU_BO_REL|BU_SG_REL)?\\s*(\"\\w*\")\\s*(INT|HEX|FLOAT|STRING|ENUM)(.*)(;)"
+        captures:
+          1:
+            name: keyword.control.attributeObject.dbc meta.attributeDefault.object.dbc
+          2:
+            name: variable.parameter.attributeDefault.dbc string.quoted.double.dbc meta.attributeDefault.name.dbc
+          3:
+            name: variable.language.attributeType.dbc
+          4:
+            patterns:
+              - match: "\\d+\\.?\\d*"
+                name: constant.numeric.decimal.dbc
+              - include: "#strings"
+          5:
+            name: punctuation.terminator.statement.dbc
