@@ -387,14 +387,14 @@ repository:
             name: punctuation.terminator.statement.dbc
 
   attributeDef:
-    begin: "^(BA_DEF_(?!\\w))"
+    begin: "^(BA_DEF_(?!\\w)|BA_DEF_REL_(?!\\w))"
     end: "$"
     contentName: meta.attributeDef.dbc
     beginCaptures:
       1:
         name: keyword.control.attributeDefault.dbc
     patterns:
-      - match: "(BU_|BO_|SG_|EV_|BU_EV_REL_|BU_BO_REL|BU_SG_REL)?\\s*(\"\\w*\")\\s*(INT|HEX|FLOAT|STRING|ENUM)(.*)(;)"
+      - match: "(BU_|BO_|SG_|EV_|BU_EV_REL_|BU_BO_REL_|BU_SG_REL_)?\\s*(\"\\w*\")\\s*(INT|HEX|FLOAT|STRING|ENUM)(.*)(;)"
         captures:
           1:
             name: keyword.control.attributeObject.dbc meta.attributeDefault.object.dbc
