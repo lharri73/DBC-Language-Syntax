@@ -32,16 +32,23 @@ expressions to match syntax.
 
 ## Known Issues
 
-1. Scientific notation in min/max fields are not all considered part of the constant and are, thus, not highlighted
-
-1. Scientific notation in the factor or offset causes the entire signal to not be recognized
+1. Attribute definitions that wrap lines may not be highlighted on the following
+   lines. 
 
 ## Todo items
 - promote to language server
 - include debugging (invalid offset, start bit, min, max, etc)
 - hover box to show all related fields as a hint
-s
+
 ## Release Notes
 
 ### 1.0.0: 
 Initial release
+
+### 1.0.1:
+Updated package description
+
+### 1.0.2:
+- Fixed comment wrapping
+- Fixed scientific notation in min/max and factor/offset
+- Updated package metadata
