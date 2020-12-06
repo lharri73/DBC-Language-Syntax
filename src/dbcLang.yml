@@ -289,13 +289,16 @@ repository:
   # This is a mess
   officialComment:
     begin: "^\\s*(CM_)"
-    end: "$"
+    end: "(;)" #TODO: fix multiline CM
     contentName: meta.cmComment.dbc
     beginCaptures:
       1:
         name: keyword.control.cmComment.generic.dbc
+    endCaptures:
+      1:
+        name: punctuation.terminator.statement.dbc
     patterns:
-      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*)(;)"
+      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*)"
         captures:
           1:
             patterns:
@@ -307,19 +310,17 @@ repository:
                 name: keyword.control.cmComment.signalComment.dbc
               - match: "(?<=CM_ )EV_"
                 name: keyword.control.cmComment.environmentComment.dbc
-              - match: "(?<=CM_ )(?!(BO_|BU_|SG_|EV_))\\w+"
-                name: meta.dugg.dbc
+              # - match: "(?<=CM_ )(?!(BO_|BU_|SG_|EV_))\\w+"
+              #   name: meta.dugg.dbc
           2:
             patterns:
               - match: "\\d+"
                 name: constant.numeric.decimal.dbc
               - match: "\\w+"
                 name: variable.parameter.sigName.dbc
-              - begin: "\""
-                end: "\""
-                name: meta.cmComment.value.dbc string.quoted.double.dbc
-          3:
-            name: punctuation.terminator.statement.dbc
+              # - begin: "\""
+              #   end: "\""
+              #   contentName: meta.cmComment.value.dbc string.quoted.double.dbc
 
   sgType:
     begin: "^(SGTYPE)"
@@ -439,13 +440,16 @@ repository:
   
   attribute:
     begin: "(BA_(?!\\w))"
-    end: "$"
+    end: "(;)\\s*$" #TODO fix multiline BA
     contentName: meta.attribute.dbc
     beginCaptures:
       1:
         name: keyword.control.attribute.dbc
+    endCaptures:
+      1:
+        name: punctuation.terminator.statement.dbc
     patterns:
-      - match: "(\".*\")\\s+(.*?)\\s*(;)"
+      - match: "(\".*\")\\s+(.*?)"
         captures:
           1:
             name: variable.parameter.attribute.dbc string.quoted.double.dbc meta.attribute.key.dbc
@@ -514,18 +518,19 @@ repository:
                                 name: string.quoted.double.dbc meta.attribute.value.string.dbc
                               - match: "\\d+\\.?\\d*"
                                 name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc
-          3:
-            name: punctuation.terminator.statement.dbc
 
   attributeRel:
     begin: "(BA_REL_(?!\\w))"
-    end: "$"
+    end: "(;)\\s*$" #TODO: fix multiline BA
     contentName: meta.attributeRel.dbc
     beginCaptures:
       1:
         name: keyword.control.attributeRel.dbc
+    endCaptures:
+      1:
+        name: punctuation.terminator.statement.dbc
     patterns:
-      - match: "(\".*\")\\s+(.*?)\\s*(;)"
+      - match: "(\".*\")\\s+(.*?)"
         captures:
           1:
             name: variable.parameter.attributeRel.dbc string.quoted.double.dbc meta.attributeRel.key.dbc
@@ -587,9 +592,6 @@ repository:
                                 name: constant.numeric.decimal.dbc meta.attribute.value.numeric.dbc
                               - match: "\".*\""
                                 name: string.quoted.double.dbc meta.attribute.value.string.dbc
-
-          3:
-            name: punctuation.terminator.statement.dbc
 
   nonParsedComment:
     begin: "(\\(\\*)"
