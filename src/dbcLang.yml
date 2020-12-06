@@ -288,8 +288,8 @@ repository:
 
   # This is a mess
   officialComment:
-    begin: "^\\s*(CM_)"
-    end: "(;)" #TODO: fix multiline CM
+    begin: "^(CM_)"
+    end: "(;)" # TODO: fix multiline CM
     contentName: meta.cmComment.dbc
     beginCaptures:
       1:
@@ -298,7 +298,9 @@ repository:
       1:
         name: punctuation.terminator.statement.dbc
     patterns:
-      - match: "(BO_|BU_|SG_|EV_|\\w+)\\s*(.*)"
+      - include: "#strings"
+      - include: "#commentAdditions"
+      - match: "(BO_|BU_|SG_|EV_|\\w+)"
         captures:
           1:
             patterns:
@@ -310,17 +312,8 @@ repository:
                 name: keyword.control.cmComment.signalComment.dbc
               - match: "(?<=CM_ )EV_"
                 name: keyword.control.cmComment.environmentComment.dbc
-              # - match: "(?<=CM_ )(?!(BO_|BU_|SG_|EV_))\\w+"
-              #   name: meta.dugg.dbc
-          2:
-            patterns:
-              - match: "\\d+"
-                name: constant.numeric.decimal.dbc
-              - match: "\\w+"
-                name: variable.parameter.sigName.dbc
-              # - begin: "\""
-              #   end: "\""
-              #   contentName: meta.cmComment.value.dbc string.quoted.double.dbc
+              - match: "(?<=CM_ )(?!(BO_|BU_|SG_|EV_))\\w+"
+                name: string.quoted.double.dbc meta.cmComment.value.dbc
 
   sgType:
     begin: "^(SGTYPE)"
@@ -603,3 +596,12 @@ repository:
     endCaptures:
       1:
         name: comment.block.close.dbc
+
+  commentAdditions:
+    patterns:
+      - match: "\\d+\\.?\\d*"
+        name: storage.type.id.dbc
+      - match: "(?<=(BU_\\s+))\\w+"
+        name: variable.language.nodeName.dbc
+      - match: "(?<=(\\d+\\s+))\\w+"
+        name: variable.parameter.sigName.dbc
