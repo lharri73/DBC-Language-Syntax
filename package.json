@@ -8,13 +8,13 @@
     },
     "license": "GPL-2.0-only",
     "version": "1.0.0",
-    "publisher": "lharri73",
+    "publisher": "Landon Harris",
     "engines": {
         "vscode": "^1.51.0"
     },
     "scripts": {
         "vscode:prepublish": "make"
-      },
+    },
     "categories": [
         "Programming Languages"
     ],
