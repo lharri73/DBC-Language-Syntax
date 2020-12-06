@@ -3,3 +3,4 @@
 .gitignore
 src
 res/image.xcf
+node_modules
