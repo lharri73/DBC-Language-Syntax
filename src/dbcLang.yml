@@ -146,7 +146,7 @@ repository:
           match: ","
 
     patterns:
-      - match: "^\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(.*?[+-])?\\s*(\\(-?\\d+\\.?\\d*,?-?\\d+\\.?\\d*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*((?(7).*|))$"
+      - match: "^\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(.*?[+-])?\\s*(\\(.*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*((?(7).*|))$"
         captures:
           1:
             name: keyword.control.signal.dbc
@@ -172,7 +172,7 @@ repository:
                     name: punctuation.sign.dbc meta.signal.signed.dbc
           5:
             patterns:
-              - match: "(\\(?)((?>-?\\d*\\.?\\d+)?)\\s*(,?)\\s*((?>-?\\d*\\.?\\d+)?)\\s*(\\)?)"
+              - match: "(\\(?)((?>-?\\d+\\.?\\d*E?\\+?\\d*)?)\\s*(,?)\\s*((?>-?\\d+\\.?\\d*E?\\+?\\d*)?)\\s*(\\)?)"
                 captures:
                   1:
                     name: punctuation.definition.factorOffset.start.dbc
