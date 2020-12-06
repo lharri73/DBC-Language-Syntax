@@ -2,7 +2,10 @@
     "name": "dbc",
     "displayName": "DBC",
     "description": "Provides VSCode support for DBC files",
-    "repository": "https://github.com/lharri73/DBC-Language-Syntax",
+    "repository": {
+        "tpye": "git",
+        "url": "https://github.com/lharri73/DBC-Language-Syntax"
+    },
     "license": "GPL-2.0-only",
     "version": "1.0.0",
     "publisher": "lharri73",
@@ -15,6 +18,13 @@
     "categories": [
         "Programming Languages"
     ],
+    "keywords": [
+        "can",
+        "dbc",
+        "vector",
+        "canbus"
+    ],
+    "icon": "res/image.png",
     "contributes": {
         "languages": [
             {
