@@ -1,53 +1,64 @@
 {
-    "name": "dbc",
-    "displayName": "DBC Language Syntax",
-    "description": "Provides VS Code support for CAN DBC files",
-    "repository": {
-        "tpye": "git",
-        "url": "https://github.com/lharri73/DBC-Language-Syntax"
-    },
-    "license": "GPL-2.0-only",
-    "version": "1.0.3",
-    "publisher": "lharri73",
-    "engines": {
-        "vscode": "^1.51.0"
-    },
-    "scripts": {
-        "vscode:prepublish": "make"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "keywords": [
-        "can",
-        "dbc",
-        "vector",
-        "canbus"
-    ],
-    "icon": "res/image.png",
-    "contributes": {
-        "languages": [
-            {
-                "id": "dbc",
-                "aliases": [
-                    "DBC",
-                    "dbc"
-                ],
-                "extensions": [
-                    ".dbc"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "dbc",
-                "scopeName": "source.dbc",
-                "path": "./syntaxes/dbc.tmLanguage.json"
-            }
-        ]
-    },
-    "devDependencies": {
-        "js-yaml": "^3.14.0"
-    }
+	"name": "dbc",
+	"displayName": "DBC Language Syntax",
+	"description": "Provides VS Code support for CAN DBC files",
+	"repository": {
+		"tpye": "git",
+		"url": "https://github.com/lharri73/DBC-Language-Syntax"
+	},
+	"license": "GPL-2.0-only",
+	"version": "1.0.3",
+	"publisher": "lharri73",
+	"engines": {
+		"vscode": "^1.51.0"
+	},
+	"scripts": {
+		"vscode:prepublish": "make"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"keywords": [
+		"can",
+		"dbc",
+		"vector",
+		"canbus"
+	],
+	"icon": "res/image.png",
+	"contributes": {
+		"languages": [
+			{
+				"id": "dbc",
+				"aliases": [
+					"DBC",
+					"dbc"
+				],
+				"extensions": [
+					".dbc"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "dbc",
+				"scopeName": "source.dbc",
+				"path": "./syntaxes/dbc.tmLanguage.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "dbc",
+				"path": "snippets/snippets.json"
+			}
+		]
+	},
+	"devDependencies": {
+		"js-yaml": "^3.14.0"
+	},
+	"__metadata": {
+		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",
+		"publisherDisplayName": "Landon Harris",
+		"publisherId": "8bcdfeae-f8a0-4401-944b-f6c335536b5a"
+	}
 }
