@@ -43,12 +43,15 @@ expressions to match syntax.
 ## Release Notes
 
 ### 1.0.0: 
-Initial release
+- Initial release
 
 ### 1.0.1:
-Updated package description
+- Updated package description
 
 ### 1.0.2:
 - Fixed comment wrapping
 - Fixed scientific notation in min/max and factor/offset
 - Updated package metadata
+
+### 1.0.3:
+- Updated first line matching
