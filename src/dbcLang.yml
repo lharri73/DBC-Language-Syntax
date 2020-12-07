@@ -17,7 +17,7 @@ name: DBC
 scopeName: source.dbc
 fileTypes: [dbc]
 
-firstLineMatch: 'VERSION ".*?"' # Match greedy
+firstLineMatch: '^VERSION ".*?"\\s*$' # Match greedy
 
 foldingStartMarker: 'BO_ .*'
 foldingStopMarker: '^\s*$' # blank line
