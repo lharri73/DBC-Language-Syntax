@@ -3,3 +3,4 @@ node_modules
 syntaxes/dbc.tmLanguage.json
 *.dbc
 test/
+.DS_Store

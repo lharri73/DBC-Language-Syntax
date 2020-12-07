@@ -4,3 +4,4 @@
 src
 res/image.xcf
 node_modules
+.DS_Store
