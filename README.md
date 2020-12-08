@@ -2,7 +2,7 @@
 
 This extension provides basic syntax highlighting and bracket completion for the Vector DBC file format. 
 This is created to work with version 2 of the DBC file format, 
-defined [here](https://bitbucket.org/tobylorenz/vector_dbc/src/master/src/Vector/DBC/Parser.yy)
+defined [here](https://bitbucket.org/tobylorenz/vector_dbc/)
 in the official Vector DBC language repository. 
 
 Although DBC files are often programmatically generated, it can be useful to
