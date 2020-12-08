@@ -18,7 +18,8 @@ NameSpec:
   prefix: 
     - ns
     - namespec
-    - NS_
+    - NS
+    - symbols
   body:
     - "NS_ : "
     - "    NS_DESC_"
@@ -49,3 +50,16 @@ NameSpec:
     - "    BU_EV_REL_"
     - "    BU_BO_REL_"
     - "    SG_MUL_VAL_"
+    - "$0"
+  description: "A list of all symbols supported in the DBC file. \
+                Typically includes all symbols available in DBC syntax version 2, even if unused."
+
+message:
+  prefix:
+    - message
+    - msg
+    - Message
+    - BO
+  body:
+    - "BO_ ${1:msg_id(dec)} ${2:msg_name}: ${3:msg_size(bytes)} ${4:transmitter(or VECTOR_XXX)}"
+    - '  SG_ ${5:sig_name} : ${6:sig_start(bit)}|${7:sig_size(bits)}@${8:sig_byte_order(0/1)}${9:sig_signed(+/-)} (${10:sig_factor},${11:sig_offset}) [${12:sig_min}|${13:sig_max}] "${14:sig_unit}" ${15:receivers}'

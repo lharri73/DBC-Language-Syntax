@@ -34,6 +34,7 @@ expressions to match syntax.
 
 1. Attribute definitions that wrap lines may not be highlighted on the following
    lines. 
+1. Signals that are multiplexed will not be recognized
 
 ## Todo items
 - promote to language server
