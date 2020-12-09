@@ -1,7 +1,8 @@
 # DBC Language Syntax
 
-This extension provides basic syntax highlighting and bracket completion for the Vector DBC file format. 
-This is created to work with version 2 of the Vector DBC file format.
+This extension provides basic syntax highlighting, bracket completion, and code snippets 
+for the Vector DBC file format. This is created to work with version 2 of the Vector 
+DBC file format.
 
 Although DBC files are often programmatically generated, it can be useful to
 more easily read the DBC file itself in a plaintext format. 
@@ -35,9 +36,9 @@ expressions to match syntax.
 1. Signals that are multiplexed will not be recognized
 
 ## Todo items
-- promote to language server
-- include debugging (invalid offset, start bit, min, max, etc)
-- hover box to show all related fields as a hint
+- Promote to language server
+- Include debugging (invalid offset, start bit, min, max, etc)
+- Hover box to show all related fields as a hint
 
 ## Release Notes
 
@@ -54,3 +55,6 @@ expressions to match syntax.
 
 ### 1.0.3:
 - Updated first line matching
+
+### 1.1.0:
+- Added basic snippets
