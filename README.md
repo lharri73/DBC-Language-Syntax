@@ -1,9 +1,7 @@
 # DBC Language Syntax
 
 This extension provides basic syntax highlighting and bracket completion for the Vector DBC file format. 
-This is created to work with version 2 of the DBC file format, 
-defined [here](https://bitbucket.org/tobylorenz/vector_dbc/)
-in the official Vector DBC language repository. 
+This is created to work with version 2 of the Vector DBC file format.
 
 Although DBC files are often programmatically generated, it can be useful to
 more easily read the DBC file itself in a plaintext format. 
