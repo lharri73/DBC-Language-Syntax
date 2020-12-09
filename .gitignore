@@ -1,7 +1,7 @@
 node_modules
 *.vsix
 syntaxes/dbc.tmLanguage.json
-syntaxes/snippets.json
+snippets/snippets.json
 *.dbc
 test/
 .DS_Store

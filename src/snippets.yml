@@ -58,11 +58,18 @@ message:
   prefix:
     - message
     - msg
-    - Message
-    - BO
+    - BO_
   body:
     - "BO_ ${1:msg_id(dec)} ${2:msg_name}: ${3:msg_size(bytes)} ${4:transmitter(or VECTOR_XXX)}"
     - ' SG_ ${5:sig_name} : ${6:sig_start(bit)}|${7:sig_size(bits)}@${8:sig_byte_order(0/1)}${9:sig_signed(+/-)} (${10:sig_factor},${11:sig_offset}) [${12:sig_min}|${13:sig_max}] "${14:sig_unit}" ${15:receivers}'
     - "$0"
   description: "A message with a single signal. The message id is provided in decimal. Additional messages can be added with the 'signal' snippet."
 
+signal:
+  prefix:
+    - signal
+    - SG_
+  body: 
+    - 'SG_ ${1:sig_name} : ${2:sig_start(bit)}|${3:sig_size(bits)}@${4:sig_byte_order(0/1)}${5:sig_signed(+/-)} (${6:sig_factor},${7:sig_offset}) [${8:sig_min}|${9:sig_max}] "${10:sig_unit}" ${11:receivers}'
+    - "$0"
+  description: "A signal with all required fields. This must be within a message environment. "
