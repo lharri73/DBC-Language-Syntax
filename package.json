@@ -7,7 +7,7 @@
         "url": "https://github.com/lharri73/DBC-Language-Syntax"
     },
     "license": "GPL-2.0-only",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "publisher": "lharri73",
     "engines": {
         "vscode": "^1.51.0"
@@ -44,6 +44,12 @@
                 "language": "dbc",
                 "scopeName": "source.dbc",
                 "path": "./syntaxes/dbc.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "dbc",
+                "path": "snippets/snippets.json"
             }
         ]
     },

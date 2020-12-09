@@ -1,0 +1,75 @@
+# Copyright (C) 2020  Landon Harris
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+NameSpec:
+  prefix: 
+    - ns
+    - namespec
+    - NS
+    - symbols
+  body:
+    - "NS_ : "
+    - "\tNS_DESC_"
+    - "\tCM_"
+    - "\tBA_DEF_"
+    - "\tBA_"
+    - "\tVAL_"
+    - "\tCAT_DEF_"
+    - "\tCAT_"
+    - "\tFILTER"
+    - "\tBA_DEF_DEF_"
+    - "\tEV_DATA_"
+    - "\tENVVAR_DATA_"
+    - "\tSGTYPE_"
+    - "\tSGTYPE_VAL_"
+    - "\tBA_DEF_SGTYPE_"
+    - "\tBA_SGTYPE_"
+    - "\tSIG_TYPE_REF_"
+    - "\tVAL_TABLE_"
+    - "\tSIG_GROUP_"
+    - "\tSIG_VALTYPE_"
+    - "\tSIGTYPE_VALTYPE_"
+    - "\tBO_TX_BU_"
+    - "\tBA_DEF_REL_"
+    - "\tBA_REL_"
+    - "\tBA_DEF_DEF_REL_"
+    - "\tBU_SG_REL_"
+    - "\tBU_EV_REL_"
+    - "\tBU_BO_REL_"
+    - "\tSG_MUL_VAL_"
+    - "$0"
+  description: "A list of all symbols supported in the DBC file. \
+                Typically includes all symbols available in DBC syntax version 2, even if unused."
+
+message:
+  prefix:
+    - message
+    - msg
+    - BO_
+  body:
+    - "BO_ ${1:msg_id(dec)} ${2:msg_name}: ${3:msg_size(bytes)} ${4:transmitter(or VECTOR_XXX)}"
+    - ' SG_ ${5:sig_name} : ${6:sig_start(bit)}|${7:sig_size(bits)}@${8:sig_byte_order(0/1)}${9:sig_signed(+/-)} (${10:sig_factor},${11:sig_offset}) [${12:sig_min}|${13:sig_max}] "${14:sig_unit}" ${15:receivers}'
+    - "$0"
+  description: "A message with a single signal. The message id is provided in decimal. Additional messages can be added with the 'signal' snippet."
+
+signal:
+  prefix:
+    - signal
+    - SG_
+  body: 
+    - 'SG_ ${1:sig_name} : ${2:sig_start(bit)}|${3:sig_size(bits)}@${4:sig_byte_order(0/1)}${5:sig_signed(+/-)} (${6:sig_factor},${7:sig_offset}) [${8:sig_min}|${9:sig_max}] "${10:sig_unit}" ${11:receivers}'
+    - "$0"
+  description: "A signal with all required fields. This must be within a message environment. "
