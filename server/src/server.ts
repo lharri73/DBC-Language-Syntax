@@ -17,6 +17,7 @@
 
 import {
     createConnection,
+    connection, 
     TextDocuments,
     Diagnostic,
     DiagnosticSeverity,
@@ -41,6 +42,49 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+
+interface ExampleSettings{
+    maxNumberOfProblems: number;
+}
+export default class DBCServer{
+    public static initialize(con: connection, {rootPath}: InitializeParams){
+        // create analyser here too
+        return new DBCServer(con);
+    }
+
+    private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+    private connection: connection;
+    // private analyzer;
+    private defaultSettings: ExampleSettings;
+    private globalSettings: ExampleSettings;
+    
+    private documentSettings: Map<string, Thenable<ExampleSettings>>;
+    
+    private constructor(con: connection){
+        this.connection = con;
+        this.defaultSettings = {maxNumberOfProblems: 1000};
+        this.globalSettings = this.defaultSettings;
+        this.documentSettings = new Map();
+    }
+    
+    public register(con: connection): void{
+        this.documents.listen(this.connection);
+        
+        con.onDidChangeWatchedFiles(this.onFileChange.bind(this));
+        con.onHover(this.onHover.bind(this));
+    }
+
+    private onFileChange(change: ){
+        if(hasConfigurationCapability){
+            this.documentSettings.clear();
+        }else{
+            this.globalSettings = <ExampleSettings>(
+                (change.settings.dbc || this.defaultSettings)
+            );
+        }
+        this.documents.all().forEach(validateTextDocument);
+    }
+}
 
 connection.onInitialize((params: InitializeParams) => {
     let capabilities = params.capabilities;
@@ -85,25 +129,25 @@ connection.onInitialized(() => {
     }
 });
 
-interface ExampleSettings{
-    maxNumberOfProblems: number;
-}
+// interface ExampleSettings{
+//     maxNumberOfProblems: number;
+// }
 
-const defaultSettings: ExampleSettings = {maxNumberOfProblems: 1000};
-let globalSettings: ExampleSettings = defaultSettings;
+// const defaultSettings: ExampleSettings = {maxNumberOfProblems: 1000};
+// let globalSettings: ExampleSettings = defaultSettings;
 
-let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
+// let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
 
-connection.onDidChangeConfiguration(change => {
-    if(hasConfigurationCapability){
-        documentSettings.clear();
-    }else{
-        globalSettings = <ExampleSettings>(
-            (change.settings.dbc || defaultSettings)
-        );
-    }
-    documents.all().forEach(validateTextDocument);
-});
+// connection.onDidChangeConfiguration(change => {
+//     if(hasConfigurationCapability){
+//         documentSettings.clear();
+//     }else{
+//         globalSettings = <ExampleSettings>(
+//             (change.settings.dbc || defaultSettings)
+//         );
+//     }
+//     documents.all().forEach(validateTextDocument);
+// });
 
 function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
     if(!hasConfigurationCapability){
