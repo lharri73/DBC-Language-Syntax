@@ -4,4 +4,8 @@ syntaxes/dbc.tmLanguage.json
 snippets/snippets.json
 *.dbc
 test/
+server/out
+client/out
+!server/out/.keep
+!client/out/.keep
 .DS_Store

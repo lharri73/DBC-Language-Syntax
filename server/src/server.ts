@@ -30,7 +30,10 @@ import {
     TextDocumentSyncKind,
     InitializeResult,
     DidChangeWatchedFilesParams,
-    WorkspaceFoldersChangeEvent
+    WorkspaceFoldersChangeEvent,
+    DidCloseTextDocumentParams,
+    TextDocumentChangeEvent,
+    DidChangeConfigurationParams
 } from 'vscode-languageserver';
 
 import {
@@ -69,7 +72,6 @@ export default class DBCServer{
             workspaceFolder: hasWorkspaceFolderCapability,
             diagnosticInformation: hasDiagnosticRelatedInformationCapability
         }
-        
         return new DBCServer(con, caps);
     }
 
@@ -91,21 +93,26 @@ export default class DBCServer{
         this.documentSettings = new Map();
     }
     
-    public register(con: Connection): void{
+    public register(): void{
         this.documents.listen(this.connection);
         
-        con.onDidChangeWatchedFiles(this.onFileChange.bind(this));
         if(this.capabilities.config){
             this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
         }
         if(this.capabilities.workspaceFolder){
-            con.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
+            this.connection.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
         }
         
+        this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
+        this.connection.onDidChangeConfiguration(this.configChange.bind(this));
+        this.connection.onCompletion(this.onCompletion.bind(this));
+        this.connection.onCompletionResolve(this.onCompletionResolve.bind(this));
+        this.documents.onDidClose(this.onDocumentClose.bind(this));
+        this.documents.onDidChangeContent(this.onDocumentChange.bind(this));
         // con.onHover(this.onHover.bind(this));
     }
 
-    private onFileChange(change: DidChangeWatchedFilesParams){
+    private configChange(change: DidChangeConfigurationParams){
         if(this.capabilities.config){
             this.documentSettings.clear();
         }else{
@@ -113,139 +120,114 @@ export default class DBCServer{
                 (change.settings.dbc || this.defaultSettings)
             );
         }
-        this.documents.all().forEach(validateTextDocument);
+
+        // recheck all files
+        this.documents.all().forEach(this.validateTextDocument);
+    }
+
+    private onWatchFileChange(change: DidChangeWatchedFilesParams){
+        console.log('watched files change event received');
     }
 
     private workspaceChange(event: WorkspaceFoldersChangeEvent){
-        this.connection.console.log('workspace folder change event received');
+        console.log('workspace folder change event received');
     }
 
-    private 
-}
+    private getDocumentSettings(resource: string): Thenable<ExampleSettings> {
+        if(!this.capabilities.config){
+            return Promise.resolve(this.globalSettings)
+        }else{
+            let result = this.documentSettings.get(resource);
 
-// interface ExampleSettings{
-//     maxNumberOfProblems: number;
-// }
-
-// const defaultSettings: ExampleSettings = {maxNumberOfProblems: 1000};
-// let globalSettings: ExampleSettings = defaultSettings;
-
-// let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
-
-// connection.onDidChangeConfiguration(change => {
-//     if(hasConfigurationCapability){
-//         documentSettings.clear();
-//     }else{
-//         globalSettings = <ExampleSettings>(
-//             (change.settings.dbc || defaultSettings)
-//         );
-//     }
-//     documents.all().forEach(validateTextDocument);
-// });
-
-function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
-    if(!hasConfigurationCapability){
-        return Promise.resolve(globalSettings);
+            if(!result){
+                result = this.connection.workspace.getConfiguration({
+                    scopeUri: resource,
+                    section: 'dbc'
+                });
+                this.documentSettings.set(resource, result);
+            }
+            return result;
+        }
     }
 
-    let result = documentSettings.get(resource);
+    private onDocumentClose(e: TextDocumentChangeEvent<TextDocument>){
+        this.documentSettings.delete(e.document.uri);
+    }
+
+    private onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
+        console.log("here");
+        this.validateTextDocument(change.document);
+    }
+
+    // TODO: move to validator
+    private async validateTextDocument(textDocument: TextDocument): Promise<void> {
+        let settings = await this.getDocumentSettings(textDocument.uri);
+        let text = textDocument.getText();
+        let pattern = /\b[A-Z]{2,}\b/g;
+        let m: RegExpExecArray | null;
     
-    if(!result){
-        result = connection.workspace.getConfiguration({
-            scopeUri: resource,
-            section: 'dbc'
-        });
-        documentSettings.set(resource, result);
-    }
+        let problems = 0;
+        let diagnostics: Diagnostic[] = [];
     
-    return result;
-}
-
-documents.onDidClose(e => {
-    documentSettings.delete(e.document.uri);
-})
-
-documents.onDidChangeContent(change => {
-    console.error("here");
-    validateTextDocument(change.document);
-})
-
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-    let settings = await getDocumentSettings(textDocument.uri);
-
-    let text = textDocument.getText();
-    let pattern = /\b[A-Z]{2,}\b/g;
-    let m: RegExpExecArray | null;
-
-    let problems = 0;
-    let diagnostics: Diagnostic[] = [];
-
-    while((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems){
-        problems++;
-        let diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Warning,
-            range: {
-                start: textDocument.positionAt(m.index),
-                end: textDocument.positionAt(m.index + m[0].length)
-            },
-            message: `${m[0]} is all uppercase.`,
-            source: 'ex'
-        };
-        if (hasDiagnosticRelatedInformationCapability){
-            diagnostic.relatedInformation = [
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
-                    },
-                    message: 'Spelling matters'
+        while((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems){
+            problems++;
+            let diagnostic: Diagnostic = {
+                severity: DiagnosticSeverity.Warning,
+                range: {
+                    start: textDocument.positionAt(m.index),
+                    end: textDocument.positionAt(m.index + m[0].length)
                 },
-                {
-                    location: {
-                        uri: textDocument.uri,
-                        range: Object.assign({}, diagnostic.range)
+                message: `${m[0]} is all uppercase.`,
+                source: 'ex'
+            };
+            if (this.capabilities.diagnosticInformation){
+                diagnostic.relatedInformation = [
+                    {
+                        location: {
+                            uri: textDocument.uri,
+                            range: Object.assign({}, diagnostic.range)
+                        },
+                        message: 'Spelling matters'
                     },
-                    message: 'Particularly for names'
-                }
-            ];
+                    {
+                        location: {
+                            uri: textDocument.uri,
+                            range: Object.assign({}, diagnostic.range)
+                        },
+                        message: 'Particularly for names'
+                    }
+                ];
+            }
+            diagnostics.push(diagnostic);
         }
-        diagnostics.push(diagnostic);
+    
+        // send to vs code
+        this.connection.sendDiagnostics({uri: textDocument.uri, diagnostics });
     }
 
-    // send to vs code
-    connection.sendDiagnostics({uri: textDocument.uri, diagnostics });
+    private onCompletion(position: TextDocumentPositionParams): CompletionItem[] {
+        return [
+            {
+                label: 'TypeScript',
+                kind: CompletionItemKind.Text,
+                data: 1
+            },
+            {
+                label: 'JavaScript',
+                kind: CompletionItemKind.Text,
+                data: 2
+            }
+        ]
+    }
+
+    private onCompletionResolve(item: CompletionItem): CompletionItem {
+        if(item.data == 1){
+            item.detail = 'Typescript details';
+            item.documentation = 'Typescript documentation';
+        }else if (item.data == 2){
+            item.detail = 'Javascript details';
+            item.documentation = 'javascript documentation'
+        }
+        return item;
+    }
 }
-
-connection.onDidChangeWatchedFiles(_change => {
-    console.log('we received an file change event');
-})
-
-connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-    return [
-        {
-            label: 'TypeScript',
-            kind: CompletionItemKind.Text,
-            data: 1
-        },
-        {
-            label: 'JavaScript',
-            kind: CompletionItemKind.Text,
-            data: 2
-        }
-    ]
-});
-
-connection.onCompletionResolve((item: CompletionItem): CompletionItem =>{
-    if(item.data == 1){
-        item.detail = 'Typescript details';
-        item.documentation = 'Typescript documentation';
-    }else if (item.data == 2){
-        item.detail = 'Javascript details';
-        item.documentation = 'javascript documentation'
-    }
-    return item;
-});
-
-documents.listen(connection);
-
-connection.listen();

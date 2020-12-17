@@ -21,7 +21,7 @@ const path = require("path");
 const vscode_languageclient_1 = require("vscode-languageclient");
 let client;
 function activate(context) {
-    let serverModule = context.asAbsolutePath(path.join('server', 'out', 'server.js'));
+    let serverModule = context.asAbsolutePath(path.join('server', 'out', 'index.js'));
     let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] }; //runs in node's inspector mode so vscode can attach for debugging
     let serverOptions = {
         run: {

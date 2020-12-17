@@ -65,4 +65,8 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
     return result;
 });
 
+connection.onInitialized(() =>{
+    server.register();
+})
+
 connection.listen();
