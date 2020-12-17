@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
-      - run: npm install # && cd server && npm install && cd ../client && npm install
+      - run: npm install
         name: install dependencies
       
       - run: npm run compile
