@@ -5,6 +5,7 @@
     "version": "0.0.1",
     "license": "GPL-2.0-only",
     "publisher": "lharri73",
+    "main": "./out/index.js",
     "engines": {
         "node": "*"
     },

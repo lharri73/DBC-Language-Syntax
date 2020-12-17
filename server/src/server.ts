@@ -17,7 +17,7 @@
 
 import {
     createConnection,
-    connection, 
+    Connection, 
     TextDocuments,
     Diagnostic,
     DiagnosticSeverity,
@@ -28,7 +28,9 @@ import {
     CompletionItemKind,
     TextDocumentPositionParams,
     TextDocumentSyncKind,
-    InitializeResult
+    InitializeResult,
+    DidChangeWatchedFilesParams,
+    WorkspaceFoldersChangeEvent
 } from 'vscode-languageserver';
 
 import {
@@ -36,46 +38,75 @@ import {
 } from 'vscode-languageserver-textdocument';
 
 // create connection for the server
-let connection = createConnection(ProposedFeatures.all);
 
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let hasConfigurationCapability: boolean = false;
-let hasWorkspaceFolderCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 interface ExampleSettings{
     maxNumberOfProblems: number;
 }
+
+interface serverCapabilities{
+    config: boolean,
+    workspaceFolder: boolean,
+    diagnosticInformation: boolean
+}
+
 export default class DBCServer{
-    public static initialize(con: connection, {rootPath}: InitializeParams){
+    public static initialize(con: Connection, params: InitializeParams): DBCServer{
         // create analyser here too
-        return new DBCServer(con);
+        let capabilities = params.capabilities;
+
+        let hasConfigurationCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.configuration);
+        let hasWorkspaceFolderCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
+        let hasDiagnosticRelatedInformationCapability: boolean = !!(
+            capabilities.textDocument &&
+            capabilities.textDocument.publishDiagnostics &&
+            capabilities.textDocument.publishDiagnostics.relatedInformation
+        );
+
+        let caps: serverCapabilities = {
+            config: hasWorkspaceFolderCapability,
+            workspaceFolder: hasWorkspaceFolderCapability,
+            diagnosticInformation: hasDiagnosticRelatedInformationCapability
+        }
+        
+        return new DBCServer(con, caps);
     }
 
+    private capabilities: serverCapabilities;
+    
     private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-    private connection: connection;
+    private connection: Connection;
     // private analyzer;
     private defaultSettings: ExampleSettings;
     private globalSettings: ExampleSettings;
     
     private documentSettings: Map<string, Thenable<ExampleSettings>>;
-    
-    private constructor(con: connection){
+
+    private constructor(con: Connection, caps: serverCapabilities){
+        this.capabilities = caps;
         this.connection = con;
         this.defaultSettings = {maxNumberOfProblems: 1000};
         this.globalSettings = this.defaultSettings;
         this.documentSettings = new Map();
     }
     
-    public register(con: connection): void{
+    public register(con: Connection): void{
         this.documents.listen(this.connection);
         
         con.onDidChangeWatchedFiles(this.onFileChange.bind(this));
-        con.onHover(this.onHover.bind(this));
+        if(this.capabilities.config){
+            this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
+        }
+        if(this.capabilities.workspaceFolder){
+            con.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
+        }
+        
+        // con.onHover(this.onHover.bind(this));
     }
 
-    private onFileChange(change: ){
-        if(hasConfigurationCapability){
+    private onFileChange(change: DidChangeWatchedFilesParams){
+        if(this.capabilities.config){
             this.documentSettings.clear();
         }else{
             this.globalSettings = <ExampleSettings>(
@@ -84,50 +115,13 @@ export default class DBCServer{
         }
         this.documents.all().forEach(validateTextDocument);
     }
+
+    private workspaceChange(event: WorkspaceFoldersChangeEvent){
+        this.connection.console.log('workspace folder change event received');
+    }
+
+    private 
 }
-
-connection.onInitialize((params: InitializeParams) => {
-    let capabilities = params.capabilities;
-
-    hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
-    hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
-    hasDiagnosticRelatedInformationCapability = !!(
-        capabilities.textDocument &&
-        capabilities.textDocument.publishDiagnostics &&
-        capabilities.textDocument.publishDiagnostics.relatedInformation
-    );
-
-    const result: InitializeResult = {
-        capabilities: {
-            textDocumentSync: TextDocumentSyncKind.Incremental,
-
-            // Tell the client that this server supports code completion.
-            completionProvider: {
-                resolveProvider: true
-            }
-        }
-    }
-
-    if (hasWorkspaceFolderCapability){
-        result.capabilities.workspace = {
-            workspaceFolders: {
-                supported: true
-            }
-        };
-    }
-    return result;
-});
-
-connection.onInitialized(() => {
-    if(hasConfigurationCapability){
-        connection.client.register(DidChangeConfigurationNotification.type, undefined);
-    }
-    if(hasWorkspaceFolderCapability){
-        connection.workspace.onDidChangeWorkspaceFolders(_event =>{
-            connection.console.log('workspace folder change event received.');
-        });
-    }
-});
 
 // interface ExampleSettings{
 //     maxNumberOfProblems: number;
