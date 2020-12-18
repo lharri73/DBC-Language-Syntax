@@ -13,6 +13,7 @@
         "url": "https://github.com/lharri73/DBC-Language-Syntax"
     },
     "dependencies": {
+        "jison": "^0.4.18",
         "vscode-languageserver": "^6.1.1",
         "vscode-languageserver-textdocument": "^1.0.1"
     },

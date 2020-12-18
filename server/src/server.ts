@@ -16,22 +16,17 @@
 // along with DBC Language Syntax.  If not, see <http://www.gnu.org/licenses/>.
 
 import {
-    createConnection,
     Connection, 
     TextDocuments,
     Diagnostic,
     DiagnosticSeverity,
-    ProposedFeatures,
     InitializeParams,
     DidChangeConfigurationNotification,
     CompletionItem,
     CompletionItemKind,
     TextDocumentPositionParams,
-    TextDocumentSyncKind,
-    InitializeResult,
     DidChangeWatchedFilesParams,
     WorkspaceFoldersChangeEvent,
-    DidCloseTextDocumentParams,
     TextDocumentChangeEvent,
     DidChangeConfigurationParams
 } from 'vscode-languageserver';
@@ -39,10 +34,9 @@ import {
 import {
     TextDocument
 } from 'vscode-languageserver-textdocument';
+import { DBCParser } from './parser';
 
 // create connection for the server
-
-let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 interface ExampleSettings{
     maxNumberOfProblems: number;
@@ -85,12 +79,15 @@ export default class DBCServer{
     
     private documentSettings: Map<string, Thenable<ExampleSettings>>;
 
+    private parser: DBCParser;
+
     private constructor(con: Connection, caps: serverCapabilities){
         this.capabilities = caps;
         this.connection = con;
         this.defaultSettings = {maxNumberOfProblems: 1000};
         this.globalSettings = this.defaultSettings;
         this.documentSettings = new Map();
+        this.parser = new DBCParser();
     }
     
     public register(): void{
@@ -155,7 +152,7 @@ export default class DBCServer{
     }
 
     private onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
-        console.log("here");
+        this.parser.parse(change.document.getText());
         this.validateTextDocument(change.document);
     }
 
