@@ -21,9 +21,8 @@ const {Database, Message, Signal} = require(path.join(__dirname, "../../../out/d
 
 %}
 
-
 %%
 
 primary_expression
-    : a SOMETHING b
-        {console.log("HERE", $1, $2, $3);};
+    : VERSION DECIMAL EOL
+        {console.log("GOOD");};

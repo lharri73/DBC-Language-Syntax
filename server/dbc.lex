@@ -14,11 +14,21 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
  */
 
-%%
-\s+     /* skip whitespace */
+DIGIT           [0-9]
+NONDIGIT        [_a-zA-Z]
+HEX_PREFIX      ("0X"|"0x")
+HEX_DIGIT       [0-9a-fA-F]
+EPONENT         ([Ee][+-]?{DIGIT}+)
 
-"a"     return 'a'
-"b"     return 'b'
-.       return 'SOMETHING'
-
 %%
+" "     /* skip whitespace */
+
+"VERSION"                       {return "VERSION"}
+([ ]*[\r\n]+)+                  {return "EOL"}
+{HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
+{DIGIT}+"."?{DIGIT}*{EPONENT}   {return "DECIMAL"}
+{DIGIT}+"."{DIGIT}+             {return "DECIMAL"}
+{DIGIT}+                        {return "DECIMAL"}
+
+
+
