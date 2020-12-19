@@ -14,6 +14,16 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
  */
 
+%{
+
+// import Signal from 'db';
+var db = require('db');
+// let message = require('db').Message;
+// let db = require('db').Database;
+
+%}
+
+
 %%
 
 primary_expression

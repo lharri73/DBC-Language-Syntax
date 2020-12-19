@@ -15,11 +15,7 @@
 */
 
 
-import {
-    Signal, 
-    Message, 
-    Database
-} from './db';
+import Database from './db';
 
 import { Parser } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
@@ -41,7 +37,7 @@ export class DBCParser {
     }
 
     public parse(contents: string){
-        console.log(this.parser.parse(contents));
-        // console.log(contents);
+        var parseResult = this.parser.parse(contents);
+        console.log(parseResult);
     }
 }
