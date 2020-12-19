@@ -1,5 +1,8 @@
 # DBC Language Syntax
 
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/lharri73.dbc?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lharri73/DBC-Language-Syntax/DBC%20language%20CI?style=flat-square)
+
 This extension provides basic syntax highlighting, bracket completion, and code snippets 
 for the Vector DBC file format. This is created to work with version 2 of the Vector 
 DBC file format.
