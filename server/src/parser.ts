@@ -21,19 +21,19 @@ import {
     Database
 } from './db';
 
-// import {Parser} from 'jison';
+import {Parser} from 'jison';
 
 import { readFileSync } from 'fs';
 
 export class DBCParser {
     private database: Database;
-    // private parser: Parser;
+    private parser;
     public constructor(){
         this.database = {
             messages: []
         }
         var tokens = readFileSync("../dbc.jison", "utf8");
-        // this.parser = Parser(tokens);
+        this.parser = Parser(tokens);
     }
 
     public parse(contents: string){
