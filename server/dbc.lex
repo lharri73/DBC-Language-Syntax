@@ -15,7 +15,10 @@
  */
 
 %%
+\s+     /* skip whitespace */
 
-primary_expression
-    : a SOMETHING b
-        {console.log("HERE", $1, $2, $3);};
+"a"     return 'a'
+"b"     return 'b'
+.       return 'SOMETHING'
+
+%%
