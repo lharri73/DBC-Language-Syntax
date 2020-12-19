@@ -67,7 +67,7 @@ export class Message{
 
 }
 
-export default class Database{
+export class Database{
     public constructor(){
         this.messages = [];
     }

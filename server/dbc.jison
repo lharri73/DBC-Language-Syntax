@@ -16,10 +16,8 @@
 
 %{
 
-// import Signal from 'db';
-var db = require('db');
-// let message = require('db').Message;
-// let db = require('db').Database;
+const path = require("path");
+const {Database, Message, Signal} = require(path.join(__dirname, "../../../out/db.js"));
 
 %}
 

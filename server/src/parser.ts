@@ -15,8 +15,6 @@
 */
 
 
-import Database from './db';
-
 import { Parser } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
 
@@ -24,12 +22,9 @@ import { fstat, readFileSync } from 'fs';
 import { resolve } from 'path';
 
 export class DBCParser {
-    private database: Database;
+    // private database: Database;
     private parser;
     public constructor(){
-        this.database = {
-            messages: []
-        }
         var tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         var lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.parser = Parser(tokens);
