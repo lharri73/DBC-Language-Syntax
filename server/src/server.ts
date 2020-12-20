@@ -86,7 +86,7 @@ export default class DBCServer{
         this.defaultSettings = {maxNumberOfProblems: 1000};
         this.globalSettings = this.defaultSettings;
         this.documentSettings = new Map();
-        this.parser = new DBCParser();
+        this.parser = new DBCParser(con);
     }
     
     public register(): void{
@@ -151,8 +151,8 @@ export default class DBCServer{
     }
 
     private onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
-        this.parser.parse(change.document.getText());
-        this.validateTextDocument(change.document);
+        this.parser.parse(change.document.getText(), change.document.uri);
+        // this.validateTextDocument(change.document);
     }
 
     // TODO: move to validator

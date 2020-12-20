@@ -20,19 +20,63 @@ var Lexer = require('jison-lex');   // this is probably bad
 
 import { fstat, readFileSync } from 'fs';
 import { resolve } from 'path';
+import { ParsedUrlQuery } from 'querystring';
+import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export class DBCParser {
     // private database: Database;
     private parser;
-    public constructor(){
+    private connection: Connection;
+    public constructor(connection: Connection){
         var tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         var lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.parser = Parser(tokens);
         this.parser.lexer = new Lexer(lexicon);
+        this.connection = connection;
     }
 
-    public parse(contents: string){
-        var parseResult = this.parser.parse(contents);
-        console.log(parseResult);
+    public async parse(contents: string, uri: string){
+        try {
+            var parseResult = this.parser.parse(contents);
+
+            // if no error
+            this.clearDiag(uri);
+        } catch (e) {
+            this.sendDiag(e, uri);
+            console.log("Error: ", JSON.stringify(e));
+        }
+    }
+
+    // send errors to vscode
+    private sendDiag(e: any, uri: string){ /* e: Parser.parseError */
+        var len = e.hash.text;
+        var lastPart = JSON.stringify(e.hash.expected);
+        let diagnostic: Diagnostic = {
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: {
+                    line: e.hash.loc.first_line,
+                    character: e.hash.loc.first_column
+                },
+                end: {
+                    line: e.hash.loc.last_line,
+                    character: e.hash.loc.last_column + len.length
+                }
+            },
+            message: `Expected ${lastPart}.`
+        };
+
+        let diagnostics = [];
+        diagnostics.push(diagnostic);
+
+        this.connection.sendDiagnostics({uri: uri, diagnostics});
+    }
+
+    // remove all diagnostics from vscode
+    private clearDiag(uri: string){
+        let diagnostics: Diagnostic[] = [];
+
+        this.connection.sendDiagnostics({uri: uri, diagnostics});
     }
 }
