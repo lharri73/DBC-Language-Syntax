@@ -38,7 +38,6 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     // initialize the dbc server
     server = DBCServer.initialize(connection, params);
-    console.log('here');
 
 
     const result: InitializeResult = {

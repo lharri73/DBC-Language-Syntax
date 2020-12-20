@@ -52,16 +52,19 @@ export class Signal {
 export class Message{
     public constructor(Id: number,
                        Name: string, 
-                       Size: number){
+                       Size: number,
+                       Transmitter: string){
         this.id = Id;
         this.name = Name;
         this.size = Size;
+        this.transmitter = Transmitter;
         this.signals = [];
         this.comment = "";
     }
     public id: number;
     public name: string;
     public size: number;
+    public transmitter: string;
     public signals: Signal[];
     public comment: string;
 
@@ -69,10 +72,12 @@ export class Message{
 
 export class Database{
     public constructor(){
-        this.messages = [];
+        this.messages = new Map();
+        this.version = "";
     }
 
-    public messages: Message[];
+    public messages: Map<number, Message>;
+    public version: string;
 }
 
 

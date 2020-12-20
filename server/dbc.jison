@@ -18,11 +18,63 @@
 
 const path = require("path");
 const {Database, Message, Signal} = require(path.join(__dirname, "../../../out/db.js"));
+var db = new Database();
 
 %}
 
+%token VERSION
+%token BO 
+%token COLON 
+%token QUOTE
+%token VECTOR_XXX
+%token REG_WORD
+%token DBC_WORD
+%token ENDOFFILE
+
 %%
 
-primary_expression
-    : VERSION DECIMAL EOL
-        {console.log("GOOD");};
+/* Structure of the file itself */
+network
+    : version
+    //   new_symbols
+    //   bit_timing
+    //   nodes
+      messages
+      end;
+
+version
+    : VERSION quoted_string EOL{
+        db.version = $quoted_string;
+    };
+
+quoted_string
+    : QUOTE REG_WORD QUOTE {$$ = $REG_WORD;}
+    | QUOTE QUOTE {$$ = ""; };
+
+messages
+    : %empty
+    | messages message{
+        db.messages[$message.id] = $message;
+    };
+
+message
+    : BO id DBC_WORD COLON DECIMAL transmitter EOL {
+        $$ = new Message($id, $DBC_WORD, $DECIMAL, $transmitter);
+    };
+
+id
+    : DECIMAL {$$ = $1};
+
+transmitter
+    : VECTOR_XXX { $$ = ""; }   /* this is a default transmitter, ignore it */
+    | DBC_WORD { $$ = $1; };
+
+number
+    : DECIMAL { $$ = $1 } 
+    | DECIMAL_EXP { $$ = $1 }
+    | DECIMAL_POINT { $$ = $1}
+    ;
+
+end
+    : ENDOFFILE { return db};
+%%
