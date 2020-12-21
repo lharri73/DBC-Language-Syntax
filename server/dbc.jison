@@ -17,7 +17,7 @@
 %{
 
 const path = require("path");
-const {Database, Message, Signal} = require(path.join(__dirname, "../../../out/db.js"));
+const {Database, Message, Signal, DBCParseError} = require(path.join(__dirname, "../../../out/db.js"));
 var db = new Database();
 
 %}
@@ -53,6 +53,9 @@ end
 version
     : VERSION quoted_string EOL{
         db.version = $quoted_string;
+    }
+    | error{
+        db.parseErrors.push(new DBCParseError(yylineno, "DBC file should start with\n VERSION \"\""));
     };
 
 new_symbols

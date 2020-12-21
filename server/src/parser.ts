@@ -23,32 +23,46 @@ import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { DBCParseError } from './db';
 
 export class DBCParser {
     // private database: Database;
-    private parser;
+    private tokens: string;
+    private lexicon: string;
     private connection: Connection;
+    private lexer;
     public constructor(connection: Connection){
-        var tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
-        var lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
-        this.parser = Parser(tokens);
-        this.parser.lexer = new Lexer(lexicon);
+        this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
+        this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
+        this.lexer = new Lexer(this.lexicon);
         this.connection = connection;
     }
-
+    
     public async parse(contents: string, uri: string){
-        try {
-            var parseResult = this.parser.parse(contents);
+        /* create a new parser to clear the context within
+        *  the parser itself. */
+        var parser = new Parser(this.tokens);
+        parser.lexer = this.lexer;
 
+        try {
+            var parseResult = parser.parse(contents);
+            
+            if(parseResult.parseErrors.length != 0){
+                this.sendCustomParseError(uri, parseResult.parseErrors);
+            }else{
+                this.clearDiag(uri);
+            }
             // if no error
             console.log(parseResult);
-            this.clearDiag(uri);
+
         } catch (e) {
+            console.log(e);
             try{
                 this.sendDiag(e, uri);
-            }catch(f){
+            }catch(_){
                 this.sendBadLine(e, uri);
             }finally{
+                // debug value 
                 console.log("Error: ", JSON.stringify(e));
             }
         }
@@ -105,6 +119,29 @@ export class DBCParser {
         diagnostics.push(diagnostic);
 
         this.connection.sendDiagnostics({uri: uri, diagnostics});
+    }
+
+    private async sendCustomParseError(uri: string, parseErrors: DBCParseError[]){
+        let diagnostics: Diagnostic[] = [];
+        parseErrors.forEach(curError => {
+            let diagnostic: Diagnostic = {
+                severity: DiagnosticSeverity.Warning,
+                range: {
+                    start: { 
+                        line: curError.line,
+                        character: 0
+                    },
+                    end: {
+                        line: curError.line,
+                        character: Number.MAX_VALUE
+                    }
+                },
+                message: curError.what
+            }
+            diagnostics.push(diagnostic);
+        });
+
+        this.connection.sendDiagnostics({uri: uri, diagnostics: diagnostics});
     }
 
     // remove all diagnostics from vscode

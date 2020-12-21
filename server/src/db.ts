@@ -75,11 +75,20 @@ export class Database{
         this.messages = new Map();
         this.version = "";
         this.symbols = [];
+        this.parseErrors = [];
     }
 
     public messages: Map<number, Message>;
     public version: string;
     public symbols: string[];
+    public parseErrors: DBCParseError[];
 }
 
-
+export class DBCParseError{
+    public constructor(line: number, what: string){
+        this.line = line;
+        this.what = what;
+    }
+    public what: string;
+    public line: number;
+}
