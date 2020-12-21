@@ -32,13 +32,14 @@ var db = new Database();
 %token DECIMAL
 %token DBC_WORD
 %token ENDOFFILE
+%token NS
 
 %%
 
 /* Structure of the file itself */
 network
     : version
-    //   new_symbols
+      new_symbols
     //   bit_timing
     //   nodes
       error
@@ -52,6 +53,24 @@ end
 version
     : VERSION quoted_string EOL{
         db.version = $quoted_string;
+    };
+
+new_symbols
+    : %empty 
+    | NS COLON EOL ns_values{
+        db.symbols = $ns_values;
+    };
+
+ns_values
+    : %empty {$$ = [];}; /* base case */
+    /* TODO: add specific values to error check rather than string */
+    | string EOL ns_values {
+        $$ = $ns_values;
+        if($$ == undefined){
+            $$ = [$string];
+        }else{
+            $$.push($string);
+        }
     };
 
 messages

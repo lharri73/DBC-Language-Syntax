@@ -20,13 +20,15 @@ HEX_PREFIX      ("0X"|"0x")
 HEX_DIGIT       [0-9a-fA-F]
 EPONENT         ([Ee][+-]?{DIGIT}+)
 // WORD            [a-zA-Z0-9]     /* not '_' */
-U_WORD          [a-zA-Z0-9.-]
+U_WORD          [a-zA-Z0-9.-_]
+DEFINER         (?![a-zA-Z])
 
 
 %%
-" "     /* skip whitespace */
+[ \t]                              /* skip whitespace */
 
 "VERSION"                       {return "VERSION"}
+("NS_"[\s:])                    {return "NS"}
 "BO_"                           {return "BO"}
 ":"                             {return "COLON"}
 "VECTOR_XXX"                    {return "VECTOR_XXX"}
@@ -43,5 +45,3 @@ U_WORD          [a-zA-Z0-9.-]
 // [a-zA-z]\w*                     {return "REG_WORD"}
 .*{EOL}                         {return "TMP_GARBAGE"}
 <<EOF>>                         {return "ENDOFFILE"}
-
-

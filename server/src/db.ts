@@ -74,10 +74,12 @@ export class Database{
     public constructor(){
         this.messages = new Map();
         this.version = "";
+        this.symbols = [];
     }
 
     public messages: Map<number, Message>;
     public version: string;
+    public symbols: string[];
 }
 
 

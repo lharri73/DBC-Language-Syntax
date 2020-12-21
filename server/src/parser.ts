@@ -47,9 +47,10 @@ export class DBCParser {
             try{
                 this.sendDiag(e, uri);
             }catch(f){
-                console.log("WORSE", f);
+                this.sendBadLine(e, uri);
+            }finally{
+                console.log("Error: ", JSON.stringify(e));
             }
-            console.log("Error: ", JSON.stringify(e));
         }
     }
 
@@ -73,6 +74,32 @@ export class DBCParser {
             },
             message: `Found ${found}.\nExpected ${lastPart}.`
         };
+
+        let diagnostics = [];
+        diagnostics.push(diagnostic);
+
+        this.connection.sendDiagnostics({uri: uri, diagnostics});
+    }
+
+    private sendBadLine(e: any, uri: string){
+        if(e.hash == undefined){
+            // this is bad
+            return;
+        }
+        let diagnostic: Diagnostic = {
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: {
+                    line: e.hash.line,
+                    character: 0
+                },
+                end: {
+                    line: e.hash.line,
+                    character: Number.MAX_VALUE
+                }
+            },
+            message: "Unexpected token."
+        }
 
         let diagnostics = [];
         diagnostics.push(diagnostic);
