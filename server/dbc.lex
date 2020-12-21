@@ -19,7 +19,8 @@ NONDIGIT        [_a-zA-Z]
 HEX_PREFIX      ("0X"|"0x")
 HEX_DIGIT       [0-9a-fA-F]
 EPONENT         ([Ee][+-]?{DIGIT}+)
-WORD            [a-zA-Z0-9]     /* not '_' */
+// WORD            [a-zA-Z0-9]     /* not '_' */
+U_WORD          [a-zA-Z0-9.-]
 
 
 %%
@@ -33,11 +34,13 @@ WORD            [a-zA-Z0-9]     /* not '_' */
 
 ([ ]*[\r\n]+)+                  {return "EOL"}
 {HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
+{UNSAFE_WORD}                   {return "UNSAFE_WORD"}
 {DIGIT}+"."?{DIGIT}*{EPONENT}   {return "DECIMAL_EXP"}
 {DIGIT}+"."{DIGIT}+             {return "DECIMAL_POINT"}
 {DIGIT}+                        {return "DECIMAL"}
-{WORD}+                         {return "DBC_WORD"}
-[a-zA-z]\w*                     {return "REG_WORD"}
+// {WORD}+                         {return "DBC_WORD"}
+{U_WORD}+                       {return "UNSAFE_WORD"}
+// [a-zA-z]\w*                     {return "REG_WORD"}
 .*{EOL}                         {return "TMP_GARBAGE"}
 <<EOF>>                         {return "ENDOFFILE"}
 

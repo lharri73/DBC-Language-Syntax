@@ -41,9 +41,14 @@ export class DBCParser {
             var parseResult = this.parser.parse(contents);
 
             // if no error
+            console.log(parseResult);
             this.clearDiag(uri);
         } catch (e) {
-            this.sendDiag(e, uri);
+            try{
+                this.sendDiag(e, uri);
+            }catch(f){
+                console.log("WORSE", f);
+            }
             console.log("Error: ", JSON.stringify(e));
         }
     }
@@ -51,7 +56,9 @@ export class DBCParser {
     // send errors to vscode
     private sendDiag(e: any, uri: string){ /* e: Parser.parseError */
         var len = e.hash.text;
+
         var lastPart = JSON.stringify(e.hash.expected);
+        var found = e.hash.token;
         let diagnostic: Diagnostic = {
             severity: DiagnosticSeverity.Error,
             range: {
@@ -64,7 +71,7 @@ export class DBCParser {
                     character: e.hash.loc.last_column + len.length
                 }
             },
-            message: `Expected ${lastPart}.`
+            message: `Found ${found}.\nExpected ${lastPart}.`
         };
 
         let diagnostics = [];

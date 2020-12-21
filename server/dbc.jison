@@ -27,7 +27,9 @@ var db = new Database();
 %token COLON 
 %token QUOTE
 %token VECTOR_XXX
+%token UNSAFE_WORD
 %token REG_WORD
+%token DECIMAL
 %token DBC_WORD
 %token ENDOFFILE
 
@@ -39,17 +41,18 @@ network
     //   new_symbols
     //   bit_timing
     //   nodes
+      error
       messages
+      error
       end;
+
+end
+    : ENDOFFILE { return db};
 
 version
     : VERSION quoted_string EOL{
         db.version = $quoted_string;
     };
-
-quoted_string
-    : QUOTE REG_WORD QUOTE {$$ = $REG_WORD;}
-    | QUOTE QUOTE {$$ = ""; };
 
 messages
     : %empty
@@ -69,12 +72,19 @@ transmitter
     : VECTOR_XXX { $$ = ""; }   /* this is a default transmitter, ignore it */
     | DBC_WORD { $$ = $1; };
 
+/* More primative types */
+string
+    : UNSAFE_WORD {$$ = $UNSAFE_WORD;};
+    // | REG_WORD {$$ = $REG_WORD;};
+
+quoted_string
+    : QUOTE UNSAFE_WORD QUOTE {$$ = $2;}
+    | QUOTE QUOTE {$$ = ""; };
+
 number
     : DECIMAL { $$ = $1 } 
     | DECIMAL_EXP { $$ = $1 }
     | DECIMAL_POINT { $$ = $1}
     ;
-
-end
-    : ENDOFFILE { return db};
 %%
+
