@@ -20,7 +20,7 @@ HEX_PREFIX      ("0X"|"0x")
 HEX_DIGIT       [0-9a-fA-F]
 EPONENT         ([Ee][+-]?{DIGIT}+)
 // WORD            [a-zA-Z0-9]     /* not '_' */
-U_WORD          [a-zA-Z0-9.-_]
+U_WORD          [a-zA-Z0-9-_\\.]
 DEFINER         (?![a-zA-Z])
 
 
@@ -28,11 +28,14 @@ DEFINER         (?![a-zA-Z])
 [ \t]                              /* skip whitespace */
 
 "VERSION"                       {return "VERSION"}
-("NS_"[\s:])                    {return "NS"}
-"BO_"                           {return "BO"}
+"NS_"{DEFINER}                  {return "NS"}
+"BO_"{DEFINER}                  {return "BO"}
+"BS_"{DEFINER}                  {return "BS"}
+"BU_"{DEFINER}                  {return "BU"}
 ":"                             {return "COLON"}
 "VECTOR_XXX"                    {return "VECTOR_XXX"}
 "\""                            {return "QUOTE"}
+","                             {return "COMMA"}
 
 ([ ]*[\r\n]+)+                  {return "EOL"}
 {HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
@@ -44,4 +47,4 @@ DEFINER         (?![a-zA-Z])
 {U_WORD}+                       {return "UNSAFE_WORD"}
 // [a-zA-z]\w*                     {return "REG_WORD"}
 .*{EOL}                         {return "TMP_GARBAGE"}
-<<EOF>>                         {return "ENDOFFILE"}
+\s*<<EOF>>                      {return "ENDOFFILE"}

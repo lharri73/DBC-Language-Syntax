@@ -17,22 +17,28 @@
 %{
 
 const path = require("path");
-const {Database, Message, Signal, DBCParseError} = require(path.join(__dirname, "../../../out/db.js"));
+const {
+    Database, 
+    Message, 
+    Node,
+    Signal, 
+    DBCParseError
+} = require(path.join(__dirname, "../../../out/db.js"));
 var db = new Database();
 
 %}
 
 %token VERSION
 %token BO 
+%token NS
 %token COLON 
 %token QUOTE
 %token VECTOR_XXX
 %token UNSAFE_WORD
-%token REG_WORD
+// %token REG_WORD
 %token DECIMAL
-%token DBC_WORD
+// %token DBC_WORD
 %token ENDOFFILE
-%token NS
 
 %%
 
@@ -40,11 +46,9 @@ var db = new Database();
 network
     : version
       new_symbols
-    //   bit_timing
-    //   nodes
-      error
+      bit_timing
+      nodes
       messages
-      error
       end;
 
 end
@@ -53,11 +57,10 @@ end
 version
     : VERSION quoted_string EOL{
         db.version = $quoted_string;
-    }
-    | error{
-        db.parseErrors.push(new DBCParseError(yylineno, "DBC file should start with\n VERSION \"\""));
     };
 
+//----------------------
+// NS_ section
 new_symbols
     : %empty 
     | NS COLON EOL ns_values{
@@ -76,6 +79,31 @@ ns_values
         }
     };
 
+//----------------------
+// BS_ section
+bit_timing
+    : BS COLON EOL
+    | BS COLON DECIMAL COLON DECIMAL COMMA DECIMAL EOL {
+        db.bitTiming.baudRate   = parseInt($3);
+        db.bitTiming.register_1 = parseInt($5);
+        db.bitTiming.register_2 = parseInt($7);
+    };
+
+//----------------------
+// BU_ section
+nodes
+    : BU COLON node_names EOL;
+
+node_names
+    : %empty
+    | node_names node_name {
+        db.nodes[$node_name] = new Node($node_name);
+    };
+
+node_name
+    : UNSAFE_WORD { $$ = $1;};
+
+//----------------------
 messages
     : %empty
     | messages message{
@@ -83,17 +111,18 @@ messages
     };
 
 message
-    : BO id DBC_WORD COLON DECIMAL transmitter EOL {
-        $$ = new Message($id, $DBC_WORD, $DECIMAL, $transmitter);
+    : BO id UNSAFE_WORD COLON DECIMAL transmitter EOL {
+        $$ = new Message($id, $UNSAFE_WORD, parseInt($DECIMAL), $transmitter);
     };
 
 id
-    : DECIMAL {$$ = $1};
+    : DECIMAL {$$ = parseInt($1);};
 
 transmitter
     : VECTOR_XXX { $$ = ""; }   /* this is a default transmitter, ignore it */
-    | DBC_WORD { $$ = $1; };
+    | UNSAFE_WORD { $$ = $1; };
 
+//----------------------
 /* More primative types */
 string
     : UNSAFE_WORD {$$ = $UNSAFE_WORD;};
@@ -104,9 +133,9 @@ quoted_string
     | QUOTE QUOTE {$$ = ""; };
 
 number
-    : DECIMAL { $$ = $1 } 
-    | DECIMAL_EXP { $$ = $1 }
-    | DECIMAL_POINT { $$ = $1}
+    : DECIMAL { $$ = parseInt($1); } 
+    | DECIMAL_EXP { $$ = Number($1); }
+    | DECIMAL_POINT { $$ = parseFloat($1); }
     ;
 %%
 
