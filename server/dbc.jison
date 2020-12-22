@@ -22,7 +22,8 @@ const {
     Message, 
     Node,
     Signal, 
-    DBCParseError
+    DBCParseError,
+    ValTable
 } = require(path.join(__dirname, "../../../out/db.js"));
 var db = new Database();
 
@@ -48,6 +49,7 @@ network
       new_symbols
       bit_timing
       nodes
+      val_tables
       messages
       end;
 
@@ -104,6 +106,36 @@ node_name
     : UNSAFE_WORD { $$ = $1;};
 
 //----------------------
+// VAL_TABLE_ section
+val_tables
+    : %empty
+    | val_tables val_table{
+        db.valTables[$val_table.name] = $val_table;
+        console.log($val_table);
+    };
+
+val_table
+    : VAL_TABLE UNSAFE_WORD val_table_descriptions SEMICOLON EOL{
+        $$ = new ValTable($UNSAFE_WORD);
+        $$.descriptions = $val_table_descriptions;
+    };
+
+val_table_descriptions
+    :  {$$ = new Map();}
+    | val_table_descriptions val_table_descr{
+        $$ = $val_table_descriptions;
+        $$[$val_table_descr[0]] = $val_table_descr[1];
+    };
+
+val_table_descr
+    : DECIMAL quoted_string{
+        $$ = [];
+        $$.push(Number($DECIMAL));
+        $$.push($quoted_string);
+    };
+
+//----------------------
+// BO_ section
 messages
     : %empty
     | messages message{

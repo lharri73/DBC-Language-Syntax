@@ -79,6 +79,7 @@ export interface BitTiming{
 export class Database{
     public constructor(){
         this.messages = new Map();
+        this.valTables = new Map();
         this.version = "";
         this.symbols = [];
         this.parseErrors = [];
@@ -87,6 +88,7 @@ export class Database{
             register_1: -1,
             register_2: -1
         };
+        this.nodes = new Map();
     }
 
     public messages: Map<number, Message>;
@@ -94,7 +96,11 @@ export class Database{
     public symbols: string[];
     public parseErrors: DBCParseError[];
     public bitTiming: BitTiming;
+    public valTables: Map<string,ValTable>;
+    public nodes: Map<string,Node>;
 }
+
+//----------------------
 
 export class Node{
     public constructor(){
@@ -104,13 +110,20 @@ export class Node{
     public name: string;
 }
 
+export class ValTable{
+    public constructor(name: string){
+        this.name = name;
+        this.descriptions = new Map();
+    }
+    public name: string;
+    public descriptions: Map<any,any>;
+}
+
 export class DBCParseError{
     public constructor(line: number, what: string){
         this.line = line;
         this.what = what;
-        this.nodes = new Map();
     }
     public what: string;
     public line: number;
-    public nodes: Map<string,Node>;
 }

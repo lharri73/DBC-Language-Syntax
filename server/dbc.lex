@@ -32,10 +32,12 @@ DEFINER         (?![a-zA-Z])
 "BO_"{DEFINER}                  {return "BO"}
 "BS_"{DEFINER}                  {return "BS"}
 "BU_"{DEFINER}                  {return "BU"}
+"VAL_TABLE_"{DEFINER}           {return "VAL_TABLE"}
 ":"                             {return "COLON"}
 "VECTOR_XXX"                    {return "VECTOR_XXX"}
 "\""                            {return "QUOTE"}
 ","                             {return "COMMA"}
+";"                             {return "SEMICOLON"}
 
 ([ ]*[\r\n]+)+                  {return "EOL"}
 {HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
