@@ -56,6 +56,8 @@ network
       nodes
       val_tables
       messages
+      msg_transmitters
+      val_descriptions
       end;
 
 end
@@ -164,7 +166,7 @@ transmitter
     | UNSAFE_WORD { $$ = $1; };
 
 //----------------------
-//SG_ sectioni
+//SG_ section
 signals
     : { $$ = new Map(); }
     | signals signal {
@@ -221,6 +223,40 @@ receivers
 receiver
     : UNSAFE_WORD { $$ = $1; }
     | VECTOR_XXX { $$ = ""; };
+
+//----------------------
+// BO_TX_BU section
+
+msg_transmitters
+    : %empty
+    | msg_transmitters msg_transmitter;
+
+msg_transmitter
+    : BO_TX_BU id COLON transmitters SEMICOLON EOL {
+        db.messages[$id].transmitters = $transmitters;
+    };
+
+transmitters
+    : transmitter {
+        $$ = [];
+        $$.push($1);
+    }
+    | transmitters COMMA transmitter {
+        $$ = $1;
+        $$.push($3);
+    };
+
+//----------------------
+// VAL_ section
+val_descriptions
+    : %empty
+    | val_descriptions val_descr_for_sig
+    | val_descriptions val_descr_for_env;
+
+val_descr_for_sig
+    : VAL id UNSAFE_WORD val_table_descriptions SEMICOLON EOL {
+        db.messages[$id].signals[$UNSAFE_WORD].valTable = $val_table_descriptions;
+    };
 
 //----------------------
 /* More primative types */

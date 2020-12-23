@@ -36,6 +36,7 @@ export class Signal {
         this.maximum = Max;
         this.unit = Unit;
         this.receivers = Receivers;
+        this.valTable = null;
     }
 
     public name: string;
@@ -49,6 +50,7 @@ export class Signal {
     public maximum: number;
     public unit: string;
     public receivers: string[];
+    public valTable: ValTable | null;
 }
 
 export class Message{
@@ -63,11 +65,13 @@ export class Message{
         this.transmitter = Transmitter;
         this.signals = Signals;
         this.comment = "";
+        this.transmitters = [];
     }
     public id: number;
     public name: string;
     public size: number;
     public transmitter: string;
+    public transmitters: string[];
     public signals: Map<string,Signal>;
     public comment: string;
 

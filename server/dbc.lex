@@ -34,6 +34,7 @@ DEFINER         (?![a-zA-Z])
 "BU_"{DEFINER}                  {return "BU"}
 "VAL_TABLE_"{DEFINER}           {return "VAL_TABLE"}
 "SG_"{DEFINER}                  {return "SG"}
+"BO_TX_BU_"{DEFINER}            {return "BO_TX_BU"}
 "VECTOR_XXX"                    {return "VECTOR_XXX"}
 
 // punctuation
