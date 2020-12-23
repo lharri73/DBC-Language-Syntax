@@ -33,11 +33,21 @@ DEFINER         (?![a-zA-Z])
 "BS_"{DEFINER}                  {return "BS"}
 "BU_"{DEFINER}                  {return "BU"}
 "VAL_TABLE_"{DEFINER}           {return "VAL_TABLE"}
-":"                             {return "COLON"}
+"SG_"{DEFINER}                  {return "SG"}
 "VECTOR_XXX"                    {return "VECTOR_XXX"}
-"\""                            {return "QUOTE"}
+
+// punctuation
+"|"                             {return "VBAR"}
+":"                             {return "COLON"}
 ","                             {return "COMMA"}
 ";"                             {return "SEMICOLON"}
+"@"                             {return "AT"}
+"+"                             {return "PLUS"}
+"-"                             {return "MINUS"}
+"("                             {return "OPEN_PAREN"}
+")"                             {return "CLOSE_PAREN"}
+"["                             {return "OPEN_BRACK"}
+"]"                             {return "CLOSE_BRACK"}
 
 ([ ]*[\r\n]+)+                  {return "EOL"}
 {HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
@@ -48,5 +58,7 @@ DEFINER         (?![a-zA-Z])
 // {WORD}+                         {return "DBC_WORD"}
 {U_WORD}+                       {return "UNSAFE_WORD"}
 // [a-zA-z]\w*                     {return "REG_WORD"}
-.*{EOL}                         {return "TMP_GARBAGE"}
+\"[^\"]*\"                      {yytext = yytext.substr(1,yyleng-2); 
+                                 return 'QUOTED_STRING';}
+
 \s*<<EOF>>                      {return "ENDOFFILE"}

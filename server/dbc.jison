@@ -32,8 +32,13 @@ var db = new Database();
 %token VERSION
 %token BO 
 %token NS
+%token BS
+%token BU
+%token VAL_TABLE
+%token SG
+%token AT
+%token VBAR
 %token COLON 
-%token QUOTE
 %token VECTOR_XXX
 %token UNSAFE_WORD
 // %token REG_WORD
@@ -57,8 +62,8 @@ end
     : ENDOFFILE { return db};
 
 version
-    : VERSION quoted_string EOL{
-        db.version = $quoted_string;
+    : VERSION QUOTED_STRING EOL{
+        db.version = $QUOTED_STRING;
     };
 
 //----------------------
@@ -111,7 +116,6 @@ val_tables
     : %empty
     | val_tables val_table{
         db.valTables[$val_table.name] = $val_table;
-        console.log($val_table);
     };
 
 val_table
@@ -128,10 +132,10 @@ val_table_descriptions
     };
 
 val_table_descr
-    : DECIMAL quoted_string{
+    : DECIMAL QUOTED_STRING{
         $$ = [];
         $$.push(Number($DECIMAL));
-        $$.push($quoted_string);
+        $$.push($QUOTED_STRING);
     };
 
 //----------------------
@@ -143,8 +147,13 @@ messages
     };
 
 message
-    : BO id UNSAFE_WORD COLON DECIMAL transmitter EOL {
-        $$ = new Message($id, $UNSAFE_WORD, parseInt($DECIMAL), $transmitter);
+    : BO id UNSAFE_WORD COLON DECIMAL transmitter EOL signals {
+        $$ = new Message($id, 
+                         $UNSAFE_WORD, 
+                         parseInt($DECIMAL), 
+                         $transmitter, 
+                         $signals
+                        );
     };
 
 id
@@ -155,19 +164,77 @@ transmitter
     | UNSAFE_WORD { $$ = $1; };
 
 //----------------------
+//SG_ sectioni
+signals
+    : { $$ = new Map(); }
+    | signals signal {
+        $$ = $1;
+        $$[$2.name] = $2;
+    };
+signal
+    : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
+      byte_order val_type OPEN_PAREN number COMMA number CLOSE_PAREN
+      OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL{
+          $$ = new Signal(/*name:  */$2, 
+                          /*start: */Number($4), 
+                          /*size:  */Number($6),
+                          /*order: */$8,
+                          /*type:  */$9,
+                          /*factor:*/$11,
+                          /*offset:*/$13,
+                          /*min:   */$16,
+                          /*max:   */$18,
+                          /*unit:  */$20,
+                          /*recs:  */$21);
+      };
+
+byte_order
+    : DECIMAL {
+        if( $1 == 0 ){
+            $$ = false;
+        }else if( $1 == 1){
+            $$ = true;
+        }else{
+            db.parseErrors.push(new ParseError(yylineno, "byte order should be '0' or '1'\n Found " + $1))
+            $$ = true;
+        }
+    };
+
+val_type
+    : PLUS { $$ = false } /* unsigned */
+    | MINUS { $$ = true }; /* signed */
+
+receivers
+    : receiver {
+        $$ = [];
+        if($1 != ""){
+            $$.push($1);
+        };
+    }
+    | receivers COMMA receiver { 
+        $$ = $1;
+        if($3 != ""){
+            $$.push($3);
+        };
+    };
+
+receiver
+    : UNSAFE_WORD { $$ = $1; }
+    | VECTOR_XXX { $$ = ""; };
+
+//----------------------
 /* More primative types */
 string
     : UNSAFE_WORD {$$ = $UNSAFE_WORD;};
     // | REG_WORD {$$ = $REG_WORD;};
 
-quoted_string
-    : QUOTE UNSAFE_WORD QUOTE {$$ = $2;}
-    | QUOTE QUOTE {$$ = ""; };
-
 number
     : DECIMAL { $$ = parseInt($1); } 
     | DECIMAL_EXP { $$ = Number($1); }
     | DECIMAL_POINT { $$ = parseFloat($1); }
+    | MINUS DECIMAL { $$ = -1 * parseInt($2); }
+    | MINUS DECIMAL_EXP { $$ = -1 * Number($2); }
+    | MINUS DECIMAL_POINT {$$ = -1 * parseFloat($2); }
     ;
 %%
 

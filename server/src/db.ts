@@ -23,7 +23,8 @@ export class Signal {
                        Offset: number, 
                        Min: number, 
                        Max: number, 
-                       Unit: string){
+                       Unit: string,
+                       Receivers: string[]){
         this.name = Name;
         this.startBit = Start;
         this.bitSize = Size;
@@ -34,38 +35,40 @@ export class Signal {
         this.minimun = Min;
         this.maximum = Max;
         this.unit = Unit;
+        this.receivers = Receivers;
     }
 
     public name: string;
     public startBit: number;
     public bitSize: number;
-    public byteOrder: boolean;
-    public valueType: boolean; // signed/unsigned
+    public byteOrder: boolean; // true: little, false: big
+    public valueType: boolean; // true: signed, false: unsigned
     public factor: number;
     public offset: number;
     public minimun: number;
     public maximum: number;
     public unit: string;
-    // public receivers: string[];
+    public receivers: string[];
 }
 
 export class Message{
     public constructor(Id: number,
                        Name: string, 
                        Size: number,
-                       Transmitter: string){
+                       Transmitter: string,
+                       Signals: Map<string,Signal>){
         this.id = Id;
         this.name = Name;
         this.size = Size;
         this.transmitter = Transmitter;
-        this.signals = [];
+        this.signals = Signals;
         this.comment = "";
     }
     public id: number;
     public name: string;
     public size: number;
     public transmitter: string;
-    public signals: Signal[];
+    public signals: Map<string,Signal>;
     public comment: string;
 
 }
