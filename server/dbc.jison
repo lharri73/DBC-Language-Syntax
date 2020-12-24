@@ -57,7 +57,8 @@ network
       val_tables
       messages
       msg_transmitters
-      val_descriptions
+      env_vars
+    //   val_descriptions
       end;
 
 end
@@ -245,6 +246,42 @@ transmitters
         $$ = $1;
         $$.push($3);
     };
+
+//----------------------
+// EV_ section
+env_vars
+    : %empty
+    | env_vars env_var;
+
+env_var
+    : EV UNSAFE_WORD COLON env_var_type OPEN_BRACK number VBAR number 
+      CLOSE_BRACK QUOTED_STRING number id access_type transmitters SEMICOLON EOL{
+
+    };
+
+env_var_type
+    : DECIMAL {
+        if($1 == '0'){
+            $$ = 0;
+        }else if($1 == '1'){
+            $$ = 1;
+        }else if($1 == '2'){
+            $$ = 2;
+        }else{
+            db.parseErrors.push(new ParseError(yylineno, "Environment variable type should be 0,1,2: \n(0: Int, 1: Float, 2: String)"));
+            $$ = 2;
+        }
+    };
+
+access_type
+    : DUMMY_NODE_VECTOR0 {$$ = 0x0;}
+    | DUMMY_NODE_VECTOR1 {$$ = 0x1;}
+    | DUMMY_NODE_VECTOR2 {$$ = 0x2;}
+    | DUMMY_NODE_VECTOR3 {$$ = 0x3;}
+    | DUMMY_NODE_VECTOR8000 {$$ = 0x8000;}
+    | DUMMY_NODE_VECTOR8001 {$$ = 0x8001;}
+    | DUMMY_NODE_VECTOR8002 {$$ = 0x8002;}
+    | DUMMY_NODE_VECTOR8003 {$$ = 0x8003;};
 
 //----------------------
 // VAL_ section
