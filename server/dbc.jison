@@ -22,7 +22,8 @@ const {
     EnvironmentVariable,
     Message, 
     Node,
-    Signal, 
+    Signal,
+    SignalType,
     DBCParseError,
     ValTable
 } = require(path.join(__dirname, "../../../out/db.js"));
@@ -59,6 +60,8 @@ network
       messages
       msg_transmitters
       env_vars
+      env_var_datas
+      signal_types
     //   val_descriptions
       end;
 
@@ -263,7 +266,7 @@ env_var
           }else{
               cur = new EnvironmentVariable();
           }
-          
+
           cur.name = $2;
           cur.type = $4;
           cur.min = $6;
@@ -301,11 +304,56 @@ access_type
     | DUMMY_NODE_VECTOR8003 {$$ = 0x8003;};
 
 //----------------------
+// ENVVAR_DATA section
+env_var_datas
+    : %empty
+    | env_var_datas env_var_data;
+
+env_var_data
+    : ENVVAR_DATA UNSAFE_WORD COLON DECIMAL SEMICOLON EOL{
+        db.environmentVariables[$2].type = 3;
+        db.environmentVariables[$2].dataSize = $4;
+    };
+
+//----------------------
+// environment variable val descriptions
+env_var_val_descr
+    : VAL UNSAFE_WORD val_table_descriptions SEMICOLON EOL {
+        // TODO: raise error if not exist
+        db.environmentVariables[$2].valueDescriptions = $3;
+    };
+
+//----------------------
+// SGTYPE section
+signal_types
+    : %empty
+    | signal_types signal_type;
+
+signal_type
+    : SGTYPE UNSAFE_WORD COLON DECIMAL VBAR byte_order val_type 
+      OPEN_PAREN number COMMA number CLOSE_PAREN 
+      OPEN_BRACK number VBAR number CLOSE_BRACK 
+      QUOTED_STRING number COMMA UNSAFE_WORD SEMICOLON EOL {
+          var cursigType = new SignalType(
+              $2, /* name */
+              $4, /* size */
+              $6, /* byte_order */
+              $7, /* val_type */
+              $9, /* factor */
+              $11, /* offset */
+              $14, /* min */
+              $16, /* max */
+              $18, /* unit */
+              $19, /* default value */
+              $21  /* valTableName */
+          )
+      }
+//----------------------
 // VAL_ section
 val_descriptions
     : %empty
     | val_descriptions val_descr_for_sig
-    | val_descriptions val_descr_for_env;
+    | val_descriptions env_var_val_descr;
 
 val_descr_for_sig
     : VAL id UNSAFE_WORD val_table_descriptions SEMICOLON EOL {

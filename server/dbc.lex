@@ -36,6 +36,7 @@ DEFINER         (?![a-zA-Z])
 "SG_"{DEFINER}                      {return "SG"}
 "BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
 "EV_"{DEFINER}                      {return "EV"}
+"SGTYPE_"{DEFINER}                  {return "SGTYPE"}
 "VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
 "DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
 "DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}

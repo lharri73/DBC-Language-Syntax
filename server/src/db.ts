@@ -86,15 +86,57 @@ export class EnvironmentVariable{
         this.initialVal = 0;
         this.id = 0;
         this.transmitters = [];
+        this.valueDescriptions = new Map();
+        this.dataSize = 0; // used when ENVVAR_DATA is present
     }
     public name: string;
-    public type: number;
+    public type: number; // 0: integer, 1: float, 2: string, 3: data(ENVVAR_DATA)
     public min: number;
     public max: number;
     public unit: string;
     public initialVal: number;
     public id: number;
     public transmitters: string[];
+    public valueDescriptions: Map<string,ValTable>;
+    public dataSize: number;
+}
+
+export class SignalType{
+    public constructor(name: string, 
+                       size: number,
+                       byteOrder: boolean,
+                       valueType: boolean,
+                       factor: number,
+                       offset: number,
+                       min: number,
+                       max: number,
+                       unit: string,
+                       defaultVal: number,
+                       valTable: string){
+        this.name = name;
+        this.size = size;
+        this.byteOrder = byteOrder;
+        this.valueType = valueType;
+        this.factor = factor;
+        this.offset = offset;
+        this.minimum = min;
+        this.maximum = max;
+        this.unit = unit;
+        this.default = defaultVal;
+        this.valTable = valTable;
+
+    }
+    public name: string;
+    public size: number;
+    public byteOrder: boolean; // true: little, false: big
+    public valueType: boolean; // true: signed, false: unsigned
+    public factor: number;
+    public offset: number;
+    public minimum: number;
+    public maximum: number;
+    public unit: string;
+    public default: number;
+    public valTable: string;    // name of valtable
 }
 
 export interface BitTiming{
