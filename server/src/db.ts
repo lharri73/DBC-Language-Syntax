@@ -159,6 +159,7 @@ export class Database{
         };
         this.nodes = new Map();
         this.environmentVariables = new Map();
+        this.signalTypes = new Map();
     }
 
     public messages: Map<number, Message>;
@@ -169,6 +170,7 @@ export class Database{
     public valTables: Map<string,ValTable>;
     public nodes: Map<string,Node>;
     public environmentVariables: Map<string,EnvironmentVariable>;
+    public signalTypes: Map<string,SignalType>;
 }
 
 //----------------------

@@ -347,7 +347,8 @@ signal_type
               $19, /* default value */
               $21  /* valTableName */
           )
-      }
+          db.signalTypes[$2] = cursigType;
+      };
 //----------------------
 // VAL_ section
 val_descriptions
