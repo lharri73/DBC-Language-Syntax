@@ -18,7 +18,8 @@
 
 const path = require("path");
 const {
-    Database, 
+    Database,
+    EnvironmentVariable,
     Message, 
     Node,
     Signal, 
@@ -256,7 +257,23 @@ env_vars
 env_var
     : EV UNSAFE_WORD COLON env_var_type OPEN_BRACK number VBAR number 
       CLOSE_BRACK QUOTED_STRING number id access_type transmitters SEMICOLON EOL{
+          var cur;
+          if(db.environmentVariables.has($2)){
+              cur = db.environmentVariables[$2];
+          }else{
+              cur = new EnvironmentVariable();
+          }
+          
+          cur.name = $2;
+          cur.type = $4;
+          cur.min = $6;
+          cur.max = $8;
+          cur.unit = $10;
+          cur.initialVal = $11;
+          cur.id = $id;
+          cur.transmitters = $transmitters;
 
+          db.environmentVariables[$2] = cur;
     };
 
 env_var_type

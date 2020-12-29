@@ -74,7 +74,27 @@ export class Message{
     public transmitters: string[];
     public signals: Map<string,Signal>;
     public comment: string;
+}
 
+export class EnvironmentVariable{
+    public constructor(){
+        this.name = "";
+        this.type = 2;
+        this.min = -1;
+        this.max = 0;
+        this.unit = "";
+        this.initialVal = 0;
+        this.id = 0;
+        this.transmitters = [];
+    }
+    public name: string;
+    public type: number;
+    public min: number;
+    public max: number;
+    public unit: string;
+    public initialVal: number;
+    public id: number;
+    public transmitters: string[];
 }
 
 export interface BitTiming{
@@ -96,6 +116,7 @@ export class Database{
             register_2: -1
         };
         this.nodes = new Map();
+        this.environmentVariables = new Map();
     }
 
     public messages: Map<number, Message>;
@@ -105,6 +126,7 @@ export class Database{
     public bitTiming: BitTiming;
     public valTables: Map<string,ValTable>;
     public nodes: Map<string,Node>;
+    public environmentVariables: Map<string,EnvironmentVariable>;
 }
 
 //----------------------

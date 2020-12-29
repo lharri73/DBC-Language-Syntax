@@ -27,16 +27,24 @@ DEFINER         (?![a-zA-Z])
 %%
 [ \t]                              /* skip whitespace */
 
-"VERSION"                       {return "VERSION"}
-"NS_"{DEFINER}                  {return "NS"}
-"BO_"{DEFINER}                  {return "BO"}
-"BS_"{DEFINER}                  {return "BS"}
-"BU_"{DEFINER}                  {return "BU"}
-"VAL_TABLE_"{DEFINER}           {return "VAL_TABLE"}
-"SG_"{DEFINER}                  {return "SG"}
-"BO_TX_BU_"{DEFINER}            {return "BO_TX_BU"}
-"EV_"{DEFINER}                  {return "EV"}
-"VECTOR_XXX"                    {return "VECTOR_XXX"}
+"VERSION"                           {return "VERSION"}
+"NS_"{DEFINER}                      {return "NS"}
+"BO_"{DEFINER}                      {return "BO"}
+"BS_"{DEFINER}                      {return "BS"}
+"BU_"{DEFINER}                      {return "BU"}
+"VAL_TABLE_"{DEFINER}               {return "VAL_TABLE"}
+"SG_"{DEFINER}                      {return "SG"}
+"BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
+"EV_"{DEFINER}                      {return "EV"}
+"VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
+"DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
+"DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}
+"DUMMY_NODE_VECTOR2"{DEFINER}       {return "DUMMY_NODE_VECTOR2"}
+"DUMMY_NODE_VECTOR3"{DEFINER}       {return "DUMMY_NODE_VECTOR3"}
+"DUMMY_NODE_VECTOR8000"{DEFINER}    {return "DUMMY_NODE_VECTOR8000"}
+"DUMMY_NODE_VECTOR8001"{DEFINER}    {return "DUMMY_NODE_VECTOR8001"}
+"DUMMY_NODE_VECTOR8002"{DEFINER}    {return "DUMMY_NODE_VECTOR8002"}
+"DUMMY_NODE_VECTOR8003"{DEFINER}    {return "DUMMY_NODE_VECTOR8003"}
 
 // punctuation
 "|"                             {return "VBAR"}
