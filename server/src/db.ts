@@ -66,6 +66,7 @@ export class Message{
         this.signals = Signals;
         this.comment = "";
         this.transmitters = [];
+        this.signalGroups = new Map();
     }
     public id: number;
     public name: string;
@@ -74,6 +75,7 @@ export class Message{
     public transmitters: string[];
     public signals: Map<string,Signal>;
     public comment: string;
+    public signalGroups: Map<string,SignalGroup>;
 }
 
 export class EnvironmentVariable{
@@ -137,6 +139,19 @@ export class SignalType{
     public unit: string;
     public default: number;
     public valTable: string;    // name of valtable
+}
+
+class SignalGroup{
+    public constructor(){
+        this.messageId = 0;
+        this.name = "";
+        this.repetitions = 0;
+        this.signals = [];
+    }
+    public messageId: number;
+    public name: string;
+    public repetitions: number;
+    public signals: string[];
 }
 
 export interface BitTiming{

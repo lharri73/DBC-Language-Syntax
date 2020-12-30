@@ -23,6 +23,7 @@ const {
     Message, 
     Node,
     Signal,
+    SignalGroup,
     SignalType,
     DBCParseError,
     ValTable
@@ -62,7 +63,10 @@ network
       env_vars
       env_var_datas
       signal_types
+
+      error
     //   val_descriptions
+    //   signal_groups
       end;
 
 end
@@ -84,14 +88,27 @@ new_symbols
 ns_values
     : %empty {$$ = [];}; /* base case */
     /* TODO: add specific values to error check rather than string */
-    | string EOL ns_values {
+    | symbols_list EOL ns_values {
         $$ = $ns_values;
         if($$ == undefined){
-            $$ = [$string];
+            $$ = [$symbols_list];
         }else{
-            $$.push($string);
+            $$.push($symbols_list);
         }
     };
+
+symbols_list
+    : NS
+    | BO
+    | BU
+    | VAL_TABLE
+    | SG
+    | BO_TX_BU
+    | EV
+    | SGTYPE
+    | ENVVAR_DATA
+    | SIG_GROUP
+    | UNSAFE_WORD;
 
 //----------------------
 // BS_ section
@@ -349,6 +366,36 @@ signal_type
           )
           db.signalTypes[$2] = cursigType;
       };
+
+//----------------------
+// SIG_GROUP section
+singal_groups
+    : %empty
+    | signal_groups signal_group;
+
+signal_group
+    : SIG_GROUP DECIMAL UNSAFE_WORD DECIMAL COLON signal_names SEMICOLON EOL{
+        // TODO make sure we don't reference a message that doesn't exist
+        var curGroup;
+        if(db.messages[$2].signalGroups.has($3)){
+            curGroup = db.messages[$2].signalGroups[$3];
+            // throw error?
+        }else{
+            curGroup = new SignalGroup();
+        }
+        curGroup.messageId = $2;
+        curGroup.name = $3;
+        curGroup.repetitions = $4;
+        curGroup.signals = $6;
+        db.messages[$2].signalGroups[$3] = curGroup;
+    };
+
+signal_names
+    : { $$ = []}
+    | signal_names UNSAFE_WORD{
+        $$ = $1;
+        $$.push($UNSAFE_WORD);
+    };
 //----------------------
 // VAL_ section
 val_descriptions

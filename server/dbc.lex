@@ -37,6 +37,8 @@ DEFINER         (?![a-zA-Z])
 "BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
 "EV_"{DEFINER}                      {return "EV"}
 "SGTYPE_"{DEFINER}                  {return "SGTYPE"}
+"ENVVAR_DATA_"{DEFINER}             {return "ENVVAR_DATA"}
+"SIG_GROUP_"{DEFINER}               {return "SIG_GROUP"}
 "VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
 "DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
 "DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}
