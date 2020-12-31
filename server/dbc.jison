@@ -63,6 +63,8 @@ network
       env_vars
       env_var_datas
       signal_types
+      comments
+      attribute_deffinitions
 
       error
     //   val_descriptions
@@ -108,6 +110,7 @@ symbols_list
     | SGTYPE
     | ENVVAR_DATA
     | SIG_GROUP
+    | CM
     | UNSAFE_WORD;
 
 //----------------------
@@ -366,6 +369,29 @@ signal_type
           )
           db.signalTypes[$2] = cursigType;
       };
+
+//----------------------
+// CM section
+comments
+    : %empty
+    | comments comment;
+
+comment
+    : CM QUOTED_STRING SEMICOLON EOL{
+        db.comment = $QUOTED_STRING;
+    }
+    | CM BU UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
+        db.nodes[$UNSAFE_WORD].comment = $QUOTED_STRING;
+    }
+    | CM BO id QUOTED_STRING SEMICOLON EOL {
+        db.messages[$id].comment = $QUOTED_STRING;
+    }
+    | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
+        db.messages[$id].signals[$UNSAFE_WORD].comment = $QUOTED_STRING;
+    }
+    | CM EV UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
+        db.environmentVariables[$UNSAFE_WORD].comment = $QUOTED_STRING;
+    };
 
 //----------------------
 // SIG_GROUP section

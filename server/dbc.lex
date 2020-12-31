@@ -39,6 +39,9 @@ DEFINER         (?![a-zA-Z])
 "SGTYPE_"{DEFINER}                  {return "SGTYPE"}
 "ENVVAR_DATA_"{DEFINER}             {return "ENVVAR_DATA"}
 "SIG_GROUP_"{DEFINER}               {return "SIG_GROUP"}
+"CM_"{DEFINER}                      {return "CM"}
+"BA_DEF_"{DEFINER}                  {return "BA_DEF"}
+"BA_DEF_REL_"{DEFINER}              {return "BA_DEF_REL"}
 "VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
 "DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
 "DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}

@@ -37,6 +37,7 @@ export class Signal {
         this.unit = Unit;
         this.receivers = Receivers;
         this.valTable = null;
+        this.comment = "";
     }
 
     public name: string;
@@ -51,6 +52,7 @@ export class Signal {
     public unit: string;
     public receivers: string[];
     public valTable: ValTable | null;
+    public comment: string;
 }
 
 export class Message{
@@ -90,6 +92,7 @@ export class EnvironmentVariable{
         this.transmitters = [];
         this.valueDescriptions = new Map();
         this.dataSize = 0; // used when ENVVAR_DATA is present
+        this.comment = "";
     }
     public name: string;
     public type: number; // 0: integer, 1: float, 2: string, 3: data(ENVVAR_DATA)
@@ -101,6 +104,7 @@ export class EnvironmentVariable{
     public transmitters: string[];
     public valueDescriptions: Map<string,ValTable>;
     public dataSize: number;
+    public comment: string;
 }
 
 export class SignalType{
@@ -175,6 +179,7 @@ export class Database{
         this.nodes = new Map();
         this.environmentVariables = new Map();
         this.signalTypes = new Map();
+        this.comment = "";
     }
 
     public messages: Map<number, Message>;
@@ -186,6 +191,7 @@ export class Database{
     public nodes: Map<string,Node>;
     public environmentVariables: Map<string,EnvironmentVariable>;
     public signalTypes: Map<string,SignalType>;
+    public comment: string;
 }
 
 //----------------------
@@ -193,9 +199,11 @@ export class Database{
 export class Node{
     public constructor(){
         this.name = "";
+        this.comment = "";
     }
 
     public name: string;
+    public comment: string;
 }
 
 export class ValTable{
