@@ -42,6 +42,11 @@ DEFINER         (?![a-zA-Z])
 "CM_"{DEFINER}                      {return "CM"}
 "BA_DEF_"{DEFINER}                  {return "BA_DEF"}
 "BA_DEF_REL_"{DEFINER}              {return "BA_DEF_REL"}
+"INT"{DEFINER}                      {return "INT"}
+"HEX"{DEFINER}                      {return "HEX"}
+"FLOAT"{DEFINER}                    {return "FLOAT"}
+"STRING"{DEFINER}                   {return "STRING"}
+"ENUM"{DEFINER}                     {return "ENUM"}
 "VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
 "DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
 "DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}

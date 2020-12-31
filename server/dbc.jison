@@ -103,6 +103,8 @@ symbols_list
     : NS
     | BO
     | BU
+    | BA_DEF
+    | BA_DEF_REL
     | VAL_TABLE
     | SG
     | BO_TX_BU
@@ -393,6 +395,59 @@ comment
         db.environmentVariables[$UNSAFE_WORD].comment = $QUOTED_STRING;
     };
 
+//----------------------
+// BA_DEF section
+
+attribute_deffinitions
+    : %empty
+    | attribute_deffinitions attribute_def;
+
+attribute_deffinitions
+    : BA_DEF attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL {};
+
+attr_obj_type
+    : %empty { $$ = 0}
+    | BU { $$ = 1}
+    | BO { $$ = 2}
+    | SG { $$ = 3}
+    | EV { $$ = 4}
+    | BU_EV_REL { $$ = 5}
+    | BU_BO_REL { $$ = 6}
+    | BU_SG_REL { $$ = 7};
+
+attr_val_type
+    : INT number number {
+        $$ = new ValueType(0);
+        $$.min = $2;
+        $$.max = $3;
+    }
+    | HEX number number {
+        $$ = new ValueType(1);
+        $$.min = $2;
+        $$.max = $3;
+    }
+    | FLOAT number number{
+        $$ = new ValueType(2);
+        $$.min = $2;
+        $$.max = $3;
+    }
+    | STRING{
+        $$ = new ValueType(3);
+    }
+    | ENUM enumVals{
+        $$ = new ValueType(4);
+        $$.enumVals = $2;
+    };
+
+enumVals
+    : QUOTED_STRING {
+        $$ = [];
+        $$.push($1);
+    }
+    | enumVals COMMA QUOTED_STRING{
+        $$ = $1;
+        $$.push($3);
+    };
 //----------------------
 // SIG_GROUP section
 singal_groups

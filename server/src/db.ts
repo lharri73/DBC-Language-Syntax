@@ -223,3 +223,16 @@ export class DBCParseError{
     public what: string;
     public line: number;
 }
+
+export class ValueType{
+    public constructor(type: number){
+        this.type = type;
+        this.min = 0;
+        this.max = 0;
+        this.enumVals = [];
+    }
+    public type: number;
+    public min: number;
+    public max: number;
+    public enumVals: string[];
+}
