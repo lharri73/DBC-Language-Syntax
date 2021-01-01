@@ -18,6 +18,7 @@
 
 const path = require("path");
 const {
+    AttributeDef,
     Database,
     EnvironmentVariable,
     Message, 
@@ -65,6 +66,7 @@ network
       signal_types
       comments
       attribute_deffinitions
+      attribute_defaults
 
       error
     //   val_descriptions
@@ -403,7 +405,12 @@ attribute_deffinitions
     | attribute_deffinitions attribute_def;
 
 attribute_deffinitions
-    : BA_DEF attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL {};
+    : BA_DEF attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL {
+        db.attrDefs[$3] = new AttributeDef($3, $2, $4);
+    }
+    | BA_DEF_REL attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL{
+        db.attrDefs[$3] = new AttributeDef($3, $2, $4);
+    };
 
 attr_obj_type
     : %empty { $$ = 0}
@@ -448,6 +455,21 @@ enumVals
         $$ = $1;
         $$.push($3);
     };
+
+//----------------------
+// BA_DEF_DEF section
+attribute_defaults
+    : %empty
+    | attribute_defaults attribute_default;
+
+attribute_default
+    : BA_DEF_DEF UNSAFE_WORD attribute_val SEMICOLON EOL {
+
+    }
+    | BA_DEF_DEF_REL UNSAFE_WORD attribute_val SEMICOLON EOL {
+
+    };
+
 //----------------------
 // SIG_GROUP section
 singal_groups

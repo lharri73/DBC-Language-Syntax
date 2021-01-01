@@ -180,6 +180,7 @@ export class Database{
         this.environmentVariables = new Map();
         this.signalTypes = new Map();
         this.comment = "";
+        this.attrDefs = new Map();
     }
 
     public messages: Map<number, Message>;
@@ -192,6 +193,7 @@ export class Database{
     public environmentVariables: Map<string,EnvironmentVariable>;
     public signalTypes: Map<string,SignalType>;
     public comment: string;
+    public attrDefs: Map<string,AttributeDef>;
 }
 
 //----------------------
@@ -235,4 +237,15 @@ export class ValueType{
     public min: number;
     public max: number;
     public enumVals: string[];
+}
+
+export class AttributeDef{
+    public constructor(name: string, objType: number, valType: ValueType){
+        this.name = name;
+        this.objType = objType;
+        this.valType = valType;
+    }
+    public name: string;
+    public objType: number;
+    public valType: ValueType;
 }
