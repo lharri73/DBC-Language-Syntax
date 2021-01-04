@@ -67,6 +67,7 @@ network
       comments
       attribute_deffinitions
       attribute_defaults
+      attribute_vals
 
       error
     //   val_descriptions
@@ -462,6 +463,7 @@ attribute_defaults
     : %empty
     | attribute_defaults attribute_default;
 
+// TODO: attribute defaults
 attribute_default
     : BA_DEF_DEF UNSAFE_WORD attribute_val SEMICOLON EOL {
 
@@ -469,6 +471,10 @@ attribute_default
     | BA_DEF_DEF_REL UNSAFE_WORD attribute_val SEMICOLON EOL {
 
     };
+
+attribute_val 
+    : number { $$ = $1}
+    | QUOTED_STRING {$$ = $1};
 
 //----------------------
 // SIG_GROUP section
@@ -510,6 +516,35 @@ val_descr_for_sig
     : VAL id UNSAFE_WORD val_table_descriptions SEMICOLON EOL {
         db.messages[$id].signals[$UNSAFE_WORD].valTable = $val_table_descriptions;
     };
+
+//----------------------
+// BA section
+attribute_vals
+    : BA UNSAFE_WORD attribute_val SEMICOLON EOL{
+
+    }
+    | BA UNSAFE_WORD BU UNSAFE_WORD attribute_val SEMICOLON EOL {
+
+    }
+    | BA UNSAFE_WORD BO id attribute_val SEMICOLON EOL {
+
+    }
+    | BA UNSAFE_WORD SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
+
+    }
+    | BA UNSAFE_WORD EV UNSAFE_WORD attribute_val SEMICOLON EOL {
+
+    }
+    | BA_REL UNSAFE_WORD BU_EV_REL UNSAFE_WORD UNSAFE_WORD attribute_val SEMICOLON EOL{
+        
+    }
+    | BA_REL UNSAFE_WORD BU_BO_REL UNSAFE_WORD id attribute_val SEMICOLON EOL{
+
+    }
+    | BA_REL UNSAFE_WORD BU_SG_REL UNSAFE_WORD SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
+        
+    };
+    // TODO: add actions here
 
 //----------------------
 /* More primative types */
