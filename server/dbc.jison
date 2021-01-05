@@ -18,16 +18,18 @@
 
 const path = require("path");
 const {
+    Attribute,
     AttributeDef,
+    DBCParseError,
     Database,
     EnvironmentVariable,
-    Message, 
+    Message,
     Node,
     Signal,
     SignalGroup,
     SignalType,
-    DBCParseError,
-    ValTable
+    ValTable,
+    ValueType
 } = require(path.join(__dirname, "../../../out/db.js"));
 var db = new Database();
 
@@ -67,7 +69,7 @@ network
       comments
       attribute_deffinitions
       attribute_defaults
-      attribute_vals
+      attribute_valssss
 
       error
     //   val_descriptions
@@ -106,8 +108,12 @@ symbols_list
     : NS
     | BO
     | BU
+    | BA
     | BA_DEF
+    | BA_DEF_DEF
     | BA_DEF_REL
+    | BA_DEF_DEF_REL
+    | BU_SG_REL
     | VAL_TABLE
     | SG
     | BO_TX_BU
@@ -205,7 +211,7 @@ signals
     };
 signal
     : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
-      byte_order val_type OPEN_PAREN number COMMA number CLOSE_PAREN
+      byte_order signal_val_type OPEN_PAREN number COMMA number CLOSE_PAREN
       OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL{
           $$ = new Signal(/*name:  */$2, 
                           /*start: */Number($4), 
@@ -232,7 +238,7 @@ byte_order
         }
     };
 
-val_type
+signal_val_type
     : PLUS { $$ = false } /* unsigned */
     | MINUS { $$ = true }; /* signed */
 
@@ -355,7 +361,7 @@ signal_types
     | signal_types signal_type;
 
 signal_type
-    : SGTYPE UNSAFE_WORD COLON DECIMAL VBAR byte_order val_type 
+    : SGTYPE UNSAFE_WORD COLON DECIMAL VBAR byte_order signal_val_type 
       OPEN_PAREN number COMMA number CLOSE_PAREN 
       OPEN_BRACK number VBAR number CLOSE_BRACK 
       QUOTED_STRING number COMMA UNSAFE_WORD SEMICOLON EOL {
@@ -403,13 +409,13 @@ comment
 
 attribute_deffinitions
     : %empty
-    | attribute_deffinitions attribute_def;
+    | attribute_deffinitions attribute_definition;
 
-attribute_deffinitions
-    : BA_DEF attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL {
+attribute_definition
+    : BA_DEF attr_obj_type QUOTED_STRING attr_val_type SEMICOLON EOL {
         db.attrDefs[$3] = new AttributeDef($3, $2, $4);
     }
-    | BA_DEF_REL attr_obj_type UNSAFE_WORD val_type SEMICOLON EOL{
+    | BA_DEF_REL attr_obj_type QUOTED_STRING attr_val_type SEMICOLON EOL{
         db.attrDefs[$3] = new AttributeDef($3, $2, $4);
     };
 
@@ -465,10 +471,10 @@ attribute_defaults
 
 // TODO: attribute defaults
 attribute_default
-    : BA_DEF_DEF UNSAFE_WORD attribute_val SEMICOLON EOL {
+    : BA_DEF_DEF QUOTED_STRING attribute_val SEMICOLON EOL {
 
     }
-    | BA_DEF_DEF_REL UNSAFE_WORD attribute_val SEMICOLON EOL {
+    | BA_DEF_DEF_REL QUOTED_STRING attribute_val SEMICOLON EOL {
 
     };
 
@@ -519,29 +525,39 @@ val_descr_for_sig
 
 //----------------------
 // BA section
+attribute_valssss
+    : %empty
+    | attribute_valssss attribute_vals;
+
 attribute_vals
-    : BA UNSAFE_WORD attribute_val SEMICOLON EOL{
-
+    : BA QUOTED_STRING attribute_val SEMICOLON EOL {
+        // network attribute
+        var attribute = new Attribute($2, 0, $3);
+        db.attributes[$2] = attribute;
     }
-    | BA UNSAFE_WORD BU UNSAFE_WORD attribute_val SEMICOLON EOL {
-
+    | BA QUOTED_STRING BU UNSAFE_WORD attribute_val SEMICOLON EOL {
+        var attribute = new Attribute($2, 1, $4);
+        db.nodes[$4].attributes[$2] = attribute;
     }
-    | BA UNSAFE_WORD BO id attribute_val SEMICOLON EOL {
-
+    | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
+        var attribute = new Attribute($2, 2, $5);
+        db.messages[$4].attributes[$2] = attribute;
     }
-    | BA UNSAFE_WORD SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
-
+    | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
+        var attribute = new Attribute($2, 3, $6);
+        db.messages[$4].signals[$5].attributes[$2] = attribute;
     }
-    | BA UNSAFE_WORD EV UNSAFE_WORD attribute_val SEMICOLON EOL {
-
+    | BA QUOTED_STRING EV UNSAFE_WORD attribute_val SEMICOLON EOL {
+        var attribute = new Attribute($2, 4, $5);
+        db.environmentVariables[$4].attributes[$2] = attribute;
     }
-    | BA_REL UNSAFE_WORD BU_EV_REL UNSAFE_WORD UNSAFE_WORD attribute_val SEMICOLON EOL{
+    | BA_REL QUOTED_STRING BU_EV_REL UNSAFE_WORD UNSAFE_WORD attribute_val SEMICOLON EOL{
         
     }
-    | BA_REL UNSAFE_WORD BU_BO_REL UNSAFE_WORD id attribute_val SEMICOLON EOL{
+    | BA_REL QUOTED_STRING BU_BO_REL UNSAFE_WORD id attribute_val SEMICOLON EOL{
 
     }
-    | BA_REL UNSAFE_WORD BU_SG_REL UNSAFE_WORD SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
+    | BA_REL QUOTED_STRING BU_SG_REL UNSAFE_WORD SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
         
     };
     // TODO: add actions here

@@ -38,6 +38,7 @@ export class Signal {
         this.receivers = Receivers;
         this.valTable = null;
         this.comment = "";
+        this.attributes = new Map();
     }
 
     public name: string;
@@ -53,6 +54,7 @@ export class Signal {
     public receivers: string[];
     public valTable: ValTable | null;
     public comment: string;
+    public attributes: Map<string,Attribute>;
 }
 
 export class Message{
@@ -69,6 +71,7 @@ export class Message{
         this.comment = "";
         this.transmitters = [];
         this.signalGroups = new Map();
+        this.attributes = new Map();
     }
     public id: number;
     public name: string;
@@ -78,6 +81,7 @@ export class Message{
     public signals: Map<string,Signal>;
     public comment: string;
     public signalGroups: Map<string,SignalGroup>;
+    public attributes: Map<string,Attribute>;
 }
 
 export class EnvironmentVariable{
@@ -93,6 +97,7 @@ export class EnvironmentVariable{
         this.valueDescriptions = new Map();
         this.dataSize = 0; // used when ENVVAR_DATA is present
         this.comment = "";
+        this.attributes = new Map();
     }
     public name: string;
     public type: number; // 0: integer, 1: float, 2: string, 3: data(ENVVAR_DATA)
@@ -105,6 +110,7 @@ export class EnvironmentVariable{
     public valueDescriptions: Map<string,ValTable>;
     public dataSize: number;
     public comment: string;
+    public attributes: Map<string,Attribute>;
 }
 
 export class SignalType{
@@ -164,6 +170,19 @@ export interface BitTiming{
     register_2: number
 };
 
+export class Attribute{
+    public constructor(name: string, 
+                       objectType: number, 
+                       value: any){
+        this.name = name;
+        this.type = objectType;
+        this.value = value;
+    }
+    public name: string;
+    public type: number;
+    public value: any;
+}
+
 export class Database{
     public constructor(){
         this.messages = new Map();
@@ -181,6 +200,7 @@ export class Database{
         this.signalTypes = new Map();
         this.comment = "";
         this.attrDefs = new Map();
+        this.attributes = new Map();
     }
 
     public messages: Map<number, Message>;
@@ -194,6 +214,7 @@ export class Database{
     public signalTypes: Map<string,SignalType>;
     public comment: string;
     public attrDefs: Map<string,AttributeDef>;
+    public attributes: Map<string,Attribute>;
 }
 
 //----------------------
@@ -202,10 +223,12 @@ export class Node{
     public constructor(){
         this.name = "";
         this.comment = "";
+        this.attributes = new Map();
     }
 
     public name: string;
     public comment: string;
+    public attributes: Map<string,Attribute>;
 }
 
 export class ValTable{

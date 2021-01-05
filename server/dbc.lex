@@ -32,6 +32,7 @@ DEFINER         (?![a-zA-Z])
 "BO_"{DEFINER}                      {return "BO"}
 "BS_"{DEFINER}                      {return "BS"}
 "BU_"{DEFINER}                      {return "BU"}
+"BA_"{DEFINER}                      {return "BA"}
 "VAL_TABLE_"{DEFINER}               {return "VAL_TABLE"}
 "SG_"{DEFINER}                      {return "SG"}
 "BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
@@ -41,7 +42,10 @@ DEFINER         (?![a-zA-Z])
 "SIG_GROUP_"{DEFINER}               {return "SIG_GROUP"}
 "CM_"{DEFINER}                      {return "CM"}
 "BA_DEF_"{DEFINER}                  {return "BA_DEF"}
+"BA_DEF_DEF_"{DEFINER}              {return "BA_DEF_DEF"}
 "BA_DEF_REL_"{DEFINER}              {return "BA_DEF_REL"}
+"BA_DEF_DEF_REL_"{DEFINER}          {return "BA_DEF_DEF_REL"}
+"BU_SG_REL_"{DEFINER}               {return "BU_SG_REL"}
 "INT"{DEFINER}                      {return "INT"}
 "HEX"{DEFINER}                      {return "HEX"}
 "FLOAT"{DEFINER}                    {return "FLOAT"}
