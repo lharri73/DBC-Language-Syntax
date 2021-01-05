@@ -16,3 +16,10 @@
 
 # 1.1.0:
 - Added basic snippets
+  
+# 1.2.0
+- Promoted to internal language server
+  - Serves as a parser and throws basic parser and lexer errors
+
+# 1.2.1 
+- fixed vscode_ignore to exclude node_modules
