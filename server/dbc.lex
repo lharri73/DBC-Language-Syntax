@@ -27,31 +27,18 @@ DEFINER         (?![a-zA-Z])
 %%
 [ \t]                              /* skip whitespace */
 
-"VERSION"                           {return "VERSION"}
-"NS_"{DEFINER}                      {return "NS"}
-"BO_"{DEFINER}                      {return "BO"}
-"BS_"{DEFINER}                      {return "BS"}
-"BU_"{DEFINER}                      {return "BU"}
 "BA_"{DEFINER}                      {return "BA"}
-"VAL_TABLE_"{DEFINER}               {return "VAL_TABLE"}
-"SG_"{DEFINER}                      {return "SG"}
-"BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
-"EV_"{DEFINER}                      {return "EV"}
-"SGTYPE_"{DEFINER}                  {return "SGTYPE"}
-"ENVVAR_DATA_"{DEFINER}             {return "ENVVAR_DATA"}
-"SIG_GROUP_"{DEFINER}               {return "SIG_GROUP"}
-"CM_"{DEFINER}                      {return "CM"}
 "BA_DEF_"{DEFINER}                  {return "BA_DEF"}
 "BA_DEF_DEF_"{DEFINER}              {return "BA_DEF_DEF"}
-"BA_DEF_REL_"{DEFINER}              {return "BA_DEF_REL"}
 "BA_DEF_DEF_REL_"{DEFINER}          {return "BA_DEF_DEF_REL"}
+"BA_DEF_REL_"{DEFINER}              {return "BA_DEF_REL"}
+"BA_REL_"{DEFINER}                  {return "BA_REL"}
+"BO_"{DEFINER}                      {return "BO"}
+"BO_TX_BU_"{DEFINER}                {return "BO_TX_BU"}
+"BS_"{DEFINER}                      {return "BS"}
+"BU_"{DEFINER}                      {return "BU"}
 "BU_SG_REL_"{DEFINER}               {return "BU_SG_REL"}
-"INT"{DEFINER}                      {return "INT"}
-"HEX"{DEFINER}                      {return "HEX"}
-"FLOAT"{DEFINER}                    {return "FLOAT"}
-"STRING"{DEFINER}                   {return "STRING"}
-"ENUM"{DEFINER}                     {return "ENUM"}
-"VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
+"CM_"{DEFINER}                      {return "CM"}
 "DUMMY_NODE_VECTOR0"{DEFINER}       {return "DUMMY_NODE_VECTOR0"}
 "DUMMY_NODE_VECTOR1"{DEFINER}       {return "DUMMY_NODE_VECTOR1"}
 "DUMMY_NODE_VECTOR2"{DEFINER}       {return "DUMMY_NODE_VECTOR2"}
@@ -60,6 +47,21 @@ DEFINER         (?![a-zA-Z])
 "DUMMY_NODE_VECTOR8001"{DEFINER}    {return "DUMMY_NODE_VECTOR8001"}
 "DUMMY_NODE_VECTOR8002"{DEFINER}    {return "DUMMY_NODE_VECTOR8002"}
 "DUMMY_NODE_VECTOR8003"{DEFINER}    {return "DUMMY_NODE_VECTOR8003"}
+"ENUM"{DEFINER}                     {return "ENUM"}
+"ENVVAR_DATA_"{DEFINER}             {return "ENVVAR_DATA"}
+"EV_"{DEFINER}                      {return "EV"}
+"FLOAT"{DEFINER}                    {return "FLOAT"}
+"HEX"{DEFINER}                      {return "HEX"}
+"INT"{DEFINER}                      {return "INT"}
+"NS_"{DEFINER}                      {return "NS"}
+"SGTYPE_"{DEFINER}                  {return "SGTYPE"}
+"SG_"{DEFINER}                      {return "SG"}
+"SIG_GROUP_"{DEFINER}               {return "SIG_GROUP"}
+"STRING"{DEFINER}                   {return "STRING"}
+"VAL_"{DEFINER}                     {return "VAL"}
+"VAL_TABLE_"{DEFINER}               {return "VAL_TABLE"}
+"VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
+"VERSION"                           {return "VERSION"}
 
 // punctuation
 "|"                             {return "VBAR"}

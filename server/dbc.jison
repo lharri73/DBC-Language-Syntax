@@ -70,10 +70,10 @@ network
       attribute_deffinitions
       attribute_defaults
       attribute_valssss
+      val_descriptions
+      signal_groups
 
       error
-    //   val_descriptions
-    //   signal_groups
       end;
 
 end
@@ -106,22 +106,24 @@ ns_values
 
 symbols_list
     : NS
-    | BO
-    | BU
     | BA
     | BA_DEF
     | BA_DEF_DEF
-    | BA_DEF_REL
     | BA_DEF_DEF_REL
-    | BU_SG_REL
-    | VAL_TABLE
-    | SG
+    | BA_DEF_REL
+    | BA_REL
+    | BO
     | BO_TX_BU
-    | EV
-    | SGTYPE
-    | ENVVAR_DATA
-    | SIG_GROUP
+    | BU
+    | BU_SG_REL
     | CM
+    | ENVVAR_DATA
+    | EV
+    | SG
+    | SGTYPE
+    | SIG_GROUP
+    | VAL
+    | VAL_TABLE
     | UNSAFE_WORD;
 
 //----------------------
@@ -484,7 +486,7 @@ attribute_val
 
 //----------------------
 // SIG_GROUP section
-singal_groups
+signal_groups
     : %empty
     | signal_groups signal_group;
 

@@ -151,7 +151,7 @@ export class SignalType{
     public valTable: string;    // name of valtable
 }
 
-class SignalGroup{
+export class SignalGroup{
     public constructor(){
         this.messageId = 0;
         this.name = "";
