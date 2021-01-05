@@ -86,7 +86,7 @@ export class DBCParser {
                     character: e.hash.loc.last_column + len.length
                 }
             },
-            message: `Found ${found}.\nExpected ${lastPart}.`
+            message: `Found ${found}.\nExpected one of ${lastPart}.`
         };
 
         let diagnostics = [];
