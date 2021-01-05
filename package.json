@@ -7,24 +7,28 @@
         "url": "https://github.com/lharri73/DBC-Language-Syntax"
     },
     "license": "GPL-2.0-only",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "publisher": "lharri73",
     "engines": {
-        "vscode": "^1.51.0"
-    },
-    "scripts": {
-        "vscode:prepublish": "make"
+        "vscode": "^1.43.0"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Snippets",
+        "Language Packs"
     ],
     "keywords": [
         "can",
+        "candb",
         "dbc",
         "vector",
         "canbus"
     ],
     "icon": "res/image.png",
+    "activationEvents": [
+        "onLanguage:dbc"
+    ],
+    "main": "./client/out/extension",
     "contributes": {
         "languages": [
             {
@@ -51,9 +55,47 @@
                 "language": "dbc",
                 "path": "snippets/snippets.json"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "DBC Configuration",
+            "properties": {
+                "dbc.maxNumberOfProblems": {
+                    "scope": "resources",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produces by the server."
+                },
+                "dbc.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "make",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
     },
     "devDependencies": {
-        "js-yaml": "^3.14.0"
+        "@types/mocha": "^8.0.3",
+        "@types/node": "^12.19.9",
+        "@typescript-eslint/parser": "^2.3.0",
+        "eslint": "^6.4.0",
+        "js-yaml": "^3.14.1",
+        "mocha": "^8.1.1",
+        "typescript": "^4.0.2"
+    },
+    "dependencies": {
+        "jison": "^0.4.18"
     }
 }
