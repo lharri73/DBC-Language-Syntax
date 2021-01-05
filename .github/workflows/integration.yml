@@ -20,7 +20,6 @@ jobs:
 
   compile:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/langServer'
     strategy:
       matrix:
         node-version:
