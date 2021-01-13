@@ -3,8 +3,8 @@ name: DBC language CI
 on:
   push:
     branches: 
+      - master
       - develop
-      - langServer
   pull_request:
     branches: [ master ]
 
