@@ -38,6 +38,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - run: npm install
+      name: install dependencies
+      
+    - run: npm run compile
+      name: Compile verification
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
