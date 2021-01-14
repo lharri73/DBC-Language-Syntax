@@ -36,6 +36,6 @@ jobs:
         run: 'echo "Version not incremented!" ; return 1'
       
       - name: Changelog update
-        run: if [ "`git diff ..master changelog.md`" == "" ] ; then return 1; else return 0; fi;
+        run: if [ "`git diff ..master changelog.md`" = "" ] ; then return 1; else return 0; fi;
           
 
