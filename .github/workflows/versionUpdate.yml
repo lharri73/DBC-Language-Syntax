@@ -25,7 +25,7 @@ jobs:
 
       - name: Check if version has been updated
         id: check
-        uses: EndBug/version-check@v1
+        uses: EndBug/version-check@v2
         with:
           diff-search: true
           file-url: https://raw.githubusercontent.com/lharri73/DBC-Language-Syntax/master/package.json
