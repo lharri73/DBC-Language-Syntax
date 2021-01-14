@@ -32,7 +32,7 @@ jobs:
           static-checking: localIsNew
       
       - name: Verify Version
-        if: steps.check.outputs.changed = 'false'
+        if: steps.check.outputs.changed == 'false'
         run: 'echo "Version not incremented!" ; return 1'
       
       - name: Changelog update
