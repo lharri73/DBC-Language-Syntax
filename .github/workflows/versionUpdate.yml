@@ -34,6 +34,10 @@ jobs:
       - name: Verify Version
         if: steps.check.outputs.changed == 'false'
         run: 'echo "Version not incremented!" ; exit 1'
+
+      - name: Verify Version
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
       
       - name: Changelog update
         run: if [ "`git diff ..master changelog.md`" = "" ] ; then exit 1; else exit 0; fi;
