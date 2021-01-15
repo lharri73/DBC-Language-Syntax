@@ -23,7 +23,6 @@ EPONENT         ([Ee][+-]?{DIGIT}+)
 U_WORD          [a-zA-Z0-9-_\\.]
 DEFINER         (?![a-zA-Z])
 
-
 %%
 [ \t]                              /* skip whitespace */
 

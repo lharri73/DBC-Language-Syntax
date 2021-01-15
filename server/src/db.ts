@@ -14,7 +14,8 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 export class Signal {
-    public constructor(Name: string, 
+    public constructor(lineNo: number,
+                       Name: string, 
                        Start: number, 
                        Size: number, 
                        Order: boolean, 
@@ -39,6 +40,7 @@ export class Signal {
         this.valTable = null;
         this.comment = "";
         this.attributes = new Map();
+        this.lineNum = lineNo;
     }
 
     public name: string;
@@ -55,10 +57,12 @@ export class Signal {
     public valTable: ValTable | null;
     public comment: string;
     public attributes: Map<string,Attribute>;
+    public lineNum: number;
 }
 
 export class Message{
-    public constructor(Id: number,
+    public constructor(endLineNum: number,
+                       Id: number,
                        Name: string, 
                        Size: number,
                        Transmitter: string,
@@ -72,6 +76,7 @@ export class Message{
         this.transmitters = [];
         this.signalGroups = new Map();
         this.attributes = new Map();
+        this.endNum = endLineNum;
     }
     public id: number;
     public name: string;
@@ -82,6 +87,12 @@ export class Message{
     public comment: string;
     public signalGroups: Map<string,SignalGroup>;
     public attributes: Map<string,Attribute>;
+
+    private endNum: number;
+
+    get lineNum(): number{
+        return this.endNum - this.signals.size;
+    }
 }
 
 export class EnvironmentVariable{
