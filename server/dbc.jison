@@ -188,7 +188,8 @@ messages
 
 message
     : BO id UNSAFE_WORD COLON DECIMAL transmitter EOL signals {
-        $$ = new Message($id, 
+        $$ = new Message(yylineno,
+                         $id, 
                          $UNSAFE_WORD, 
                          parseInt($DECIMAL), 
                          $transmitter, 
@@ -215,7 +216,8 @@ signal
     : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
       byte_order signal_val_type OPEN_PAREN number COMMA number CLOSE_PAREN
       OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL{
-          $$ = new Signal(/*name:  */$2, 
+          $$ = new Signal(yylineno,
+                          /*name:  */$2, 
                           /*start: */Number($4), 
                           /*size:  */Number($6),
                           /*order: */$8,
@@ -235,7 +237,7 @@ byte_order
         }else if( $1 == 1){
             $$ = true;
         }else{
-            db.parseErrors.push(new ParseError(yylineno, "byte order should be '0' or '1'\n Found " + $1))
+            db.parseErrors.push(new DBCParseError(yylineno, "byte order should be '0' or '1'\n Found " + $1));
             $$ = true;
         }
     };
@@ -321,7 +323,7 @@ env_var_type
         }else if($1 == '2'){
             $$ = 2;
         }else{
-            db.parseErrors.push(new ParseError(yylineno, "Environment variable type should be 0,1,2: \n(0: Int, 1: Float, 2: String)"));
+            db.parseErrors.push(new DBCParseError(yylineno, "Environment variable type should be 0,1,2: \n(0: Int, 1: Float, 2: String)"));
             $$ = 2;
         }
     };
@@ -392,15 +394,29 @@ comments
 comment
     : CM QUOTED_STRING SEMICOLON EOL{
         db.comment = $QUOTED_STRING;
-    }
+    } // -1 for the EOL
     | CM BU UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
-        db.nodes[$UNSAFE_WORD].comment = $QUOTED_STRING;
+        if(!db.nodes.has($UNSAFE_WORD)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot have comment for node '" + $UNSAFE_WORD + "' without definition.\nUndefined node name: " + $UNSAFE_WORD));
+        }else{
+            db.nodes[$UNSAFE_WORD].comment = $QUOTED_STRING;
+        }
     }
     | CM BO id QUOTED_STRING SEMICOLON EOL {
-        db.messages[$id].comment = $QUOTED_STRING;
+        if(!db.messages.has($id)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot have comment for message with id '" + $id + "' without definition.\nUndefined message: " + $id));
+        }else{
+            db.messages[$id].comment = $QUOTED_STRING;
+        }
     }
-    | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
-        db.messages[$id].signals[$UNSAFE_WORD].comment = $QUOTED_STRING;
+    | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {       
+        if(!db.messages.has($id)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot have comment for a signal in message with id '" + $id + "' without definition.\nUndefined message: " + $id));
+        }else if(!db.messages[$id].signals.has($UNSAFE_WORD)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot have comment for signal in messageId: " + $id + " without definition of signal '" + $UNSAFE_WORD +"' first.\nSignal '" +$UNSAFE_WORD+" NOT IN message " + $id));
+        }else{
+            db.messages[$id].signals[$UNSAFE_WORD].comment = $QUOTED_STRING;
+        }
     }
     | CM EV UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
         db.environmentVariables[$UNSAFE_WORD].comment = $QUOTED_STRING;
@@ -538,20 +554,38 @@ attribute_vals
         db.attributes[$2] = attribute;
     }
     | BA QUOTED_STRING BU UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var attribute = new Attribute($2, 1, $4);
-        db.nodes[$4].attributes[$2] = attribute;
+        if(!db.nodes.has($4)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assign attribute to node '" + $4 + "' without definition.\nUndefined node: " + $4));
+        }else{
+            var attribute = new Attribute($2, 1, $4);
+            db.nodes[$4].attributes[$2] = attribute;
+        }
     }
     | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
-        var attribute = new Attribute($2, 2, $5);
-        db.messages[$4].attributes[$2] = attribute;
+        if(!db.messages.has($4)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assign attribute to message '" + $4 + "' without definition.\nUndefined message: " + $4));
+        }else{
+            var attribute = new Attribute($2, 2, $5);
+            db.messages[$4].attributes[$2] = attribute;
+        }
     }
     | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var attribute = new Attribute($2, 3, $6);
-        db.messages[$4].signals[$5].attributes[$2] = attribute;
+        if(!db.messages.has($4)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to signal in undefined message: " + $4 + "\nUndefined message: " + $4));
+        }else if(!db.messages[$4].signals.has($5)){
+            db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to undegind signal '"+$5+"' in message " + $4 + "\nUndefined signal: '" + $5 + "'"));
+        }else{
+            var attribute = new Attribute($2, 3, $6);
+            db.messages[$4].signals[$5].attributes[$2] = attribute;
+        }
     }
     | BA QUOTED_STRING EV UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var attribute = new Attribute($2, 4, $5);
-        db.environmentVariables[$4].attributes[$2] = attribute;
+        if(!db.environmentVariables.has($4)){
+            // db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assgn environment variable attribute to undefined environment variable '" + $4 + "'\nUndefined Environment Variable: " + $4));
+        }else{
+            var attribute = new Attribute($2, 4, $5);
+            db.environmentVariables[$4].attributes[$2] = attribute;
+        }
     }
     | BA_REL QUOTED_STRING BU_EV_REL UNSAFE_WORD UNSAFE_WORD attribute_val SEMICOLON EOL{
         
