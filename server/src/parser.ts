@@ -23,7 +23,7 @@ import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DBCParseError } from './db';
+import { DBCError } from "./errors";
 
 export class DBCParser {
     // private database: Database;
@@ -121,18 +121,24 @@ export class DBCParser {
         this.connection.sendDiagnostics({uri: uri, diagnostics});
     }
 
-    private async sendCustomParseError(uri: string, parseErrors: DBCParseError[]){
+    private async sendCustomParseError(uri: string, parseErrors: DBCError[]){
         let diagnostics: Diagnostic[] = [];
         parseErrors.forEach(curError => {
+
+            // if this error was added under a condition and the
+            // condition passes
+            if(curError.hasCondition && !curError.evalCondition())
+                return;
+
             let diagnostic: Diagnostic = {
-                severity: DiagnosticSeverity.Warning,
+                severity: curError.type == 0 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
                 range: {
                     start: { 
-                        line: curError.line,
+                        line: curError.whence,
                         character: 0
                     },
                     end: {
-                        line: curError.line,
+                        line: curError.whence,
                         character: Number.MAX_VALUE
                     }
                 },
