@@ -13,6 +13,8 @@
  * along with this program. If not, see 
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
+
+import { DBCError } from "./errors";
 export class Signal {
     public constructor(lineNo: number,
                        Name: string, 
@@ -217,7 +219,7 @@ export class Database{
     public messages: Map<number, Message>;
     public version: string;
     public symbols: string[];
-    public parseErrors: DBCParseError[];
+    public parseErrors: DBCError[];
     public bitTiming: BitTiming;
     public valTables: Map<string,ValTable>;
     public nodes: Map<string,Node>;
@@ -249,15 +251,6 @@ export class ValTable{
     }
     public name: string;
     public descriptions: Map<any,any>;
-}
-
-export class DBCParseError{
-    public constructor(line: number, what: string){
-        this.line = line;
-        this.what = what;
-    }
-    public what: string;
-    public line: number;
 }
 
 export class ValueType{
