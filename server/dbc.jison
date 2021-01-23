@@ -356,6 +356,7 @@ env_var_data
 env_var_val_descr
     : VAL UNSAFE_WORD val_table_descriptions SEMICOLON EOL {
         // TODO: raise error if not exist
+        console.log("UGHH");
         db.environmentVariables[$2].valueDescriptions = $3;
     };
 
@@ -383,7 +384,8 @@ signal_type
               $19, /* default value */
               $21  /* valTableName */
           )
-          db.signalTypes[$2] = cursigType;
+        // TODO: uncomment
+        //   db.signalTypes[$2] = cursigType;
       };
 
 //----------------------
@@ -400,15 +402,17 @@ comment
         var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for node '" + $UNSAFE_WORD + "' without definition.\nUndefined node name: " + $UNSAFE_WORD, 0, true);
         error.addMapCondition(db.nodes, $UNSAFE_WORD);
         db.parseErrors.push(error);
-            
-        db.nodes[$UNSAFE_WORD]?.comment = $QUOTED_STRING;
+        
+        if(db.nodes.has($UNSAFE_WORD))
+            db.nodes[$UNSAFE_WORD].comment = $QUOTED_STRING;
     }
     | CM BO id QUOTED_STRING SEMICOLON EOL {
         var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for message with id '" + $id + "' without definition.\nUndefined message: " + $id, 0, true);
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
-        db.messages[$id]?.comment = $QUOTED_STRING;
+        if(db.messages.has($id))
+            db.messages[$id].comment = $QUOTED_STRING;
     }
     | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {       
         var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for a signal in message with id '" + $id + "' without definition.\nUndefined message: " + $id, 0, true);
@@ -418,11 +422,15 @@ comment
         var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for signal in messageId: " + $id + " without definition of signal '" + $UNSAFE_WORD +"' first.\nSignal '" +$UNSAFE_WORD+" NOT IN message " + $id, 0, true);
         error2.addMapCondition(db.messages[$id].signals, $UNSAFE_WORD);
         db.parseErrors.push(error2);
-        db.messages[$id]?.signals[$UNSAFE_WORD]?.comment = $QUOTED_STRING;
+
+        if(db.messages.has($id) && dbb.messages[$id].signals.has($UNSAFE_WORD))
+            db.messages[$id].signals[$UNSAFE_WORD].comment = $QUOTED_STRING;
 
     }
     | CM EV UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
-        db.environmentVariables[$UNSAFE_WORD].comment = $QUOTED_STRING;
+
+        if(db.environmentVariables.has($UNSAFE_WORD))
+            db.environmentVariables[$UNSAFE_WORD].comment = $QUOTED_STRING;
     };
 
 //----------------------
@@ -523,7 +531,8 @@ signal_group
         curGroup.name = $3;
         curGroup.repetitions = $4;
         curGroup.signals = $6;
-        db.messages[$2].signalGroups[$3] = curGroup;
+        if(db.messages.has($2))
+            db.messages[$2].signalGroups[$3] = curGroup;
     };
 
 signal_names
@@ -541,7 +550,8 @@ val_descriptions
 
 val_descr_for_sig
     : VAL id UNSAFE_WORD val_table_descriptions SEMICOLON EOL {
-        db.messages[$id].signals[$UNSAFE_WORD].valTable = $val_table_descriptions;
+        if(db.messages.has($id) && db.messages[$id].signals.has($UNSAFE_WORD))
+            db.messages[$id].signals[$UNSAFE_WORD].valTable = $val_table_descriptions;
     };
 
 //----------------------
@@ -562,7 +572,9 @@ attribute_vals
         db.parseErrors.push(error);
 
         var attribute = new Attribute($2, 1, $4);
-        db.nodes[$4]?.attributes[$2] = attribute;
+
+        if(db.nodes.has($4) && db.nodes[$4].attributes.has($2))
+            db.nodes[$4].attributes[$2] = attribute;
     }
     | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
         var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign attribute to message '" + $4 + "' without definition.\nUndefined message: " + $4, 0, true);
@@ -570,7 +582,8 @@ attribute_vals
         db.parseErrors.push(error);
 
         var attribute = new Attribute($2, 2, $5);
-        db.messages[$4]?.attributes[$2] = attribute;
+        if(db.messages.has($4) && db.messages[$4].attributes.has($2))
+            db.messages[$4].attributes[$2] = attribute;
     }
     | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
         var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to signal in undefined message: " + $4 + "\nUndefined message: " + $4, 0, true);
@@ -582,7 +595,9 @@ attribute_vals
         db.parseErrors.push(error2);
 
         var attribute = new Attribute($2, 3, $6);
-        db.messages[$4]?.signals[$5]?.attributes[$2] = attribute;
+
+        if(db.messages.has($4) && db.messages[$4].signals.has($5))
+            db.messages[$4].signals[$5].attributes[$2] = attribute;
 
     }
     | BA QUOTED_STRING EV UNSAFE_WORD attribute_val SEMICOLON EOL {

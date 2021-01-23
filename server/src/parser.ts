@@ -31,14 +31,16 @@ export class DBCParser {
     private lexicon: string;
     private connection: Connection;
     private lexer;
+    private lastContents: string;
     public constructor(connection: Connection){
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.lexer = new Lexer(this.lexicon);
         this.connection = connection;
+        this.lastContents = "";
     }
     
-    public async parse(contents: string, uri: string){
+    public parse(contents: string, uri: string){
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
@@ -46,6 +48,7 @@ export class DBCParser {
 
         try {
             var parseResult = parser.parse(contents);
+            this.lastContents = contents;
             
             if(parseResult.parseErrors.length != 0){
                 this.sendCustomParseError(uri, parseResult.parseErrors);
@@ -130,15 +133,17 @@ export class DBCParser {
             if(curError.hasCondition && !curError.evalCondition())
                 return;
 
+            var lineNo = this.findLine(curError.whence);
+
             let diagnostic: Diagnostic = {
                 severity: curError.type == 0 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
                 range: {
                     start: { 
-                        line: curError.whence,
+                        line: lineNo,
                         character: 0
                     },
                     end: {
-                        line: curError.whence,
+                        line: lineNo,
                         character: Number.MAX_VALUE
                     }
                 },
@@ -155,5 +160,13 @@ export class DBCParser {
         let diagnostics: Diagnostic[] = [];
 
         this.connection.sendDiagnostics({uri: uri, diagnostics});
+    }
+
+    private findLine(startLine: number): number{
+        let contents: string[] = this.lastContents.split('\n');
+        console.log(contents);
+        for (; startLine > 0; startLine--);
+
+        return 0;
     }
 }
