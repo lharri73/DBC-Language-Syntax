@@ -9,7 +9,7 @@ export class DBCError {
                        what: string,
                        type: number,    // 0: warning, 1: error
                        hasCondition: boolean = false,
-                       token: string = ''){
+                       token: string = ""){
         this.whence = whence;
         this.what = what;
         this.type = type;
