@@ -165,8 +165,13 @@ export class DBCParser {
     private findLine(startLine: number, token: string): number{
         let contents: string[] = this.lastContents.split('\n');
         // console.log(contents);
-        for (; startLine > 0; startLine--);
+        for (; startLine > 0; startLine--){
+            if(token == "" && contents[startLine].length != 0)
+                break;
+            else if(token != "" && contents[startLine].search(token) != -1)
+                break;
+        }
 
-        return 0;
+        return startLine;
     }
 }
