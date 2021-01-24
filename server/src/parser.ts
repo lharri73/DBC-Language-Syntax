@@ -130,26 +130,26 @@ export class DBCParser {
 
             // if this error was added under a condition and the
             // condition passes
-            if(curError.hasCondition && !curError.evalCondition())
-                return;
+            if(curError.hasCondition && !curError.evalCondition()){
+                var lineNo = this.findLine(curError.whence, curError.token);
+                // var lineNo = curError.whence;
 
-            var lineNo = this.findLine(curError.whence);
-
-            let diagnostic: Diagnostic = {
-                severity: curError.type == 0 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
-                range: {
-                    start: { 
-                        line: lineNo,
-                        character: 0
+                let diagnostic: Diagnostic = {
+                    severity: curError.type == 0 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
+                    range: {
+                        start: { 
+                            line: lineNo,
+                            character: 0
+                        },
+                        end: {
+                            line: lineNo,
+                            character: Number.MAX_VALUE
+                        }
                     },
-                    end: {
-                        line: lineNo,
-                        character: Number.MAX_VALUE
-                    }
-                },
-                message: curError.what
+                    message: curError.what
+                }
+                diagnostics.push(diagnostic);
             }
-            diagnostics.push(diagnostic);
         });
 
         this.connection.sendDiagnostics({uri: uri, diagnostics: diagnostics});
@@ -162,9 +162,9 @@ export class DBCParser {
         this.connection.sendDiagnostics({uri: uri, diagnostics});
     }
 
-    private findLine(startLine: number): number{
+    private findLine(startLine: number, token: string): number{
         let contents: string[] = this.lastContents.split('\n');
-        console.log(contents);
+        // console.log(contents);
         for (; startLine > 0; startLine--);
 
         return 0;
