@@ -233,8 +233,8 @@ export class Database{
 //----------------------
 
 export class Node{
-    public constructor(){
-        this.name = "";
+    public constructor(name: string){
+        this.name = name;
         this.comment = "";
         this.attributes = new Map();
     }
