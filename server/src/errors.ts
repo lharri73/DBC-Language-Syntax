@@ -45,16 +45,19 @@ export class DBCError {
         }
     }
 
-    public addMapCondition(mapVal: Map<string,any>, key: string): boolean{
+    public addMapCondition(mapVal: Map<string,any>, key: string){
         this.mapVal = mapVal;
         this.key = key;
         this.condition = conditionType.mapHas;
         this.hasCondition = true;
-        return (this.mapVal.has(this.key));
     }
 
     private evalMapCondition(): boolean{
         if(this.mapVal === null || this.key === null)
+            // no condition set. unconditional error, so always add
+            return false;
+        else if(this.mapVal === undefined)
+            // map doest exist so there's no way the key is in it. 
             return false;
         else{
             // console.log("checking map condition", this.mapVal, this.key, this.mapVal.has(this.key));

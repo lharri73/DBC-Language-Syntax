@@ -238,7 +238,7 @@ byte_order
         }else if( $1 == 1){
             $$ = true;
         }else{
-            db.parseErrors.push(new DBCError(yylineno, "byte order should be '0' or '1'\n Found " + $1, 1));
+            db.parseErrors.push(new DBCError(yylineno, "Byte order should be '0' or '1'\n Found " + $1, 1));
             $$ = true;
         }
     };
@@ -399,7 +399,7 @@ comment
         db.comment = $QUOTED_STRING;
     } // -1 for the EOL
     | CM BU UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for node '" + $UNSAFE_WORD + "' without definition.\nUndefined node name: " + $UNSAFE_WORD, 0, $UNSAFE_WORD);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node name: " + $UNSAFE_WORD, 0, $UNSAFE_WORD);
         error.addMapCondition(db.nodes, $UNSAFE_WORD);
         db.parseErrors.push(error);
 
@@ -408,7 +408,7 @@ comment
             db.nodes.get($UNSAFE_WORD).comment = $QUOTED_STRING;
     }
     | CM BO id QUOTED_STRING SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for message with id '" + $id + "' without definition.\nUndefined message: " + $id, 0, $id);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $id);
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
@@ -416,12 +416,12 @@ comment
             db.messages.get($id).comment = $QUOTED_STRING;
     }
     | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {       
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for a signal in message with id '" + $id + "' without definition.\nUndefined message: " + $id, 0, $UNSAFE_WORD);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $UNSAFE_WORD);
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot have comment for signal in messageId: " + $id + " without definition of signal '" + $UNSAFE_WORD +"' first.\nSignal '" +$UNSAFE_WORD+" NOT IN message " + $id, 0, $UNSAFE_WORD);
-        error2.addMapCondition(db.messages.get($id).signals, $UNSAFE_WORD);
+        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Signal '" +$UNSAFE_WORD+"'' NOT IN message " + $id, 0, $UNSAFE_WORD);
+        error2.addMapCondition(db.messages.get($id)?.signals, $UNSAFE_WORD);
         db.parseErrors.push(error2);
 
         if(db.messages.has($id) && db.messages.get($id).signals.has($UNSAFE_WORD))
@@ -568,7 +568,7 @@ attribute_vals
         db.attributes.set($2, attribute);
     }
     | BA QUOTED_STRING BU UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign attribute to node '" + $4 + "' without definition.\nUndefined node: " + $4, 0, $4);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node: " + $4, 0, $4);
         error.addMapCondition(db.nodes, $4);
         db.parseErrors.push(error);
 
@@ -578,7 +578,7 @@ attribute_vals
             db.nodes.get($4).attributes.set($2,attribute);
     }
     | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign attribute to message '" + $4 + "' without definition.\nUndefined message: " + $4, 0, $4);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $4);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
@@ -587,11 +587,11 @@ attribute_vals
             db.messages.get($4).attributes.set($2, attribute);
     }
     | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to signal in undefined message: " + $4 + "\nUndefined message: " + $4, 0, $5);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $5);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to undegind signal '"+$5+"' in message " + $4 + "\nUndefined signal: '" + $5 + "'", 0, $5);
+        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined signal: '" + $5 + "'", 0, $5);
         error2.addMapCondition(db.messages.get($4)?.signals, $5);
         db.parseErrors.push(error2);
 
