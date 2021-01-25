@@ -22,4 +22,9 @@
   - Serves as a parser and throws basic parser and lexer errors
 
 # 1.2.1 
-- fixed vscode_ignore to exclude node_modules
+- Fixed vscode_ignore to exclude node_modules
+
+# 1.2.2
+- Added more useful errors and warnings
+- Fixed line number that error occurs on when present
+- Changed when parse occurs (now on save)
