@@ -592,7 +592,7 @@ attribute_vals
         db.parseErrors.push(error);
 
         var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Cannot assign signal attribute to undegind signal '"+$5+"' in message " + $4 + "\nUndefined signal: '" + $5 + "'", 0, $5);
-        error.addMapCondition(db.messages.get($4)?.signals, $5);
+        error2.addMapCondition(db.messages.get($4)?.signals, $5);
         db.parseErrors.push(error2);
 
         var attribute = new Attribute($2, 3, $6);
