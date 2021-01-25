@@ -420,7 +420,7 @@ comment
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Signal '" +$UNSAFE_WORD+"'' NOT IN message " + $id, 0, $UNSAFE_WORD);
+        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Signal '" +$UNSAFE_WORD+"' NOT IN message " + $id, 0, $UNSAFE_WORD);
         error2.addMapCondition(db.messages.get($id)?.signals, $UNSAFE_WORD);
         db.parseErrors.push(error2);
 
@@ -568,7 +568,7 @@ attribute_vals
         db.attributes.set($2, attribute);
     }
     | BA QUOTED_STRING BU UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node: " + $4, 0, $4);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.nodes, $4);
         db.parseErrors.push(error);
 
@@ -578,7 +578,7 @@ attribute_vals
             db.nodes.get($4).attributes.set($2,attribute);
     }
     | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $4);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
@@ -587,11 +587,11 @@ attribute_vals
             db.messages.get($4).attributes.set($2, attribute);
     }
     | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $5);
+        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined signal: '" + $5 + "'", 0, $5);
+        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined signal: '" + $5 + "'", 0, $QUOTED_STRING);
         error2.addMapCondition(db.messages.get($4)?.signals, $5);
         db.parseErrors.push(error2);
 
