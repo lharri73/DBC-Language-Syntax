@@ -18,12 +18,12 @@
 import { Parser } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
 
-import { fstat, readFileSync } from 'fs';
+import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DBCParseError } from './db';
+import { DBCError } from "./errors";
 
 export class DBCParser {
     // private database: Database;
@@ -31,14 +31,16 @@ export class DBCParser {
     private lexicon: string;
     private connection: Connection;
     private lexer;
+    private lastContents: string;
     public constructor(connection: Connection){
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.lexer = new Lexer(this.lexicon);
         this.connection = connection;
+        this.lastContents = "";
     }
     
-    public async parse(contents: string, uri: string){
+    public parse(contents: string, uri: string){
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
@@ -46,6 +48,8 @@ export class DBCParser {
 
         try {
             var parseResult = parser.parse(contents);
+            writeFileSync("/home/landon/Code/out.txt", JSON.stringify(parseResult.nodes));
+            this.lastContents = contents;
             
             if(parseResult.parseErrors.length != 0){
                 this.sendCustomParseError(uri, parseResult.parseErrors);
@@ -121,24 +125,32 @@ export class DBCParser {
         this.connection.sendDiagnostics({uri: uri, diagnostics});
     }
 
-    private async sendCustomParseError(uri: string, parseErrors: DBCParseError[]){
+    private sendCustomParseError(uri: string, parseErrors: DBCError[]){
         let diagnostics: Diagnostic[] = [];
         parseErrors.forEach(curError => {
-            let diagnostic: Diagnostic = {
-                severity: DiagnosticSeverity.Warning,
-                range: {
-                    start: { 
-                        line: curError.line,
-                        character: 0
+
+            // if this error was added under a condition and the
+            // condition passes
+            if(!curError.evalCondition()){
+                var lineNo = this.findLine(curError.whence, curError.token);
+                // var lineNo = curError.whence;
+
+                let diagnostic: Diagnostic = {
+                    severity: curError.type == 0 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
+                    range: {
+                        start: { 
+                            line: lineNo,
+                            character: 0
+                        },
+                        end: {
+                            line: lineNo,
+                            character: Number.MAX_VALUE
+                        }
                     },
-                    end: {
-                        line: curError.line,
-                        character: Number.MAX_VALUE
-                    }
-                },
-                message: curError.what
+                    message: curError.what
+                }
+                diagnostics.push(diagnostic);
             }
-            diagnostics.push(diagnostic);
         });
 
         this.connection.sendDiagnostics({uri: uri, diagnostics: diagnostics});
@@ -149,5 +161,18 @@ export class DBCParser {
         let diagnostics: Diagnostic[] = [];
 
         this.connection.sendDiagnostics({uri: uri, diagnostics});
+    }
+
+    private findLine(startLine: number, token: string): number{
+        let contents: string[] = this.lastContents.split('\n');
+        // console.log(contents);
+        for (; startLine > 0; startLine--){
+            if(token == "" && contents[startLine].length != 0)
+                break;
+            else if(token != "" && contents[startLine].search(token) != -1)
+                break;
+        }
+
+        return startLine;
     }
 }
