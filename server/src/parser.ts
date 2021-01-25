@@ -18,7 +18,7 @@
 import { Parser } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
 
-import { fstat, readFileSync } from 'fs';
+import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
@@ -48,6 +48,7 @@ export class DBCParser {
 
         try {
             var parseResult = parser.parse(contents);
+            writeFileSync("/home/landon/Code/out.txt", JSON.stringify(parseResult.nodes));
             this.lastContents = contents;
             
             if(parseResult.parseErrors.length != 0){
@@ -124,13 +125,13 @@ export class DBCParser {
         this.connection.sendDiagnostics({uri: uri, diagnostics});
     }
 
-    private async sendCustomParseError(uri: string, parseErrors: DBCError[]){
+    private sendCustomParseError(uri: string, parseErrors: DBCError[]){
         let diagnostics: Diagnostic[] = [];
         parseErrors.forEach(curError => {
 
             // if this error was added under a condition and the
             // condition passes
-            if(curError.hasCondition && !curError.evalCondition()){
+            if(!curError.evalCondition()){
                 var lineNo = this.findLine(curError.whence, curError.token);
                 // var lineNo = curError.whence;
 

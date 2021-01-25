@@ -8,14 +8,13 @@ export class DBCError {
     public constructor(whence: number,
                        what: string,
                        type: number,    // 0: warning, 1: error
-                       hasCondition: boolean = false,
                        token: string = ""){
         this.whence = whence;
         this.what = what;
         this.type = type;
-        this.hasCondition = hasCondition;
         this.token = token;
-
+        
+        this.hasCondition = false;
         this.condition = conditionType.noCondition;
         this.mapVal = null;
         this.key = null;
@@ -27,8 +26,14 @@ export class DBCError {
     public hasCondition: boolean;
     public token: string;
 
+    // condition variables
+    private condition: conditionType;
+    private mapVal: Map<string,any> | null;
+    private key: string|null;
+
     public evalCondition(){
         // returns false if error needs to be added
+        if(!this.hasCondition) return false;
 
         switch (this.condition) {
             case conditionType.noCondition:
@@ -40,23 +45,24 @@ export class DBCError {
         }
     }
 
-    public addMapCondition(mapVal: Map<any,any>, key: any): boolean{
+    public addMapCondition(mapVal: Map<string,any>, key: string): boolean{
         this.mapVal = mapVal;
         this.key = key;
         this.condition = conditionType.mapHas;
-        return(mapVal.has(key));
+        this.hasCondition = true;
+        return (this.mapVal.has(this.key));
     }
 
-    // condition variables
-    private condition: conditionType;
-    private mapVal: Map<any,any> | null;
-    private key: any;
-
     private evalMapCondition(): boolean{
-        if(this.mapVal === null)
+        if(this.mapVal === null || this.key === null)
             return false;
-        else
-            return this.mapVal.has(this.key);
+        else{
+            // console.log("checking map condition", this.mapVal, this.key, this.mapVal.has(this.key));
+            if(this.mapVal.has(this.key))
+                return true;
+            else
+                return false;
+        }
     }
 
 }
