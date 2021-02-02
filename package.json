@@ -57,14 +57,13 @@
 			}
 		],
 		"configuration": {
-			"type": "object",
-			"title": "DBC Configuration",
+			"title": "DBC Language",
 			"properties": {
-				"dbc.maxNumberOfProblems": {
-					"scope": "resources",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produces by the server."
+				"dbc.silenceMapWarnings": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": false,
+					"description": "Silence warnings generated from references to undefined objects."
 				},
 				"dbc.trace.server": {
 					"scope": "window",

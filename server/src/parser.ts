@@ -24,6 +24,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DBCError } from "./errors";
+import LanguageSettings from './settings';
 
 export class DBCParser {
     // private database: Database;
@@ -32,12 +33,15 @@ export class DBCParser {
     private connection: Connection;
     private lexer;
     private lastContents: string;
+    private silenceMap: boolean;
+
     public constructor(connection: Connection){
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.lexer = new Lexer(this.lexicon);
         this.connection = connection;
         this.lastContents = "";
+        this.silenceMap = false;
     }
     
     public parse(contents: string, uri: string){
@@ -48,7 +52,6 @@ export class DBCParser {
 
         try {
             var parseResult = parser.parse(contents);
-            writeFileSync("/home/landon/Code/out.txt", JSON.stringify(parseResult.nodes));
             this.lastContents = contents;
             
             if(parseResult.parseErrors.length != 0){
@@ -129,6 +132,11 @@ export class DBCParser {
         let diagnostics: Diagnostic[] = [];
         parseErrors.forEach(curError => {
 
+            // if this has a map condition and we are supposed to silence map
+            // conditions, don't add it.
+            if(curError.isMapCondition() && this.silenceMap)
+                return;
+            
             // if this error was added under a condition and the
             // condition passes
             if(!curError.evalCondition()){
@@ -157,7 +165,7 @@ export class DBCParser {
     }
 
     // remove all diagnostics from vscode
-    private clearDiag(uri: string){
+    public clearDiag(uri: string){
         let diagnostics: Diagnostic[] = [];
 
         this.connection.sendDiagnostics({uri: uri, diagnostics});
@@ -174,5 +182,9 @@ export class DBCParser {
         }
 
         return startLine;
+    }
+
+    public addConfig(settings: LanguageSettings){
+        this.silenceMap = settings.silenceMapWarnings;
     }
 }
