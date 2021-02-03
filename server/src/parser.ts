@@ -45,6 +45,7 @@ export class DBCParser {
     }
     
     public parse(contents: string, uri: string){
+        console.log(this.silenceMap);
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);

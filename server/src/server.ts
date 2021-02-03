@@ -33,6 +33,7 @@ import {
 import {
     TextDocument
 } from 'vscode-languageserver-textdocument';
+import { resolve } from 'vscode-languageserver/lib/files';
 import { DBCParser } from './parser';
 import LanguageSettings from './settings';
 
@@ -58,7 +59,7 @@ export default class DBCServer{
         );
 
         let caps: serverCapabilities = {
-            config: hasWorkspaceFolderCapability,
+            config: hasConfigurationCapability,
             workspaceFolder: hasWorkspaceFolderCapability,
             diagnosticInformation: hasDiagnosticRelatedInformationCapability
         }
@@ -92,6 +93,7 @@ export default class DBCServer{
         if(this.capabilities.config){
             this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
         }
+        
         if(this.capabilities.workspaceFolder){
             this.connection.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
         }
@@ -107,7 +109,7 @@ export default class DBCServer{
         this.globalSettings = {
             silenceMapWarnings: change.settings.dbc.silenceMapWarnings
         }
-        console.log("here");
+        console.log("config change");
 
         this.parser.addConfig(this.globalSettings);
         // recheck all files
@@ -146,10 +148,11 @@ export default class DBCServer{
         this.documentSettings.delete(e.document.uri);
     }
 
-    private onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
-        // var settings = await this.getDocumentSettings(change.document.uri);
-        // this.parser.addConfig(settings);
-        this.parser.parse(change.document.getText(), change.document.uri);
-        // this.validateTextDocument(change.document);
+    private async onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
+        this.getDocumentSettings(change.document.uri).then((settings) =>{
+            this.parser.addConfig(settings);
+            console.log(settings);
+            this.parser.parse(change.document.getText(), change.document.uri);
+        });
     }
 }
