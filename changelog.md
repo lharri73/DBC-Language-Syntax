@@ -28,3 +28,7 @@
 - Added more useful errors and warnings
 - Fixed line number that error occurs on when present
 - Changed when parse occurs (now on save)
+
+# 1.2.3
+- Fixed crashing issue that prevented parsing
+- Added option to silence warnings from undefined objects
