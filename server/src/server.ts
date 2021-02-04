@@ -99,23 +99,22 @@ export default class DBCServer{
         }
         
         this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
-        this.connection.onDidChangeConfiguration(this.configChange.bind(this));
+        
         this.documents.onDidClose(this.onDocumentClose.bind(this));
         this.documents.onDidChangeContent(this.onDocumentChange.bind(this));
-        // con.onHover(this.onHover.bind(this));
-    }
 
-    private configChange(change: DidChangeConfigurationParams){
-        this.globalSettings = {
-            silenceMapWarnings: change.settings.dbc.silenceMapWarnings
-        }
-        console.log("config change");
-
-        this.parser.addConfig(this.globalSettings);
-        // recheck all files
-        this.documents.all().forEach((doc) =>{
-            this.parser.clearDiag(doc.uri);
-            this.parser.parse(doc.getText(), doc.uri);
+        // apparently this can't be a function?
+        this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
+            this.globalSettings = {
+                silenceMapWarnings: change.settings.dbc.silenceMapWarnings
+            }
+    
+            this.parser.addConfig(this.globalSettings);
+            // recheck all files
+            this.documents.all().forEach((doc) =>{
+                this.parser.clearDiag(doc.uri);
+                this.parser.parse(doc.getText(), doc.uri);
+            });
         });
     }
 
