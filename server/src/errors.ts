@@ -68,4 +68,8 @@ export class DBCError {
         }
     }
 
+    public isMapCondition(): boolean{
+        return this.condition == conditionType.mapHas;
+    }
+
 }

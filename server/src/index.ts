@@ -20,17 +20,12 @@ import {
     InitializeParams,
     ProposedFeatures,
     InitializeResult,
-    TextDocumentSyncKind,
-    DidChangeConfigurationNotification,
-    Event,
-    WorkspaceFoldersChangeEvent
+    TextDocumentSyncKind
 } from 'vscode-languageserver'
 
 import DBCServer from './server'
 
 let connection: Connection = createConnection(ProposedFeatures.all);
-let hasConfigurationCapability: boolean = false;
-let hasDiagnosticRelatedInformationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let server: DBCServer;
 
