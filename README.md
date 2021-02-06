@@ -44,14 +44,11 @@ expressions to match syntax.
 - VAL_TABLE
 - VERSION
 ## Known Issues
-
 1. Attribute definitions that wrap lines may not be highlighted on the following
    lines. 
 1. Signals that are multiplexed will not be recognized
 
 ## Todo items
-- Make lexer and parser errors more useful
-- Add checks that prevent crashing when signals don't exist
 - Include debugging (invalid offset, start bit, min, max, etc)
 - Hover box to show all related fields as a hint
 
