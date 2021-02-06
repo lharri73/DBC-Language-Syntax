@@ -77,6 +77,26 @@
 					"description": "Traces the communication between VS Code and the language server."
 				}
 			}
+		},
+		"commands": [
+			{
+				"command": "dbc.test",
+				"title": "some test button",
+				"category": "dbc",
+				"icon": {
+					"light": "res/open-preview_light.svg",
+					"dark": "res/open-preview_dark.svg"
+				}
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"when": "editorTextFocus && editorLangId == 'dbc'",
+					"command": "dbc.test",
+					"group": "navigation@1"
+				}
+			]
 		}
 	},
 	"scripts": {
