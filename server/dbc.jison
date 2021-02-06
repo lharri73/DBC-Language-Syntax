@@ -17,20 +17,16 @@
 %{
 
 const path = require("path");
-const {
-    Attribute,
-    AttributeDef,
-    Database,
-    EnvironmentVariable,
-    Message,
-    Node,
-    Signal,
-    SignalGroup,
-    SignalType,
-    ValTable,
-    ValueType
-} = require(path.join(__dirname, "../../../out/db.js"));
-const { DBCError } = require(path.join(__dirname, "../../../out/errors.js"));
+const dbcSrcDir = path.join(__dirname, "../../../out/dbc");
+
+const { Database }                          = require(path.join(dbcSrcDir, "db.js"));
+const { Attribute, AttributeDef }           = require(path.join(dbcSrcDir, "attributes.js"));
+const { EnvironmentVariable }               = require(path.join(dbcSrcDir, "ev.js"));
+const { Message }                           = require(path.join(dbcSrcDir, "message.js"));
+const { Node }                              = require(path.join(dbcSrcDir, "node.js"));
+const { Signal, SignalGroup, SignalType }   = require(path.join(dbcSrcDir, "signal.js"));
+const { ValTable, ValueType }               = require(path.join(dbcSrcDir, "valtable.js"));
+const { DBCError }                          = require(path.join(__dirname, "../../../out/errors.js"));
 
 var db = new Database();
 

@@ -1,5 +1,5 @@
 import { ViewColumn, WebviewPanel, window } from "vscode";
-import { Database } from "../../server/out/db";
+import { Database } from "../../server/src/dbc/db"
 
 export default class DBCPanel{
     private panel: WebviewPanel;
