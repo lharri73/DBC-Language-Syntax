@@ -37,6 +37,7 @@ import { resolve } from 'vscode-languageserver/lib/files';
 import { DBCParser } from './parser';
 import LanguageSettings from './settings';
 
+
 // create connection for the server
 
 interface serverCapabilities{
@@ -116,6 +117,8 @@ export default class DBCServer{
                 this.parser.parse(doc.getText(), doc.uri);
             });
         });
+
+        this.connection.onNotification("dbc/parseRequest", this.onForceParse.bind(this));
     }
 
     private onWatchFileChange(change: DidChangeWatchedFilesParams){
@@ -150,8 +153,18 @@ export default class DBCServer{
     private async onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
         this.getDocumentSettings(change.document.uri).then((settings) =>{
             this.parser.addConfig(settings);
-            console.log(settings);
             this.parser.parse(change.document.getText(), change.document.uri);
+        });
+    }
+
+    private async onForceParse(uri: string){
+        this.getDocumentSettings(uri).then((settings) =>{
+            this.parser.addConfig(settings);
+            var text = this.documents.get(uri)?.getText();
+            if(text === undefined){
+                return;
+            }
+            this.parser.parse(text, uri);
         });
     }
 }

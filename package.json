@@ -80,8 +80,8 @@
 		},
 		"commands": [
 			{
-				"command": "dbc.test",
-				"title": "some test button",
+				"command": "dbc.showPreview",
+				"title": "Open DBC Preview",
 				"category": "dbc",
 				"icon": {
 					"light": "res/open-preview_light.svg",
@@ -93,7 +93,7 @@
 			"editor/title": [
 				{
 					"when": "editorTextFocus && editorLangId == 'dbc'",
-					"command": "dbc.test",
+					"command": "dbc.showPreview",
 					"group": "navigation@1"
 				}
 			]

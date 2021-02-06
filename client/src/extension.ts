@@ -15,8 +15,9 @@
 */
 
 import * as path from 'path';
-import { workspace, ExtensionContext } from 'vscode'
+import { workspace, ExtensionContext, commands, window, ViewColumn } from 'vscode'
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
+import DBCPanel from './dbcPanel';
 
 let client: LanguageClient;
 
@@ -49,6 +50,18 @@ export function activate(context: ExtensionContext){
     );
 
     client.start();
+
+    context.subscriptions.push(
+        commands.registerCommand('dbc.showPreview', ()=>{
+            const innerPannel = new DBCPanel();
+            
+            // bind the callback function
+            client.onNotification("dbc/fileParsed", innerPannel.parsedDBC.bind(innerPannel));
+
+            // request to parse the current open document when the preview is opened
+            client.sendNotification("dbc/parseRequest", window.activeTextEditor?.document.uri.toString());
+        })
+    );
 }
 
 export function deactivate(): Thenable<void> | undefined {
