@@ -10,3 +10,4 @@ client/out/*
 !server/out/.keep
 !client/out/.keep
 .DS_Store
+*.tsbuildinfo

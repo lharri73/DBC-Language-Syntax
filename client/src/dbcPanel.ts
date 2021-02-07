@@ -3,7 +3,7 @@ import { Database } from "../../server/src/dbc/db"
 
 export default class DBCPanel{
     private panel: WebviewPanel;
-    private curDb: Database;
+    private curDb: Database | null;
 
     public constructor(){
         this.panel = window.createWebviewPanel(
@@ -15,6 +15,7 @@ export default class DBCPanel{
         
         this.panel.onDidDispose(this.cleanup.bind(this));
         this.panel.webview.html = this.genContent();
+        this.curDb = null;
     }
 
     // public getPanel(){
@@ -26,7 +27,13 @@ export default class DBCPanel{
     }
 
     private genContent(){
-        return this.header() + this.footer();
+        if(this.curDb == null)
+            return this.header() + this.footer();
+        
+        var ret: string = this.header();
+        this.curDb.messages.forEach((msg) =>{
+            ret += msg.represent();
+        });
     }
 
     private header(){

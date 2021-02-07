@@ -6,8 +6,8 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "strict": true,
-        "outDir": "out",
-        "rootDir": "src",
+        "outDir": "./out",
+        "rootDir": "./src",
         "composite": true
     },
     "include": ["src", "jison.d.ts"],

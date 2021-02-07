@@ -50,4 +50,12 @@ export class Message{
     get lineNum(): number{
         return this.endNum - this.signals.size;
     }
+
+    public represent(): string{
+        var hex = this.id.toString(16);
+        var dec = this.id.toString(10);
+        return `
+        <h1>0x${hex} (${dec}) ${this.name}</h1>
+        `
+    }
 }
