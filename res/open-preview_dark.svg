@@ -53,8 +53,7 @@
      inkscape:current-layer="svg931" />
   <g
      fill="#ffffff"
-     id="g929"
-     transform="translate(0.00733215,1.06)">
+     id="g929">
     <path
        fill-rule="evenodd"
        clip-rule="evenodd"
@@ -66,20 +65,20 @@
      id="rect68"
      width="9.9867382"
      height="3.2634501"
-     x="1.3187548"
-     y="5.1177497"
+     x="1.0"
+     y="4.0"
      ry="0.97134674" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:2.81387px;line-height:1.25;font-family:sans-serif;letter-spacing:0.25px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.0552"
-     x="2.7444828"
-     y="8.1664143"
+     x="2.7"
+     y="7.0"
      id="text895"
      transform="scale(1.0551998,0.94768783)"><tspan
        sodipodi:role="line"
        id="tspan893"
-       x="2.7444828"
-       y="8.1664143"
+       x="2.7"
+       y="7.0"
        style="font-size:2.81387px;fill:#ffffff;stroke-width:1.0552"
        dx="0">DBC</tspan></text>
 </svg>
