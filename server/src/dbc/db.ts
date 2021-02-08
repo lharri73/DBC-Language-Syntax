@@ -15,12 +15,14 @@
 */
 
 import { DBCError } from "../errors";
+import { replacer, reviver } from "../mapTools";
 import { AttributeDef, Attribute } from "./attributes";
 import { EnvironmentVariable } from "./ev";
 import { Message } from "./message"
 import { Node } from "./node";
 import { SignalType } from "./signal";
 import { ValTable } from "./valtable";
+import { encode, decode } from 'js-base64';
 
 export interface BitTiming{
     baudRate: number,
@@ -46,7 +48,51 @@ export class Database{
         this.comment = "";
         this.attrDefs = new Map();
         this.attributes = new Map();
+
+        this.messagesStr = "";
+        this.attrDefsStr = "";
+        this.valTablesStr = "";
+        this.nodesStr = "";
+        this.environmentVariablesStr = "";
+        this.signalTypesStr = "";
+        this.attrDefsStr = "";
+        this.attributesStr ="";
     }
+
+    public fromString(json: any){
+        this.version = json?.version;
+        this.comment = json?.comment;
+        this.symbols = json?.symbols;
+        this.bitTiming = json?.bitTiming;
+        this.parseErrors = json?.parseErrors;
+
+        this.messages = JSON.parse(decode(json.messagesStr), reviver);
+        // this.valTables = JSON.parse(decode(json.valTablesStr), reviver);
+        // this.nodes = JSON.parse(decode(json.nodesStr), reviver);
+        // this.environmentVariables = JSON.parse(decode(json.environmentVariablesStr), reviver);
+        // this.signalTypes = JSON.parse(decode(json.signalTypesStr), reviver);
+        // this.attrDefs = JSON.parse(decode(json.attrDefsStr), reviver);
+        // this.attributes = JSON.parse(decode(json.attributesStr), reviver);
+        
+    }
+
+    public toString(){
+        this.messagesStr = encode(JSON.stringify(this.messages, replacer));
+        this.valTablesStr = encode(JSON.stringify(this.valTables, replacer));
+        this.nodesStr = encode(JSON.stringify(this.nodes, replacer));
+        this.environmentVariablesStr = encode(JSON.stringify(this.environmentVariables, replacer));
+        this.signalTypesStr = encode(JSON.stringify(this.signalTypes, replacer));
+        this.attrDefsStr = encode(JSON.stringify(this.attrDefs, replacer));
+        this.attributesStr = encode(JSON.stringify(this.attributes, replacer));
+    }
+
+    public messagesStr: string;
+    public valTablesStr: string;
+    public nodesStr: string;
+    public environmentVariablesStr: string;
+    public signalTypesStr: string;
+    public attrDefsStr: string;
+    public attributesStr: string;
 
     public messages: Map<number, Message>;
     public version: string;
@@ -61,5 +107,4 @@ export class Database{
     public attrDefs: Map<string,AttributeDef>;
     public attributes: Map<string,Attribute>;
 }
-
 

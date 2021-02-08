@@ -62,6 +62,7 @@ export class DBCParser {
             }
             // if no error
             console.log(parseResult);
+            parseResult.toString();
             this.connection.sendNotification("dbc/fileParsed", parseResult);
 
         } catch (e) {

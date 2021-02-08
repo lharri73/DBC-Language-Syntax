@@ -1,5 +1,6 @@
 import { ViewColumn, WebviewPanel, window } from "vscode";
-import { Database } from "../../server/src/dbc/db"
+import { Message } from "vscode-languageclient";
+import { Database } from "../../server/out/dbc/db"
 
 export default class DBCPanel{
     private panel: WebviewPanel;
@@ -27,13 +28,16 @@ export default class DBCPanel{
     }
 
     private genContent(){
-        if(this.curDb == null)
+        if(this.curDb == null || typeof(this.curDb.messages) == 'string')
             return this.header() + this.footer();
         
         var ret: string = this.header();
-        this.curDb.messages.forEach((msg) =>{
+        this.curDb.messages.forEach((msg,id) => {
+            console.log(msg);
             ret += msg.represent();
         });
+        ret += this.footer();
+        return ret;
     }
 
     private header(){
@@ -48,9 +52,13 @@ export default class DBCPanel{
         `;
     }
 
-    public parsedDBC(db: Database){
+    public parsedDBC(received: Database){
         console.log("received");
-        this.curDb = db;
+        this.curDb = new Database();
+        this.curDb.fromString(received);
+        console.log(received);
+        console.log(this.curDb);
+        this.panel.webview.html = this.genContent();
     }
 
     private footer(){
