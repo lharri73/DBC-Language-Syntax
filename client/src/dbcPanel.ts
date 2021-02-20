@@ -30,7 +30,7 @@ export default class DBCPanel{
     }
 
     private genContent(){
-        if(this.curDb == null || typeof(this.curDb.messages) == 'string')
+        if(this.curDb == null)
             return this.header() + this.footer();
         
         var ret: string = this.header();
