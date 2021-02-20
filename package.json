@@ -28,7 +28,7 @@
 	"activationEvents": [
 		"onLanguage:dbc"
 	],
-	"main": "./client/out/extension",
+	"main": "./client/dist/ext-src/extension.js",
 	"contributes": {
 		"languages": [
 			{
@@ -101,7 +101,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "make",
-		"compile": "tsc -b",
+		"compile": "tsc -b && cd client && ng build",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
 	},
@@ -111,8 +111,7 @@
 		"@typescript-eslint/parser": "^2.3.0",
 		"eslint": "^6.4.0",
 		"js-yaml": "^3.14.1",
-		"mocha": "^8.1.1",
-		"typescript": "^4.0.2"
+		"mocha": "^8.1.1"
 	},
 	"dependencies": {
 		"jison": "^0.4.18"
