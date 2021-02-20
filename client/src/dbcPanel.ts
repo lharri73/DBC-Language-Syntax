@@ -16,13 +16,14 @@ export default class DBCPanel{
         );
         
         this.panel.onDidDispose(this.cleanup.bind(this));
-        this.panel.webview.html = this.genContent();
         this.curDb = null;
+        this.panel.webview.html = this.genContent();
     }
 
     // public getPanel(){
     //     return this.panel;
     // }
+
 
     public cleanup(){
         // ?
@@ -33,6 +34,7 @@ export default class DBCPanel{
             return this.header() + this.footer();
         
         var ret: string = this.header();
+        ret += `<h1>${this.curDb.version}</h1>`;
         this.curDb.messages.forEach((msg,id) => {
             ret += msg.represent();
         });
@@ -59,6 +61,7 @@ export default class DBCPanel{
 
     private footer(){
         return `
-        </body>`;
+        </body>
+        </html>`;
     }
 }

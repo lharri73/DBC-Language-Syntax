@@ -60,10 +60,10 @@ export class Message{
     }
 
     public represent(): string{
-        var hex = this.id.toString(16);
-        var dec = this.id.toString(10);
+        var hex = this.id.toString(16).padStart(3, "000");
+        var dec = this.id.toString(10).padStart(4, "0000");
         return `
-        <h1>0x${hex} (${dec}) ${this.name}</h1>
+        <h2>0x${hex} (${dec}) ${this.name}</h2>
         `
     }
 

@@ -57,6 +57,8 @@ export class Database{
         this.signalTypesStr = "";
         this.attrDefsStr = "";
         this.attributesStr ="";
+
+        this.fileName = "";
     }
 
     public fromString(json: string[]){
@@ -106,5 +108,7 @@ export class Database{
     public comment: string;
     public attrDefs: Map<string,AttributeDef>;
     public attributes: Map<string,Attribute>;
+
+    public fileName: string;
 }
 
