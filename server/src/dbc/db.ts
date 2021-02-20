@@ -59,14 +59,14 @@ export class Database{
         this.attributesStr ="";
     }
 
-    public fromString(json: any){
-        this.version = json?.version;
-        this.comment = json?.comment;
-        this.symbols = json?.symbols;
-        this.bitTiming = json?.bitTiming;
-        this.parseErrors = json?.parseErrors;
+    public fromString(json: string[]){
+        this.version = json[7];
+        this.comment = json[8];
+        // this.symbols = json?.symbols;
+        // this.bitTiming = json?.bitTiming;
+        // this.parseErrors = json?.parseErrors;
 
-        this.messages = JSON.parse(decode(json.messagesStr), reviver);
+        this.messages = JSON.parse(decode(json[0]), reviver);
         // this.valTables = JSON.parse(decode(json.valTablesStr), reviver);
         // this.nodes = JSON.parse(decode(json.nodesStr), reviver);
         // this.environmentVariables = JSON.parse(decode(json.environmentVariablesStr), reviver);

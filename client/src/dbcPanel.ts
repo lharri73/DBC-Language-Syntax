@@ -1,6 +1,7 @@
 import { ViewColumn, WebviewPanel, window } from "vscode";
 import { Message } from "vscode-languageclient";
 import { Database } from "../../server/out/dbc/db"
+import { reviver } from "../../server/out/mapTools";
 
 export default class DBCPanel{
     private panel: WebviewPanel;
@@ -33,7 +34,6 @@ export default class DBCPanel{
         
         var ret: string = this.header();
         this.curDb.messages.forEach((msg,id) => {
-            console.log(msg);
             ret += msg.represent();
         });
         ret += this.footer();
@@ -52,12 +52,8 @@ export default class DBCPanel{
         `;
     }
 
-    public parsedDBC(received: Database){
-        console.log("received");
-        this.curDb = new Database();
-        this.curDb.fromString(received);
-        console.log(received);
-        console.log(this.curDb);
+    public parsedDBC(received: string){
+        this.curDb = JSON.parse(received, reviver);
         this.panel.webview.html = this.genContent();
     }
 

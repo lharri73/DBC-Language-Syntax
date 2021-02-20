@@ -25,6 +25,7 @@ import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserve
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DBCError } from "./errors";
 import LanguageSettings from './settings';
+import { replacer } from './mapTools';
 
 export class DBCParser {
     // private database: Database;
@@ -61,9 +62,8 @@ export class DBCParser {
                 this.clearDiag(uri);
             }
             // if no error
-            console.log(parseResult);
-            parseResult.toString();
-            this.connection.sendNotification("dbc/fileParsed", parseResult);
+            var toSend = JSON.stringify(parseResult, replacer);
+            this.connection.sendNotification("dbc/fileParsed", toSend);
 
         } catch (e) {
             console.log(e);
