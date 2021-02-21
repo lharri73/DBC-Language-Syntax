@@ -1,9 +1,10 @@
+ 
 import { readFileSync } from "fs";
 import { join } from "path";
 import { ViewColumn, WebviewPanel, window, Uri } from "vscode";
 import { Message } from "vscode-languageclient";
-import { Database } from "../../server/out/dbc/db"
-import { reviver } from "../../server/out/mapTools";
+import { Database } from "../../server/out/dbc/db.js"
+import { reviver } from "../../server/out/mapTools.js";
 
 export default class DBCPanel{
     private static readonly viewType = 'angular';
@@ -12,7 +13,7 @@ export default class DBCPanel{
     private extensionPath: string;
 
     public constructor(extensionPath: string){
-        this.extensionPath = extensionPath;
+        this.extensionPath = join(extensionPath, 'client');
 
         this.panel = window.createWebviewPanel(
             'dbcPreview',
@@ -47,7 +48,7 @@ export default class DBCPanel{
         const baseUri = this.panel.webview.asWebviewUri(appDistPathUri);
         const indexPath = join(appDistPath, 'index.html');
         var indexHtml = readFileSync(indexPath, {encoding: 'utf8'});
-        indexHtml = indexHtml.replace('<base href="/">', '<base href="${String(baseUri)}/">');
+        indexHtml = indexHtml.replace('<base href="/">', `<base href="${String(baseUri)}/">`);
         
         return indexHtml;
     }

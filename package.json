@@ -28,7 +28,7 @@
 	"activationEvents": [
 		"onLanguage:dbc"
 	],
-	"main": "./client/dist/ext-src/extension.js",
+	"main": "./client/dist/extension.js",
 	"contributes": {
 		"languages": [
 			{
@@ -101,7 +101,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "make",
-		"compile": "tsc -b && cd client && ng build",
+		"compile": "tsc -b && cd client && ng build && tsc -p tsconfig.extension.json",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
 	},
@@ -114,7 +114,9 @@
 		"mocha": "^8.1.1"
 	},
 	"dependencies": {
-		"jison": "^0.4.18"
+		"@angular/cli": "^11.2.1",
+		"jison": "^0.4.18",
+		"typescript": "^4.1.5"
 	},
 	"__metadata": {
 		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",
