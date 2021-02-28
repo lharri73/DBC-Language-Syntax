@@ -22,8 +22,6 @@ export default class DBCPanel{
             {
                 // enable javascript in the webview
                 enableScripts: true,
-
-
             }
         );
         
@@ -53,26 +51,9 @@ export default class DBCPanel{
         return indexHtml;
     }
 
-    private header(){
-        return `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>DBC Preview</title>
-        </head>
-        <body>
-        `;
-    }
-
     public parsedDBC(received: string){
-        this.curDb = JSON.parse(received, reviver);
+        // this.curDb = JSON.parse(received, reviver);
+        this.panel.webview.postMessage(received);
         // this.panel.webview.html = this.genContent();
-    }
-
-    private footer(){
-        return `
-        </body>
-        </html>`;
     }
 }
