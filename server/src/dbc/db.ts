@@ -64,6 +64,7 @@ export class Database{
     public fromString(json: string[]){
         this.version = json[7];
         this.comment = json[8];
+        this.fileName = json[9];
         // this.symbols = json?.symbols;
         // this.bitTiming = json?.bitTiming;
         // this.parseErrors = json?.parseErrors;

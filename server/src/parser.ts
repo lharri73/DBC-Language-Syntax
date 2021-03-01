@@ -62,6 +62,7 @@ export class DBCParser {
                 this.clearDiag(uri);
             }
             // if no error
+            parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
             var toSend = JSON.stringify(parseResult, replacer);
             this.connection.sendNotification("dbc/fileParsed", toSend);
 

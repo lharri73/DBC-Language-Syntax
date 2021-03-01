@@ -20,6 +20,7 @@ export function replacer(key: any, value: any) {
         ret.push(value.attributesStr);
         ret.push(value.version);
         ret.push(value.comment);
+        ret.push(value.fileName)
         return {
             dataType: 'Database',
             value: ret,
