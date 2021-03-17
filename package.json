@@ -92,7 +92,7 @@
 		"menus": {
 			"editor/title": [
 				{
-					"when": "editorTextFocus && editorLangId == 'dbc'",
+					"when": "editorLangId == 'dbc'",
 					"command": "dbc.showPreview",
 					"group": "navigation@1"
 				}
