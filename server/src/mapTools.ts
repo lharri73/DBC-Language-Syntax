@@ -1,4 +1,3 @@
-import { privateEncrypt } from "crypto";
 import { Database } from "./dbc/db";
 import { Message } from "./dbc/message";
 

@@ -15,7 +15,7 @@
 */
 
 
-import { Parser } from 'jison';
+import { Parser, Generator } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
 
 import { fstat, readFileSync, writeFileSync } from 'fs';
@@ -40,13 +40,13 @@ export class DBCParser {
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         this.lexer = new Lexer(this.lexicon);
+
         this.connection = connection;
         this.lastContents = "";
         this.silenceMap = false;
     }
     
     public parse(contents: string, uri: string){
-        console.log(this.silenceMap);
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
@@ -63,6 +63,7 @@ export class DBCParser {
             }
             // if no error
             parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
+            console.log("here", parseResult);
             var toSend = JSON.stringify(parseResult, replacer);
             this.connection.sendNotification("dbc/fileParsed", toSend);
 

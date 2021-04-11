@@ -22,13 +22,18 @@
 		"candb",
 		"dbc",
 		"vector",
-		"canbus"
+		"canbus",
+		"j1939"
 	],
 	"icon": "res/image.png",
+	"galleryBanner": {
+		"color": "#77c3e4",
+		"theme": "dark"
+	},
 	"activationEvents": [
 		"onLanguage:dbc"
 	],
-	"main": "./client/dist/extension.js",
+	"main": "./dist/extension",
 	"contributes": {
 		"languages": [
 			{
@@ -100,7 +105,8 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "make",
+		"vscode:prepublish": "make && webpack --mode production",
+		"webpack": "cd server && webpack --mode development && cd ../ && webpack --mode development",
 		"compile": "tsc -b && cd client && ng build && tsc -p tsconfig.extension.json",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
@@ -111,7 +117,10 @@
 		"@typescript-eslint/parser": "^2.3.0",
 		"eslint": "^6.4.0",
 		"js-yaml": "^3.14.1",
-		"mocha": "^8.1.1"
+		"mocha": "^8.1.1",
+		"ts-loader": "^8.1.0",
+		"webpack": "^5.31.2",
+		"webpack-cli": "^4.6.0"
 	},
 	"dependencies": {
 		"@angular/cli": "^11.2.1",

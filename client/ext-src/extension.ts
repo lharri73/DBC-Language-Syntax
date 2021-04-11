@@ -22,7 +22,7 @@ import DBCPanel from './dbcPanel';
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext){
-    let serverModule = context.asAbsolutePath(path.join('server', 'out', 'index.js'));
+    let serverModule = context.asAbsolutePath(path.join('server', 'dist', 'serverPack.js'));
 
     let debugOptions = {execArgv: ['--nolazy', '--inspect=6009']}; //runs in node's inspector mode so vscode can attach for debugging
 
