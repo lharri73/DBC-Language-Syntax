@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
             var pth = db.fileName;
             var pthStr = pth.split('/');
             this.title = pthStr[pthStr.length - 1];
+            
             this.messages.next(db.messages.values());
         });
     }

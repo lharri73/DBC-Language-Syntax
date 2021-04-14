@@ -53,6 +53,11 @@ export class DBCParser {
         parser.lexer = this.lexer;
 
         try {
+            if(contents == this.lastContents){
+                console.log("parse elided...content unchanged");
+                return;
+            }
+            console.log("try parse");
             var parseResult = parser.parse(contents);
             this.lastContents = contents;
             
@@ -63,7 +68,7 @@ export class DBCParser {
             }
             // if no error
             parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
-            console.log("here", parseResult);
+            console.log("parse done!");
             var toSend = JSON.stringify(parseResult, replacer);
             this.connection.sendNotification("dbc/fileParsed", toSend);
 

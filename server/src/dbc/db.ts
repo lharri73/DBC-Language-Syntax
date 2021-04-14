@@ -31,6 +31,7 @@ export interface BitTiming{
 };
 
 export class Database{
+    public static identifier="Database";
     public constructor(){
         this.messages = new Map();
         this.valTables = new Map();

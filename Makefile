@@ -17,5 +17,10 @@ all: src/dbcLang.yml
 	npx js-yaml src/dbcLang.yml > syntaxes/dbc.tmLanguage.json
 	npx js-yaml src/snippets.yml > snippets/snippets.json
 
+.PHONY: webpack
+webpack:
+	npm run compile
+	npm run webpack
+
 clean:
 	rm -f syntaxes/dbc.tmLanguage.json snippets/snippets.json
