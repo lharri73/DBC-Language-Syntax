@@ -26,7 +26,7 @@ import {
 import DBCServer from './server'
 
 let connection: Connection = createConnection(ProposedFeatures.all);
-let hasWorkspaceFolderCapability: boolean = false;
+let hasWorkspaceFolderCapability: boolean = true;
 let server: DBCServer;
 
 connection.onInitialize((params: InitializeParams): InitializeResult =>{
@@ -59,6 +59,10 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
 connection.onInitialized(() =>{
     server.register();
+})
+
+connection.onDidChangeTextDocument(() => {
+    console.log('changed text document');
 })
 
 connection.listen();

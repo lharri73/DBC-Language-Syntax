@@ -11,13 +11,6 @@
 			"label": "npm: compile",
 			"detail": "tsc -b",
 			"isBackground": true
-		},
-		{
-			"type": "npm",
-			"script": "prerun",
-			"group": "build",
-			"label": "npm: prerun",
-			"isBackground": true
 		}
 	]
 }

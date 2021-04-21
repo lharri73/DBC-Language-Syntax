@@ -107,9 +107,8 @@
 	"scripts": {
 		"vscode:prepublish": "make && webpack --mode production",
 		"webpack": "cd server && webpack --mode development && cd ../ && webpack --mode development",
-		"compile": "tsc -b && cd client && ng build && tsc -p tsconfig.extension.json",
+		"compile": "tsc -b && cd client && ng build --prod && tsc -p tsconfig.extension.json",
 		"watch": "tsc -b -w",
-		"prerun": "make webpack",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
 	},
 	"devDependencies": {

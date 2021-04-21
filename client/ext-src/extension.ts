@@ -40,6 +40,10 @@ export function activate(context: ExtensionContext){
 
     let clientOptions: LanguageClientOptions = {
         documentSelector: [{scheme: 'file', language: 'dbc'}],
+        synchronize: {
+            // Notify the server about file changes to '.dbc files contained in the workspace
+            fileEvents: workspace.createFileSystemWatcher('**/.dbc')
+        }
     };
 
     client = new LanguageClient(
@@ -53,7 +57,8 @@ export function activate(context: ExtensionContext){
 
     context.subscriptions.push(
         commands.registerCommand('dbc.showPreview', ()=>{
-            const innerPannel = new DBCPanel(context.extensionPath);
+            var innerPannel = new DBCPanel(context.extensionPath);
+            console.log("new inner pannel");
             
             // bind the callback function
             client.onNotification("dbc/fileParsed", innerPannel.parsedDBC.bind(innerPannel));

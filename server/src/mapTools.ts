@@ -9,20 +9,21 @@ export function replacer(key: any, value: any) {
         };
     } else if (value instanceof Database){
         value.toString();
-        var ret = new Array();
-        ret.push(value.messagesStr);
-        ret.push(value.valTablesStr);
-        ret.push(value.nodesStr);
-        ret.push(value.environmentVariablesStr);
-        ret.push(value.signalTypesStr);
-        ret.push(value.attrDefsStr);
-        ret.push(value.attributesStr);
-        ret.push(value.version);
-        ret.push(value.comment);
-        ret.push(value.fileName)
+        var dbret = "";
+        dbret += '[';
+        dbret += value.messagesStr + ",";
+        dbret += value.valTablesStr + ",";
+        dbret += value.nodesStr + ",";
+        dbret += value.environmentVariablesStr + ",";
+        dbret += value.signalTypesStr + ",";
+        dbret += value.attrDefsStr + ",";
+        dbret += value.attributesStr + ",";
+        dbret += value.version + ",";
+        dbret += value.comment + ",";
+        dbret += value.fileName + "]";
         return {
             dataType: 'Database',
-            value: ret,
+            value: dbret,
         };
     } else if (value instanceof Message) {
         value.toString();

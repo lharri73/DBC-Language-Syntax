@@ -32,14 +32,14 @@ export class DBCParser {
     private tokens: string;
     private lexicon: string;
     private connection: Connection;
-    private lexer;
+    // private lexer;
     private lastContents: string;
     private silenceMap: boolean;
 
     public constructor(connection: Connection){
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
-        this.lexer = new Lexer(this.lexicon);
+        // this.lexer = new Lexer(this.lexicon);
 
         this.connection = connection;
         this.lastContents = "";
@@ -50,39 +50,42 @@ export class DBCParser {
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
-        parser.lexer = this.lexer;
+        // this.lexer.
+        parser.lexer = new Lexer(this.lexicon);
 
+        if(contents == this.lastContents){
+            console.log("parse elided...content unchanged");
+            return;
+        }
+        var parseResult;
         try {
-            if(contents == this.lastContents){
-                console.log("parse elided...content unchanged");
-                return;
-            }
             console.log("try parse");
-            var parseResult = parser.parse(contents);
-            this.lastContents = contents;
-            
-            if(parseResult.parseErrors.length != 0){
-                this.sendCustomParseError(uri, parseResult.parseErrors);
-            }else{
-                this.clearDiag(uri);
-            }
-            // if no error
-            parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
-            console.log("parse done!");
-            var toSend = JSON.stringify(parseResult, replacer);
-            this.connection.sendNotification("dbc/fileParsed", toSend);
-
+            parseResult = parser.parse(contents);
         } catch (e) {
-            console.log(e);
             try{
                 this.sendDiag(e, uri);
             }catch(_){
                 this.sendBadLine(e, uri);
             }finally{
                 // debug value 
-                console.log("Error: ", JSON.stringify(e));
+                console.error("Parse Error: ", JSON.stringify(e));
+                return; // don't have a valid result to send to vscode
             }
         }
+
+        this.lastContents = contents;
+        
+        if(parseResult.parseErrors.length != 0){
+            this.sendCustomParseError(uri, parseResult.parseErrors);
+        }else{
+            this.clearDiag(uri);
+        }
+        // if no error
+        parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
+        console.log("parse done!");
+        var toSend = JSON.stringify(parseResult, replacer);
+        this.connection.sendNotification("dbc/fileParsed", toSend);
+
     }
 
     // send errors to vscode
