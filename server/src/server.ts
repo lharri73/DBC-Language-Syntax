@@ -14,16 +14,12 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 
+import { createImportSpecifier } from 'typescript';
 import {
     Connection, 
     TextDocuments,
-    Diagnostic,
-    DiagnosticSeverity,
     InitializeParams,
     DidChangeConfigurationNotification,
-    CompletionItem,
-    CompletionItemKind,
-    TextDocumentPositionParams,
     DidChangeWatchedFilesParams,
     WorkspaceFoldersChangeEvent,
     TextDocumentChangeEvent,
@@ -33,7 +29,6 @@ import {
 import {
     TextDocument
 } from 'vscode-languageserver-textdocument';
-import { resolve } from 'vscode-languageserver/lib/files';
 import { DBCParser } from './parser';
 import LanguageSettings from './settings';
 
@@ -106,6 +101,7 @@ export default class DBCServer{
 
         // apparently this can't be a function?
         this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
+            console.log("config change");
             this.globalSettings = {
                 silenceMapWarnings: change.settings.dbc.silenceMapWarnings
             }
@@ -151,13 +147,22 @@ export default class DBCServer{
     }
 
     private async onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
-        this.getDocumentSettings(change.document.uri).then((settings) =>{
-            this.parser.addConfig(settings);
-            this.parser.parse(change.document.getText(), change.document.uri);
-        });
+        return Promise.race([
+            this.getDocumentSettings(change.document.uri).then((settings) =>{
+                this.parser.addConfig(settings);
+                console.log("top of parse");
+                this.parser.parse(change.document.getText(), change.document.uri);
+            }),
+            new Promise((resolve,reject) => 
+                setTimeout(reject =>{
+                    console.warn("took too long to parse. Returning early");
+                    return reject;
+                }, 1000))]
+        );
     }
 
     private async onForceParse(uri: string){
+        console.log("force parse");
         this.getDocumentSettings(uri).then((settings) =>{
             this.parser.addConfig(settings);
             var text = this.documents.get(uri)?.getText();

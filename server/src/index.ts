@@ -61,6 +61,10 @@ connection.onInitialized(() =>{
     server.register();
 })
 
+connection.onShutdown(() =>{
+    console.log("shutdown?");
+})
+
 connection.onDidChangeTextDocument(() => {
     console.log('changed text document');
 })

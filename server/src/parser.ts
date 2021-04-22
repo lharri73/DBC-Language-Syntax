@@ -69,9 +69,11 @@ export class DBCParser {
             }finally{
                 // debug value 
                 console.error("Parse Error: ", JSON.stringify(e));
+                parser = null;
                 return; // don't have a valid result to send to vscode
             }
         }
+        parser = null;
 
         this.lastContents = contents;
         
@@ -85,7 +87,6 @@ export class DBCParser {
         console.log("parse done!");
         var toSend = JSON.stringify(parseResult, replacer);
         this.connection.sendNotification("dbc/fileParsed", toSend);
-
     }
 
     // send errors to vscode

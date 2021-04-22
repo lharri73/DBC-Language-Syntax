@@ -52,9 +52,8 @@ export default class DBCPanel{
     }
 
     public parsedDBC(received: string){
-        // this.curDb = JSON.parse(received, reviver);
         console.log("received dbc");
         this.panel.webview.postMessage(received);
-        // this.panel.webview.html = this.genContent();
+        this.panel.webview.html = this.genContent();
     }
 }
