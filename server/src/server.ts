@@ -95,9 +95,15 @@ export default class DBCServer{
         }
         
         this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
+        this.connection.onDidChangeTextDocument((params)=>{
+            console.log("here", params);
+        });
         
         this.documents.onDidClose(this.onDocumentClose.bind(this));
-        this.documents.onDidChangeContent(this.onDocumentChange.bind(this));
+        
+        this.documents.onDidChangeContent((change)=>{
+            this.onDocumentChange(change);
+        });
 
         // apparently this can't be a function?
         this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{

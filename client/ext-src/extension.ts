@@ -54,14 +54,19 @@ export function activate(context: ExtensionContext){
     );
 
     client.start();
+    var innerPannel: DBCPanel;
 
     context.subscriptions.push(
         commands.registerCommand('dbc.showPreview', ()=>{
-            var innerPannel = new DBCPanel(context.extensionPath);
+            innerPannel = new DBCPanel(context.extensionPath);
             console.log("new inner pannel");
             
             // bind the callback function
-            client.onNotification("dbc/fileParsed", innerPannel.parsedDBC.bind(innerPannel));
+            client.onNotification("dbc/fileParsed", (result) =>{
+                console.log("parsed inside");
+                innerPannel.parsedDBC(result);
+            });
+            // client.onNotification("dbc/fileParsed", innerPannel.parsedDBC.bind(innerPannel));
 
             // request to parse the current open document when the preview is opened
             client.sendNotification("dbc/parseRequest", window.activeTextEditor?.document.uri.toString());

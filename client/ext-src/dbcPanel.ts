@@ -25,7 +25,7 @@ export default class DBCPanel{
             }
         );
         
-        this.panel.onDidDispose(this.cleanup.bind(this));
+        // this.panel.onDidDispose(this.cleanup.bind(this));
         this.curDb = null;
         this.panel.webview.html = this.genContent();
     }
@@ -33,11 +33,6 @@ export default class DBCPanel{
     // public getPanel(){
     //     return this.panel;
     // }
-
-
-    public cleanup(){
-        // ?
-    }
 
     private genContent(){
         const appDistPath = join(this.extensionPath, 'dist');
