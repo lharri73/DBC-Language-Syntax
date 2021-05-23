@@ -14,7 +14,6 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 
-import { createImportSpecifier } from 'typescript';
 import {
     Connection, 
     TextDocuments,
@@ -23,7 +22,8 @@ import {
     DidChangeWatchedFilesParams,
     WorkspaceFoldersChangeEvent,
     TextDocumentChangeEvent,
-    DidChangeConfigurationParams
+    DidChangeConfigurationParams,
+    DidChangeTextDocumentParams
 } from 'vscode-languageserver';
 
 import {
@@ -96,13 +96,24 @@ export default class DBCServer{
         
         this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
         this.connection.onDidChangeTextDocument((params)=>{
-            console.log("here", params);
+            // console.log("text doc change", params);
+            this.onDocumentChange(params);
         });
         
         this.documents.onDidClose(this.onDocumentClose.bind(this));
         
+        // set the document text in the contents map
+        // this.documents.onDidOpen((event) => {
+        //     var contents: string[] = [];
+        //     for(var i = 0; i < event.document.lineCount; i++){
+        //         contents.push(event.document.);
+        //     }
+        //     this.contents.set(event.document.uri, event.document.getText());
+        // })
+        
         this.documents.onDidChangeContent((change)=>{
-            this.onDocumentChange(change);
+            console.log("content change");
+            // this.onDocumentChange(change);
         });
 
         // apparently this can't be a function?
@@ -152,12 +163,13 @@ export default class DBCServer{
         this.documentSettings.delete(e.document.uri);
     }
 
-    private async onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
+    private async onDocumentChange(change: DidChangeTextDocumentParams){
+        console.log("top of parse");
         return Promise.race([
-            this.getDocumentSettings(change.document.uri).then((settings) =>{
+            this.getDocumentSettings(change.textDocument.uri).then((settings) =>{
                 this.parser.addConfig(settings);
-                console.log("top of parse");
-                this.parser.parse(change.document.getText(), change.document.uri);
+                
+                this.parser.parse(change.contentChanges[0].text, change.textDocument.uri);
             }),
             new Promise((resolve,reject) => 
                 setTimeout(reject =>{
@@ -175,7 +187,7 @@ export default class DBCServer{
             if(text === undefined){
                 return;
             }
-            this.parser.parse(text, uri);
+            this.parser.parse(text, uri, true);
         });
     }
 }

@@ -52,28 +52,37 @@ export function activate(context: ExtensionContext){
         serverOptions,
         clientOptions
     );
-
-    client.start();
-    var innerPannel: DBCPanel;
-
+    // bind the callback function
+    client.onReady().then(()=> {
+        client.onNotification("dbc/fileParsed", (result) =>{
+            console.log("parsed inside");
+            if(innerPannel != null)
+                innerPannel.parsedDBC(result);
+            else
+                console.log("...but is closed")
+        });
+    });
+    
+    var innerPannel: DBCPanel | null;
+    
     context.subscriptions.push(
         commands.registerCommand('dbc.showPreview', ()=>{
             innerPannel = new DBCPanel(context.extensionPath);
-            console.log("new inner pannel");
+            console.log("new inner pannel", context.extensionPath);
             
-            // bind the callback function
-            client.onNotification("dbc/fileParsed", (result) =>{
-                console.log("parsed inside");
-                innerPannel.parsedDBC(result);
+            innerPannel.panel.onDidDispose(()=>{
+                console.log("close pannel");
+                innerPannel = null;
             });
-            // client.onNotification("dbc/fileParsed", innerPannel.parsedDBC.bind(innerPannel));
-
+            
             // request to parse the current open document when the preview is opened
             client.sendNotification("dbc/parseRequest", window.activeTextEditor?.document.uri.toString());
         })
     );
-}
 
+    client.start();
+}
+    
 export function deactivate(): Thenable<void> | undefined {
     if (!client){
         return undefined;

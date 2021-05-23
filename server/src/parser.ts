@@ -46,14 +46,14 @@ export class DBCParser {
         this.silenceMap = false;
     }
     
-    public parse(contents: string, uri: string){
+    public parse(contents: string, uri: string, force: boolean = false){
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
         // this.lexer.
         parser.lexer = new Lexer(this.lexicon);
 
-        if(contents == this.lastContents){
+        if(contents == this.lastContents && !force){
             console.log("parse elided...content unchanged");
             return;
         }

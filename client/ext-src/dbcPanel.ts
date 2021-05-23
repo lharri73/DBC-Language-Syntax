@@ -8,7 +8,7 @@ import { reviver } from "../../server/out/mapTools.js";
 
 export default class DBCPanel{
     private static readonly viewType = 'angular';
-    private panel: WebviewPanel;
+    public panel: WebviewPanel;
     private curDb: Database | null;
     private extensionPath: string;
 
@@ -24,6 +24,7 @@ export default class DBCPanel{
                 enableScripts: true,
             }
         );
+        console.log("pannel: ", this.panel)
         
         // this.panel.onDidDispose(this.cleanup.bind(this));
         this.curDb = null;
@@ -50,5 +51,6 @@ export default class DBCPanel{
         console.log("received dbc");
         this.panel.webview.postMessage(received);
         this.panel.webview.html = this.genContent();
+        // can we force a refresh here?
     }
 }

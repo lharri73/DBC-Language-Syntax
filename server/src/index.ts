@@ -21,7 +21,7 @@ import {
     ProposedFeatures,
     InitializeResult,
     TextDocumentSyncKind
-} from 'vscode-languageserver'
+} from 'vscode-languageserver/node'
 
 import DBCServer from './server'
 
@@ -37,7 +37,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     const result: InitializeResult = {
         capabilities: {
-            textDocumentSync: TextDocumentSyncKind.Incremental
+            textDocumentSync: TextDocumentSyncKind.Full
 
             // Tell the client that this server supports code completion.
             // completionProvider: {
