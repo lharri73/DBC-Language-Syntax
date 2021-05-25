@@ -83,6 +83,17 @@
 				}
 			}
 		},
+		"customEditors": [
+			{
+				"viewType": "dbc.dbcViewer",
+				"displayName": "DBC Viewer",
+				"selector": [
+					{
+						"filenamePattern": "*.dbc"
+					}
+				]
+			}
+		],
 		"commands": [
 			{
 				"command": "dbc.showPreview",
@@ -109,13 +120,14 @@
 		"webpack": "cd server && webpack --mode development && cd ../ && webpack --mode development",
 		"compile": "tsc -b && cd client && ng build --prod && tsc -p tsconfig.extension.json",
 		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
+		"postinstall": "cd client && npm install && cd ../"
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",
 		"@types/node": "^12.19.9",
 		"@typescript-eslint/parser": "^2.3.0",
 		"eslint": "^6.4.0",
+		"jison-gho-loader": "^1.0.2",
 		"js-yaml": "^3.14.1",
 		"mocha": "^8.1.1",
 		"ts-loader": "^8.1.0",
@@ -124,7 +136,10 @@
 	},
 	"dependencies": {
 		"@angular/cli": "^11.2.1",
+		"@types/vscode": "^1.52.0",
 		"jison": "^0.4.18",
+		"jison-lex": "^0.3.4",
+		"js-base64": "^3.6.0",
 		"typescript": "^4.1.5"
 	},
 	"__metadata": {
