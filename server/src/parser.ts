@@ -21,6 +21,8 @@ var Lexer = require('jison-lex');   // this is probably bad
 import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
+import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DBCError } from "./errors";
 import LanguageSettings from './settings';
 import { replacer } from './mapTools';
@@ -29,15 +31,17 @@ export class DBCParser {
     // private database: Database;
     private tokens: string;
     private lexicon: string;
+    private connection: Connection;
     // private lexer;
     private lastContents: string;
     private silenceMap: boolean;
 
-    public constructor(context: vscode.ExtensionContext){
-        this.tokens = readFileSync(resolve(__dirname,"..","syntaxSrc", "dbc.jison"), "utf8");
-        this.lexicon = readFileSync(resolve(__dirname,"..","syntaxSrc", "dbc.lex"), "utf8");
+    public constructor(connection: Connection){
+        this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
+        this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
         // this.lexer = new Lexer(this.lexicon);
 
+        this.connection = connection;
         this.lastContents = "";
         this.silenceMap = false;
     }

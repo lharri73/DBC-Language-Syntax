@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-all: syntaxcSrc/dbcLang.yml syntaxcSrc/snippets.yml
-	npx js-yaml syntaxcSrc/dbcLang.yml > syntaxes/dbc.tmLanguage.json
-	npx js-yaml syntaxcSrc/snippets.yml > snippets/snippets.json
+all: src/dbcLang.yml
+	npx js-yaml src/dbcLang.yml > syntaxes/dbc.tmLanguage.json
+	npx js-yaml src/snippets.yml > snippets/snippets.json
 
 .PHONY: webpack
 webpack:
