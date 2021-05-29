@@ -1,9 +1,12 @@
+import { ParsedEventType } from '@angular/compiler';
 import { Component, HostListener, OnInit } from '@angular/core';
-import { reviver } from "../../../server/out/mapTools.js";
-import { Database } from "../../../server/out/dbc/db.js";
+import { 
+    reviver,
+    Database,
+    Message
+} from "dbclib";
 
-import { fromEvent, Observable, Subject, of } from 'rxjs';
-import { Message } from '../../../server/out/dbc/message.js';
+import { fromEvent, Observable, Subject, of, NextObserver } from 'rxjs';
 
 @Component({
     selector: 'app-root',
@@ -37,14 +40,15 @@ export class AppComponent implements OnInit {
 
     ngOnInit(){
         const msg = fromEvent(window, 'message');
-        msg.subscribe((event: MessageEvent) =>{
-            var db = JSON.parse(event.data, reviver);
-            this.db = db;
-            var pth = db.fileName;
-            var pthStr = pth.split('/');
-            this.title = pthStr[pthStr.length - 1];
+        msg.subscribe(val => console.log(val));
+        // msg.subscribe((event: NextObserver<event>) =>{
+        //     var db = JSON.parse(event.data, reviver);
+        //     this.db = db;
+        //     var pth = db.fileName;
+        //     var pthStr = pth.split('/');
+        //     this.title = pthStr[pthStr.length - 1];
             
-            this.messages.next(db.messages.values());
-        });
+        //     this.messages.next(db.messages.values());
+        // });
     }
 }

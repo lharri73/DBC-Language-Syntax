@@ -43,6 +43,7 @@ interface serverCapabilities{
 
 export default class DBCServer{
     public static initialize(con: Connection, params: InitializeParams): DBCServer{
+        console.log('here??');
         // create analyser here too
         let capabilities = params.capabilities;
 

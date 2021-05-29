@@ -16,16 +16,14 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext, commands, window, ViewColumn } from 'vscode'
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import DBCPanel from './dbcPanel';
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext){
     let serverModule = context.asAbsolutePath(path.join('server', 'dist', 'serverPack.js'));
-
     let debugOptions = {execArgv: ['--nolazy', '--inspect=6009']}; //runs in node's inspector mode so vscode can attach for debugging
-
     let serverOptions: ServerOptions = {
         run: {
             module: serverModule,
@@ -53,40 +51,27 @@ export function activate(context: ExtensionContext){
         clientOptions
     );
     // bind the callback function
-    client.onReady().then(()=> {
-        client.onNotification("dbc/fileParsed", (result) =>{
-            console.log("parsed inside");
-            if(innerPannel != null)
-                innerPannel.parsedDBC(result);
-            else
-                console.log("...but is closed")
-        });
-    });
+    // client.onReady().then(()=> {
+    //     console.log("here?");
+    //     context.subscriptions.push(DBCPanel.register(context,client));
+    //     // client.onNotification("dbc/fileParsed", (result) =>{
+    //     //     console.log("parsed inside");
+    //     //     if(innerPannel != null)
+    //     //         innerPannel.parsedDBC(result);
+    //     //     else
+    //     //         console.log("...but is closed")
+    //     // });
+    // });
     
-    var innerPannel: DBCPanel | null;
-    
-    context.subscriptions.push(
-        commands.registerCommand('dbc.showPreview', ()=>{
-            innerPannel = new DBCPanel(context.extensionPath);
-            console.log("new inner pannel", context.extensionPath);
-            
-            innerPannel.panel.onDidDispose(()=>{
-                console.log("close pannel");
-                innerPannel = null;
-            });
-            
-            // request to parse the current open document when the preview is opened
-            client.sendNotification("dbc/parseRequest", window.activeTextEditor?.document.uri.toString());
-        })
-    );
 
+    console.log("pre-start");
+    console.log(client)
     client.start();
+    console.log("post-start");
 }
     
 export function deactivate(): Thenable<void> | undefined {
-    if (!client){
+    if(!client)
         return undefined;
-    }
-    console.log("stop?");
     return client.stop();
 }

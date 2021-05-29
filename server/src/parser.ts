@@ -21,11 +21,10 @@ var Lexer = require('jison-lex');   // this is probably bad
 import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { ParsedUrlQuery } from 'querystring';
-import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DBCError } from "./errors";
+import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node';
+import { DBCError } from "dbclib";
 import LanguageSettings from './settings';
-import { replacer } from './mapTools';
+import { replacer } from 'dbclib';
 
 export class DBCParser {
     // private database: Database;

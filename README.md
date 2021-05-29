@@ -52,5 +52,13 @@ expressions to match syntax.
 - Include debugging (invalid offset, start bit, min, max, etc)
 - Hover box to show all related fields as a hint
 
+## Organization
+- `server`
+  - Contains the language server and parser for the dbc language sytax
+- `client`
+  - Contains the editor and viewer
+- `dbcLib`
+  - basic type descriptions of each element/class of the dbc language
+
 ## License
 GNU General Public License v2.0 only

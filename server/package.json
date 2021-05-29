@@ -13,6 +13,7 @@
         "url": "https://github.com/lharri73/DBC-Language-Syntax"
     },
     "dependencies": {
+        "dbclib": "file:../dbcLib",
         "jison": "^0.4.18",
         "jison-lex": "^0.3.4",
         "js-base64": "^3.6.0",
@@ -24,6 +25,6 @@
         "jison-gho-loader": "^1.0.2",
         "ts-loader": "^8.1.0",
         "webpack": "^5.31.2",
-        "webpack-cli": "^4.6.0"
+        "webpack-cli": "^4.7.0"
     }
 }

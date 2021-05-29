@@ -14,7 +14,7 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 
-import { DBCError } from "../errors";
+import { DBCError } from "./errors";
 import { replacer, reviver } from "../mapTools";
 import { AttributeDef, Attribute } from "./attributes";
 import { EnvironmentVariable } from "./ev";

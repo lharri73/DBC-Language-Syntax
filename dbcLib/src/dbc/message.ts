@@ -14,7 +14,6 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 
-import { throws } from "assert";
 import { decode, encode } from "js-base64";
 import { replacer, reviver } from "../mapTools";
 import { Attribute } from "./attributes";

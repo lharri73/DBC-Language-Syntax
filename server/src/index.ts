@@ -32,7 +32,9 @@ let server: DBCServer;
 connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     // initialize the dbc server
+    console.log("initializing");
     server = DBCServer.initialize(connection, params);
+    console.log("done init");
 
 
     const result: InitializeResult = {
@@ -58,6 +60,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 });
 
 connection.onInitialized(() =>{
+    console.log("maybe here?");
     server.register();
 })
 
