@@ -12,7 +12,9 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see 
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
-*/
+ */
+ 
+import { DBCServer } from './langServer'
 
 import {
     createConnection,
@@ -23,17 +25,17 @@ import {
     TextDocumentSyncKind
 } from 'vscode-languageserver/node'
 
-import { DBCServer } from './server'
 
 let connection: Connection = createConnection(ProposedFeatures.all);
 let hasWorkspaceFolderCapability: boolean = true;
-let server: DBCServer;
+let server: DBCServer | null = null;
 
 connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     // initialize the dbc server
     console.log("initializing");
-    server = new DBCServer(connection, params);
+    server = DBCServer.initialize(connection, params);
+    console.log(server);
     console.log("done init");
 
 
@@ -61,7 +63,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
 connection.onInitialized(() =>{
     console.log("client connection initialized. registering server callbacks");
-    server.register();
+    server?.register();
     console.log("callbacks registered");
 })
 

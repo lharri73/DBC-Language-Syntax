@@ -125,7 +125,7 @@
 	"dependencies": {
 		"@angular/cli": "^11.2.1",
 		"jison": "^0.4.18",
-		"typescript": "^4.1.5"
+		"typescript": "^4.3.2"
 	},
 	"__metadata": {
 		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",

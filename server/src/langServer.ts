@@ -43,6 +43,10 @@ interface serverCapabilities{
 
 export class DBCServer {
 
+    public static initialize(con: Connection, params: InitializeParams){
+        return new DBCServer(con, params);
+    }
+
     private capabilities: serverCapabilities;
     
     private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -55,7 +59,8 @@ export class DBCServer {
 
     private parser: DBCParser;
 
-    public constructor(con: Connection, params: InitializeParams){
+    private constructor(con: Connection, params: InitializeParams){
+        console.log('here');
         let capabilities = params.capabilities;
 
         let hasConfigurationCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.configuration);
