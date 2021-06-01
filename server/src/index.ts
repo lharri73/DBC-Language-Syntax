@@ -23,7 +23,7 @@ import {
     TextDocumentSyncKind
 } from 'vscode-languageserver/node'
 
-import DBCServer from './server'
+import { DBCServer } from './server'
 
 let connection: Connection = createConnection(ProposedFeatures.all);
 let hasWorkspaceFolderCapability: boolean = true;
@@ -33,7 +33,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     // initialize the dbc server
     console.log("initializing");
-    server = DBCServer.initialize(connection, params);
+    server = new DBCServer(connection, params);
     console.log("done init");
 
 
@@ -60,8 +60,9 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 });
 
 connection.onInitialized(() =>{
-    console.log("maybe here?");
+    console.log("client connection initialized. registering server callbacks");
     server.register();
+    console.log("callbacks registered");
 })
 
 connection.onShutdown(() =>{

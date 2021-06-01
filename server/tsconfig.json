@@ -6,9 +6,8 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "strict": true,
-        "outDir": "./out",
-        "rootDir": "./src",
-        "composite": true
+        "outDir": "out",
+        "rootDir": "src"
     },
     "include": ["src", "jison.d.ts"],
     "exclude": ["node_modules", ".vscode-test"]

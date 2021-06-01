@@ -27,7 +27,7 @@ export {
 
 export {
     Node
-} from './dbc/node'
+} from './dbc/dbcNode'
 
 export {
     Signal,

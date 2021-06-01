@@ -15,7 +15,7 @@
 */
 
 import * as path from 'path';
-import { workspace, ExtensionContext, commands, window, ViewColumn } from 'vscode'
+import { workspace, ExtensionContext } from 'vscode'
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import DBCPanel from './dbcPanel';
 
@@ -63,11 +63,7 @@ export function activate(context: ExtensionContext){
     //     // });
     // });
     
-
-    console.log("pre-start");
-    console.log(client)
     client.start();
-    console.log("post-start");
 }
     
 export function deactivate(): Thenable<void> | undefined {

@@ -19,7 +19,7 @@ import { replacer, reviver } from "../mapTools";
 import { AttributeDef, Attribute } from "./attributes";
 import { EnvironmentVariable } from "./ev";
 import { Message } from "./message"
-import { Node } from "./node";
+import { Node } from "./dbcNode";
 import { SignalType } from "./signal";
 import { ValTable } from "./valtable";
 import { encode, decode } from 'js-base64';

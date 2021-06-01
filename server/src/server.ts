@@ -41,10 +41,21 @@ interface serverCapabilities{
     diagnosticInformation: boolean
 }
 
-export default class DBCServer{
-    public static initialize(con: Connection, params: InitializeParams): DBCServer{
-        console.log('here??');
-        // create analyser here too
+export class DBCServer {
+
+    private capabilities: serverCapabilities;
+    
+    private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+    private connection: Connection;
+    // private analyzer;
+    private defaultSettings: LanguageSettings;
+    private globalSettings: LanguageSettings;
+    
+    private documentSettings: Map<string, Thenable<LanguageSettings>>;
+
+    private parser: DBCParser;
+
+    public constructor(con: Connection, params: InitializeParams){
         let capabilities = params.capabilities;
 
         let hasConfigurationCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.configuration);
@@ -60,22 +71,7 @@ export default class DBCServer{
             workspaceFolder: hasWorkspaceFolderCapability,
             diagnosticInformation: hasDiagnosticRelatedInformationCapability
         }
-        return new DBCServer(con, caps);
-    }
 
-    private capabilities: serverCapabilities;
-    
-    private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-    private connection: Connection;
-    // private analyzer;
-    private defaultSettings: LanguageSettings;
-    private globalSettings: LanguageSettings;
-    
-    private documentSettings: Map<string, Thenable<LanguageSettings>>;
-
-    private parser: DBCParser;
-
-    private constructor(con: Connection, caps: serverCapabilities){
         this.capabilities = caps;
         this.connection = con;
         this.defaultSettings = {silenceMapWarnings: false};
