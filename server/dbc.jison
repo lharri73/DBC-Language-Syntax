@@ -17,8 +17,7 @@
 %{
 
 const path = require("path");
-const dbc = require('dbclib');
-// const dbcSrcDir = path.join(__dirname, "../out/dbc");
+const dbclib = require('dbclib');
 // const { Database }                          = require(path.join(dbcSrcDir, "db.js"));
 // const { Attribute, AttributeDef }           = require(path.join(dbcSrcDir, "attributes.js"));
 // const { EnvironmentVariable }               = require(path.join(dbcSrcDir, "ev.js"));
@@ -29,7 +28,7 @@ const dbc = require('dbclib');
 // const { DBCError }                          = require(path.join(dbcSrcDir,
 // "../errors.js"));
 // const Database = require('db')
-var db = new Database();
+var db = new dbclib.Database();
 
 %}
 
@@ -142,7 +141,7 @@ nodes
 node_names
     : %empty
     | node_names node_name {
-        db.nodes.set($node_name, new Node($node_name));
+        db.nodes.set($node_name, new dbclib.Node($node_name));
     };
 
 node_name
@@ -158,7 +157,7 @@ val_tables
 
 val_table
     : VAL_TABLE UNSAFE_WORD val_table_descriptions SEMICOLON EOL{
-        $$ = new ValTable($UNSAFE_WORD);
+        $$ = new dbclib.ValTable($UNSAFE_WORD);
         $$.descriptions = $val_table_descriptions;
     };
 
@@ -186,7 +185,7 @@ messages
 
 message
     : BO id UNSAFE_WORD COLON DECIMAL transmitter EOL signals {
-        $$ = new Message(yylineno,
+        $$ = new dbclib.Message(yylineno,
                          $id, 
                          $UNSAFE_WORD, 
                          parseInt($DECIMAL), 
@@ -214,7 +213,7 @@ signal
     : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
       byte_order signal_val_type OPEN_PAREN number COMMA number CLOSE_PAREN
       OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL{
-          $$ = new Signal(yylineno,
+          $$ = new dbclib.Signal(yylineno,
                           /*name:  */$2, 
                           /*start: */Number($4), 
                           /*size:  */Number($6),
@@ -235,7 +234,7 @@ byte_order
         }else if( $1 == 1){
             $$ = true;
         }else{
-            db.parseErrors.push(new DBCError(yylineno, "Byte order should be '0' or '1'\n Found " + $1, 1));
+            db.parseErrors.push(new dbclib.DBCError(yylineno, "Byte order should be '0' or '1'\n Found " + $1, 1));
             $$ = true;
         }
     };
@@ -298,7 +297,7 @@ env_var
           if(db.environmentVariables.has($2)){
               cur = db.environmentVariables.get($2);
           }else{
-              cur = new EnvironmentVariable();
+              cur = new dbclib.EnvironmentVariable();
           }
 
           cur.name = $2;
@@ -322,7 +321,7 @@ env_var_type
         }else if($1 == '2'){
             $$ = 2;
         }else{
-            db.parseErrors.push(new DBCError(yylineno, "Environment variable type should be 0,1,2: \n(0: Int, 1: Float, 2: String)", 1));
+            db.parseErrors.push(new dbclib.DBCError(yylineno, "Environment variable type should be 0,1,2: \n(0: Int, 1: Float, 2: String)", 1));
             $$ = 2;
         }
     };
@@ -368,7 +367,7 @@ signal_type
       OPEN_PAREN number COMMA number CLOSE_PAREN 
       OPEN_BRACK number VBAR number CLOSE_BRACK 
       QUOTED_STRING number COMMA UNSAFE_WORD SEMICOLON EOL {
-          var cursigType = new SignalType(
+          var cursigType = new dbclib.SignalType(
               $2, /* name */
               $4, /* size */
               $6, /* byte_order */
@@ -396,7 +395,7 @@ comment
         db.comment = $QUOTED_STRING;
     } // -1 for the EOL
     | CM BU UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node name: " + $UNSAFE_WORD, 0, $UNSAFE_WORD);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined node name: " + $UNSAFE_WORD, 0, $UNSAFE_WORD);
         error.addMapCondition(db.nodes, $UNSAFE_WORD);
         db.parseErrors.push(error);
 
@@ -405,7 +404,7 @@ comment
             db.nodes.get($UNSAFE_WORD).comment = $QUOTED_STRING;
     }
     | CM BO id QUOTED_STRING SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $id);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $id);
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
@@ -413,11 +412,11 @@ comment
             db.messages.get($id).comment = $QUOTED_STRING;
     }
     | CM SG id UNSAFE_WORD QUOTED_STRING SEMICOLON EOL {       
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $UNSAFE_WORD);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $id, 0, $UNSAFE_WORD);
         error.addMapCondition(db.messages, $id);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Signal '" +$UNSAFE_WORD+"' NOT IN message " + $id, 0, $UNSAFE_WORD);
+        var error2 = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Signal '" +$UNSAFE_WORD+"' NOT IN message " + $id, 0, $UNSAFE_WORD);
         error2.addMapCondition(db.messages.get($id)?.signals, $UNSAFE_WORD);
         db.parseErrors.push(error2);
 
@@ -440,10 +439,10 @@ attribute_deffinitions
 
 attribute_definition
     : BA_DEF attr_obj_type QUOTED_STRING attr_val_type SEMICOLON EOL {
-        db.attrDefs.set($3, new AttributeDef($3, $2, $4));
+        db.attrDefs.set($3, new dbclib.AttributeDef($3, $2, $4));
     }
     | BA_DEF_REL attr_obj_type QUOTED_STRING attr_val_type SEMICOLON EOL{
-        db.attrDefs.set($3, new AttributeDef($3, $2, $4));
+        db.attrDefs.set($3, new dbclib.AttributeDef($3, $2, $4));
     };
 
 attr_obj_type
@@ -458,25 +457,25 @@ attr_obj_type
 
 attr_val_type
     : INT number number {
-        $$ = new ValueType(0);
+        $$ = new dbclib.ValueType(0);
         $$.min = $2;
         $$.max = $3;
     }
     | HEX number number {
-        $$ = new ValueType(1);
+        $$ = new dbclib.ValueType(1);
         $$.min = $2;
         $$.max = $3;
     }
     | FLOAT number number{
-        $$ = new ValueType(2);
+        $$ = new dbclib.ValueType(2);
         $$.min = $2;
         $$.max = $3;
     }
     | STRING{
-        $$ = new ValueType(3);
+        $$ = new dbclib.ValueType(3);
     }
     | ENUM enumVals{
-        $$ = new ValueType(4);
+        $$ = new dbclib.ValueType(4);
         $$.enumVals = $2;
     };
 
@@ -523,7 +522,7 @@ signal_group
             curGroup = db.messages.get($2).signalGroups.get($3);
             // throw error?
         }else{
-            curGroup = new SignalGroup();
+            curGroup = new dbclib.SignalGroup();
         }
         curGroup.messageId = $2;
         curGroup.name = $3;
@@ -561,38 +560,38 @@ attribute_valssss
 attribute_vals
     : BA QUOTED_STRING attribute_val SEMICOLON EOL {
         // network attribute
-        var attribute = new Attribute($2, 0, $3);
+        var attribute = new dbclib.Attribute($2, 0, $3);
         db.attributes.set($2, attribute);
     }
     | BA QUOTED_STRING BU UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined node: " + $4, 0, $QUOTED_STRING);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined node: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.nodes, $4);
         db.parseErrors.push(error);
 
-        var attribute = new Attribute($2, 1, $4);
+        var attribute = new dbclib.Attribute($2, 1, $4);
 
         if(db.nodes.has($4) && db.nodes.get($4).attributes.has($2))
             db.nodes.get($4).attributes.set($2,attribute);
     }
     | BA QUOTED_STRING BO id attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
-        var attribute = new Attribute($2, 2, $5);
+        var attribute = new dbclib.Attribute($2, 2, $5);
         if(db.messages.has($4) && db.messages.get($4).attributes.has($2))
             db.messages.get($4).attributes.set($2, attribute);
     }
     | BA QUOTED_STRING SG id UNSAFE_WORD attribute_val SEMICOLON EOL {
-        var error = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
+        var error = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined message: " + $4, 0, $QUOTED_STRING);
         error.addMapCondition(db.messages, $4);
         db.parseErrors.push(error);
 
-        var error2 = new DBCError(yy.lexer.yylloc.first_line-1, "Undefined signal: '" + $5 + "'", 0, $QUOTED_STRING);
+        var error2 = new dbclib.DBCError(yy.lexer.yylloc.first_line-1, "Undefined signal: '" + $5 + "'", 0, $QUOTED_STRING);
         error2.addMapCondition(db.messages.get($4)?.signals, $5);
         db.parseErrors.push(error2);
 
-        var attribute = new Attribute($2, 3, $6);
+        var attribute = new dbclib.Attribute($2, 3, $6);
 
         if(db.messages.has($4) && db.messages.get($4).signals.has($5))
             db.messages.get($4).signals.get($5).attributes.set($2, attribute);
@@ -602,7 +601,7 @@ attribute_vals
         if(!db.environmentVariables.has($4)){
             // db.parseErrors.push(new DBCParseError(yy.lexer.yylloc.first_line-1, "Cannot assgn environment variable attribute to undefined environment variable '" + $4 + "'\nUndefined Environment Variable: " + $4));
         }else{
-            var attribute = new Attribute($2, 4, $5);
+            var attribute = new dbclib.Attribute($2, 4, $5);
             db.environmentVariables.get($4).attributes.set($2, attribute);
         }
     }

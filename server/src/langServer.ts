@@ -60,7 +60,6 @@ export class DBCServer {
     private parser: DBCParser;
 
     private constructor(con: Connection, params: InitializeParams){
-        console.log('here');
         let capabilities = params.capabilities;
 
         let hasConfigurationCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.configuration);

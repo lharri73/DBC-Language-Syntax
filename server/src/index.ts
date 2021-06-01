@@ -28,16 +28,12 @@ import {
 
 let connection: Connection = createConnection(ProposedFeatures.all);
 let hasWorkspaceFolderCapability: boolean = true;
-let server: DBCServer | null = null;
+let server: DBCServer;
 
 connection.onInitialize((params: InitializeParams): InitializeResult =>{
 
     // initialize the dbc server
-    console.log("initializing");
     server = DBCServer.initialize(connection, params);
-    console.log(server);
-    console.log("done init");
-
 
     const result: InitializeResult = {
         capabilities: {
@@ -62,12 +58,11 @@ connection.onInitialize((params: InitializeParams): InitializeResult =>{
 });
 
 connection.onInitialized(() =>{
-    console.log("client connection initialized. registering server callbacks");
-    server?.register();
-    console.log("callbacks registered");
+    server.register();
 })
 
 connection.onShutdown(() =>{
+    // server.unregister();
     console.log("shutdown?");
 })
 
