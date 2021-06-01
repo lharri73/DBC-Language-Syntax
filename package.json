@@ -107,9 +107,8 @@
 	"scripts": {
 		"vscode:prepublish": "make && webpack --mode production",
 		"webpack": "cd server && tsc && webpack --mode development && cd ../client && ng build --prod && webpack --mode development",
-		"compile": "tsc -b && cd client && ng build --prod && tsc -p tsconfig.extension.json",
 		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../"
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install && tsc"
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",
