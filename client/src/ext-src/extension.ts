@@ -51,22 +51,16 @@ export function activate(context: ExtensionContext){
         clientOptions
     );
     // bind the callback function
-    // client.onReady().then(()=> {
-    //     console.log("here?");
-    //     context.subscriptions.push(DBCPanel.register(context,client));
-    //     // client.onNotification("dbc/fileParsed", (result) =>{
-    //     //     console.log("parsed inside");
-    //     //     if(innerPannel != null)
-    //     //         innerPannel.parsedDBC(result);
-    //     //     else
-    //     //         console.log("...but is closed")
-    //     // });
-    // });
+    client.onReady().then(()=> {
+        console.log("here?");
+        context.subscriptions.push(DBCPanel.register(context,client));
+    });
     
     client.start();
 }
     
 export function deactivate(): Thenable<void> | undefined {
+    console.log("deactivate");
     if(!client)
         return undefined;
     return client.stop();

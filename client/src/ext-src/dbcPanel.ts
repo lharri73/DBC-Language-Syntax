@@ -10,9 +10,9 @@ import {
 
 
 class DBCPanel implements vscode.CustomTextEditorProvider {
-    private static readonly viewType = 'angular';
+    private static readonly viewType = 'dbcLanguage.dbc';
     public panel: vscode.WebviewPanel | null;
-    private extensionPath: string;
+    private appDistPath: string;
     public client: LanguageClient | null;
 
     public static register(context: vscode.ExtensionContext, client: LanguageClient): vscode.Disposable {
@@ -24,7 +24,7 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
 	}
 
     public constructor(private readonly context: vscode.ExtensionContext){
-        this.extensionPath = join(__dirname, '..');
+        this.appDistPath = context.asAbsolutePath(join('client', 'dist'));
         this.panel = null;
         this.client = null;
     }
@@ -34,14 +34,14 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
     // }
 
     private genContent(){
-        const appDistPath = join(this.extensionPath, 'dist');
-        const appDistPathUri = vscode.Uri.file(appDistPath);
+        const appDistPathUri = vscode.Uri.file(this.appDistPath);
 
         const baseUri = this.panel?.webview.asWebviewUri(appDistPathUri);
-        const indexPath = join(appDistPath, 'index.html');
+        const indexPath = join(this.appDistPath, 'index.html');
+
         var indexHtml = readFileSync(indexPath, {encoding: 'utf8'});
         indexHtml = indexHtml.replace('<base href="/">', `<base href="${String(baseUri)}/">`);
-        
+
         return indexHtml;
     }
 
@@ -60,29 +60,24 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
         _token: vscode.CancellationToken): 
         Promise<void>
     {
-
+        
         webviewPanel.webview.options = {
             enableScripts: true,
         };
-
+        
+        this.panel = webviewPanel;
         webviewPanel.webview.html = this.genContent();
 
-        this.panel = webviewPanel;
         this.registerCallbacks(document, webviewPanel);      
     }
 
     private registerCallbacks(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel){
-        var disposed:boolean = false;
         // document change event
-        var curEvent = this.client?.onNotification("dbc/fileParsed", (result: string) => {
-            if(!disposed){
-                webviewPanel.webview.postMessage(result);
-            }
+        this.client?.onNotification("dbc/fileParsed", (result: string) => {
+            console.log("received event");
+            webviewPanel.webview.postMessage(result);
         });
-
-        webviewPanel.onDidDispose(() =>{
-            disposed = true;
-        });
+        this.client?.sendNotification("dbc/parseRequest", document.uri.toString());
     }
 }
 

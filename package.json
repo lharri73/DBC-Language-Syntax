@@ -3,7 +3,7 @@
 	"displayName": "DBC Language Syntax",
 	"description": "Provides VS Code support for CAN DBC files",
 	"repository": {
-		"tpye": "git",
+		"type": "git",
 		"url": "https://github.com/lharri73/DBC-Language-Syntax"
 	},
 	"license": "GPL-2.0-only",
@@ -102,7 +102,18 @@
 					"group": "navigation@1"
 				}
 			]
-		}
+		},
+		"customEditors": [
+			{
+				"viewType": "dbcLanguage.dbc",
+				"displayName": "DBC",
+				"selector": [
+					{
+						"filenamePattern": "*.dbc"
+					}
+				]
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "make && webpack --mode production",

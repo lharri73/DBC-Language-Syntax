@@ -40,15 +40,17 @@ export class AppComponent implements OnInit {
 
     ngOnInit(){
         const msg = fromEvent(window, 'message');
-        msg.subscribe(val => console.log(val));
-        // msg.subscribe((event: NextObserver<event>) =>{
-        //     var db = JSON.parse(event.data, reviver);
-        //     this.db = db;
-        //     var pth = db.fileName;
-        //     var pthStr = pth.split('/');
-        //     this.title = pthStr[pthStr.length - 1];
+        msg.subscribe((event: Event) => {
+
+            // the datatype passed to subscribe is a MessageEvent but typescript
+            // will only allow a basic Event, so casting is necessary. 
+            var db = JSON.parse((<MessageEvent>event).data, reviver);
+            this.db = db;
+            var pth = db.fileName;
+            var pthStr = pth.split('/');
+            this.title = pthStr[pthStr.length - 1];
             
-        //     this.messages.next(db.messages.values());
-        // });
+            this.messages.next(db.messages.values());
+        });
     }
 }
