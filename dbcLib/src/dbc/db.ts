@@ -22,8 +22,7 @@ import { Message } from "./message"
 import { Node } from "./dbcNode";
 import { SignalType } from "./signal";
 import { ValTable } from "./valtable";
-import { encode, decode } from 'js-base64';
-
+// import { encode, decode } from 'js-base64';
 export interface BitTiming{
     baudRate: number,
     register_1: number,
@@ -31,7 +30,7 @@ export interface BitTiming{
 };
 
 export class Database{
-    public static identifier="Database";
+    public static readonly identifier="Database";
     public constructor(){
         this.messages = new Map();
         this.valTables = new Map();
@@ -49,46 +48,36 @@ export class Database{
         this.comment = "";
         this.attrDefs = new Map();
         this.attributes = new Map();
-
-        this.messagesStr = "";
-        this.attrDefsStr = "";
-        this.valTablesStr = "";
-        this.nodesStr = "";
-        this.environmentVariablesStr = "";
-        this.signalTypesStr = "";
-        this.attrDefsStr = "";
-        this.attributesStr ="";
-
         this.fileName = "";
     }
 
-    public fromString(json: string[]){
-        this.version = json[7];
-        this.comment = json[8];
-        this.fileName = json[9];
-        // this.symbols = json?.symbols;
-        // this.bitTiming = json?.bitTiming;
-        // this.parseErrors = json?.parseErrors;
+    // public fromString(json: string[]){
+    //     this.version = json[7];
+    //     this.comment = json[8];
+    //     this.fileName = json[9];
+    //     // this.symbols = json?.symbols;
+    //     // this.bitTiming = json?.bitTiming;
+    //     // this.parseErrors = json?.parseErrors;
 
-        this.messages = JSON.parse(decode(json[0]), reviver);
-        // this.valTables = JSON.parse(decode(json.valTablesStr), reviver);
-        // this.nodes = JSON.parse(decode(json.nodesStr), reviver);
-        // this.environmentVariables = JSON.parse(decode(json.environmentVariablesStr), reviver);
-        // this.signalTypes = JSON.parse(decode(json.signalTypesStr), reviver);
-        // this.attrDefs = JSON.parse(decode(json.attrDefsStr), reviver);
-        // this.attributes = JSON.parse(decode(json.attributesStr), reviver);
+    //     this.messages = JSON.parse(decode(json[0]), reviver);
+    //     // this.valTables = JSON.parse(decode(json.valTablesStr), reviver);
+    //     // this.nodes = JSON.parse(decode(json.nodesStr), reviver);
+    //     // this.environmentVariables = JSON.parse(decode(json.environmentVariablesStr), reviver);
+    //     // this.signalTypes = JSON.parse(decode(json.signalTypesStr), reviver);
+    //     // this.attrDefs = JSON.parse(decode(json.attrDefsStr), reviver);
+    //     // this.attributes = JSON.parse(decode(json.attributesStr), reviver);
         
-    }
+    // }
 
-    public toString(){
-        this.messagesStr = encode(JSON.stringify(this.messages, replacer));
-        this.valTablesStr = encode(JSON.stringify(this.valTables, replacer));
-        this.nodesStr = encode(JSON.stringify(this.nodes, replacer));
-        this.environmentVariablesStr = encode(JSON.stringify(this.environmentVariables, replacer));
-        this.signalTypesStr = encode(JSON.stringify(this.signalTypes, replacer));
-        this.attrDefsStr = encode(JSON.stringify(this.attrDefs, replacer));
-        this.attributesStr = encode(JSON.stringify(this.attributes, replacer));
-    }
+    // public toString(){
+    //     this.messagesStr = encode(JSON.stringify(this.messages, replacer));
+    //     this.valTablesStr = encode(JSON.stringify(this.valTables, replacer));
+    //     this.nodesStr = encode(JSON.stringify(this.nodes, replacer));
+    //     this.environmentVariablesStr = encode(JSON.stringify(this.environmentVariables, replacer));
+    //     this.signalTypesStr = encode(JSON.stringify(this.signalTypes, replacer));
+    //     this.attrDefsStr = encode(JSON.stringify(this.attrDefs, replacer));
+    //     this.attributesStr = encode(JSON.stringify(this.attributes, replacer));
+    // }
 
     public messagesStr: string;
     public valTablesStr: string;
@@ -113,4 +102,3 @@ export class Database{
 
     public fileName: string;
 }
-

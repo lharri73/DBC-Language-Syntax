@@ -8,6 +8,7 @@
         "./dist"
     ],
     "dependencies": {
+        "@msgpack/msgpack": "^2.7.0",
         "js-base64": "^3.6.1"
     }
 }
