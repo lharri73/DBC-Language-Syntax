@@ -1,7 +1,7 @@
 import { ParsedEventType } from '@angular/compiler';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { 
-    reviver,
+    decodeDb,
     Database,
     Message
 } from "dbclib";
@@ -44,13 +44,12 @@ export class AppComponent implements OnInit {
 
             // the datatype passed to subscribe is a MessageEvent but typescript
             // will only allow a basic Event, so casting is necessary. 
-            var db = JSON.parse((<MessageEvent>event).data, reviver);
+            var db = decodeDb((<MessageEvent>event).data);
             this.db = db;
             var pth = db.fileName;
             var pthStr = pth.split('/');
             this.title = pthStr[pthStr.length - 1];
-            
-            this.messages.next(db.messages.values());
+            this.messages.next([...db.messages.values()]);
         });
     }
 }

@@ -37,7 +37,7 @@ export class Signal {
         this.valueType = Type;
         this.factor = Factor;
         this.offset = Offset;
-        this.minimun = Min;
+        this.minimum = Min;
         this.maximum = Max;
         this.unit = Unit;
         this.receivers = Receivers;
@@ -54,7 +54,7 @@ export class Signal {
     public valueType: boolean; // true: signed, false: unsigned
     public factor: number;
     public offset: number;
-    public minimun: number;
+    public minimum: number;
     public maximum: number;
     public unit: string;
     public receivers: string[];

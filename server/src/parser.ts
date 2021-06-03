@@ -24,7 +24,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node';
 import { DBCError } from "dbclib";
 import LanguageSettings from './settings';
-import { replacer } from 'dbclib';
+import { encodeDb } from 'dbclib';
 import { write } from 'node:fs';
 
 export class DBCParser {
@@ -85,7 +85,7 @@ export class DBCParser {
         // if no error
         parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
         console.log("parse done!");
-        var toSend = JSON.stringify(parseResult, replacer);
+        var toSend = encodeDb(parseResult);
         writeFileSync('/home/landon/Desktop/out.txt', toSend);
         this.connection.sendNotification("dbc/fileParsed", toSend);
     }

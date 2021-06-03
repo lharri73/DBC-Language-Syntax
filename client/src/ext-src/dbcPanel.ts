@@ -5,7 +5,6 @@ import * as vscode from 'vscode'
 import { LanguageClient } from "vscode-languageclient/node";
 import { 
     Database,
-    reviver
 } from "dbclib"
 
 

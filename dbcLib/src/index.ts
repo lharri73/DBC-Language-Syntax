@@ -1,6 +1,7 @@
 export {
-    replacer,
-    reviver
+    extensionCodec,
+    encodeDb,
+    decodeDb
 } from './mapTools'
 
 export {

@@ -12,75 +12,78 @@ import {
     AttributeDef 
 } from "./dbc/attributes";
 import { EnvironmentVariable } from "./dbc/ev";
-import { SignalType } from "./dbc/signal";
+import { Signal, SignalGroup, SignalType } from "./dbc/signal";
+import * as b64 from 'js-base64';
 
-export function replacer(key: any, value: any) {
-    if(value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-        };
-    } else if (value instanceof Database){
-        value.toString();
-        var dbret = "";
-        dbret += '[';
-        dbret += value.messagesStr + ",";
-        dbret += value.valTablesStr + ",";
-        dbret += value.nodesStr + ",";
-        dbret += value.environmentVariablesStr + ",";
-        dbret += value.signalTypesStr + ",";
-        dbret += value.attrDefsStr + ",";
-        dbret += value.attributesStr + ",";
-        dbret += value.version + ",";
-        dbret += value.comment + ",";
-        dbret += value.fileName + "]";
-        return {
-            dataType: 'Database',
-            value: dbret,
-        };
-    } else if (value instanceof Message) {
-        value.toString();
-        var ret = new Array();
-        ret.push(value.id);
-        ret.push(value.name);
-        ret.push(value.size);
-        ret.push(value.transmitter);
-        ret.push(value.transmitterStr);
-        ret.push(value.signalStr);
-        ret.push(value.comment);
-        ret.push(value.sigGroupStr);
-        ret.push(value.attributeStr);
-        return {
-            dataType: 'Message',
-            value: ret,
-        };
-    }else {
-        return value;
-    }
-}
+// export function replacer(key: any, value: any) {
+//     if(value instanceof Map) {
+//         return {
+//             dataType: 'Map',
+//             value: Array.from(value.entries()), // or with spread: value: [...value]
+//         };
+//     } else if (value instanceof Database){
+//         value.toString();
+//         var dbret = "";
+//         dbret += '[';
+//         dbret += value.messagesStr + ",";
+//         dbret += value.valTablesStr + ",";
+//         dbret += value.nodesStr + ",";
+//         dbret += value.environmentVariablesStr + ",";
+//         dbret += value.signalTypesStr + ",";
+//         dbret += value.attrDefsStr + ",";
+//         dbret += value.attributesStr + ",";
+//         dbret += value.version + ",";
+//         dbret += value.comment + ",";
+//         dbret += value.fileName + "]";
+//         return {
+//             dataType: 'Database',
+//             value: dbret,
+//         };
+//     } else if (value instanceof Message) {
+//         value.toString();
+//         var ret = new Array();
+//         ret.push(value.id);
+//         ret.push(value.name);
+//         ret.push(value.size);
+//         ret.push(value.transmitter);
+//         ret.push(value.transmitterStr);
+//         ret.push(value.signalStr);
+//         ret.push(value.comment);
+//         ret.push(value.sigGroupStr);
+//         ret.push(value.attributeStr);
+//         return {
+//             dataType: 'Message',
+//             value: ret,
+//         };
+//     }else {
+//         return value;
+//     }
+// }
 
-export function reviver(key: any, value: any) {
-    if(value !== null) {
-        if (value.dataType === 'Map') {
-            var map = new Map(value.value);
-            return new Map(value.value);
-        }else if (value.dataType === 'Database'){
-            var db = new Database();
-            db.fromString(value.value);
-            return db;
-        }else if (value.dataType === 'Message'){
-            var msg = new Message(0,0,"",0,"",new Map());
-            msg.fromString(value.value);
-            return msg;
+// export function reviver(key: any, value: any) {
+//     if(value !== null) {
+//         if (value.dataType === 'Map') {
+//             var map = new Map(value.value);
+//             return new Map(value.value);
+//         }else if (value.dataType === 'Database'){
+//             var db = new Database();
+//             db.fromString(value.value);
+//             return db;
+//         }else if (value.dataType === 'Message'){
+//             var msg = new Message(0,0,"",0,"",new Map());
+//             msg.fromString(value.value);
+//             return msg;
 
-        }
-    }
-    return value;
-}
+//         }
+//     }
+//     return value;
+// }
 
 
 // DBCError elided
-const extensionCodec = new ExtensionCodec();
+
+export const extensionCodec = new ExtensionCodec();
+
 extensionCodec.register({
     type: 0,
     encode: (object: unknown): Uint8Array => {
@@ -210,10 +213,264 @@ extensionCodec.register({
             var initialVal: Uint8Array = encode(object.initialVal);
             var id: Uint8Array = encode(object.id);
             var transmitters: Uint8Array = encode(object.transmitters)
+            var valueDescriptions: Uint8Array = encode(object.valueDescriptions);
+            var dataSize: Uint8Array = encode(object.dataSize);
+            var comment: Uint8Array = encode(object.comment);
+            var attributes: Uint8Array = encode(object.attributes);
+            return(encode([name, type, min, max, unit, initialVal, id, transmitters, valueDescriptions, dataSize, comment, attributes]));
         }else
             return null;
     },
     decode: (data: Uint8Array) => {
-
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new EnvironmentVariable();
+        ret.name = decode(array[0]) as string;
+        ret.type = decode(array[1]) as number;
+        ret.min = decode(array[2]) as number;
+        ret.max = decode(array[3]) as number;
+        ret.unit = decode(array[4]) as string;
+        ret.initialVal = decode(array[5]) as number;
+        ret.id = decode(array[6]) as number;
+        ret.transmitters = decode(array[7]) as string[];
+        ret.dataSize = decode(array[8]) as number;
+        ret.comment = decode(array[9]) as string;
+        ret.attributes = decode(array[10]) as Map<string,Attribute>;
+        return ret;
     }
-})
+});
+
+// message
+extensionCodec.register({
+    type: 6,
+    encode: (object: unknown): Uint8Array | null => {
+        if(object instanceof Message){
+            const id: Uint8Array = encode(object.id);
+            const name: Uint8Array = encode(object.name);
+            const size: Uint8Array = encode(object.size);
+            const transmitter: Uint8Array = encode(object.transmitter);
+            const transmitters: Uint8Array = encode(object.transmitters);
+            const signals: Uint8Array = encode(object.signals);
+            const comment: Uint8Array = encode(object.comment);
+            const signalGroups: Uint8Array = encode(object.signalGroups);
+            const attributes: Uint8Array = encode(object.attributes);
+            return encode([id, name, size, transmitter, transmitters, signals, comment, signalGroups, attributes]);
+        }else
+            return null
+    },
+    decode: (data: Uint8Array) => {
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new Message(
+            0, // endLineNum
+            decode(array[0]) as number,
+            decode(array[1]) as string,
+            decode(array[2]) as number,
+            decode(array[3]) as string,
+            decode(array[5]) as Map<string,Signal>
+        );
+        ret.transmitters = decode(array[4]) as string[];
+        ret.comment = decode(array[6]) as string;
+        ret.signalGroups = decode(array[7]) as Map<string,SignalGroup>;
+        ret.attributes = decode(array[8]) as Map<string,Attribute>;
+        return ret;
+    }
+});
+
+// signal
+extensionCodec.register({
+    type: 7,
+    encode: (object: unknown): Uint8Array | null =>{
+        if(object instanceof Signal){
+            const name: Uint8Array = encode(object.name);
+            const startBit: Uint8Array = encode(object.startBit);
+            const bitSize: Uint8Array = encode(object.bitSize);
+            const byteOrder: Uint8Array = encode(object.byteOrder);
+            const valueType: Uint8Array = encode(object.valueType);
+            const factor: Uint8Array = encode(object.factor);
+            const offset: Uint8Array = encode(object.offset);
+            const minimum: Uint8Array = encode(object.minimum);
+            const maximum: Uint8Array = encode(object.maximum);
+            const unit: Uint8Array = encode(object.unit);
+            const receivers: Uint8Array = encode(object.receivers);
+            const valTable: Uint8Array = encode(object.valTable);
+            const comment: Uint8Array = encode(object.comment);
+            const attributes: Uint8Array = encode(object.attributes);
+            const lineNum: Uint8Array = encode(object.lineNum);
+            return encode([
+                name,
+                startBit,
+                bitSize,
+                byteOrder,
+                valueType,
+                factor,
+                offset,
+                minimum,
+                maximum,
+                unit,
+                receivers,
+                valTable,
+                comment,
+                attributes,
+                lineNum
+            ]);
+        }else
+            return null;
+    },
+    decode: (data: Uint8Array) => {
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new Signal(
+            decode(array[14]) as number,// lineNum
+            decode(array[0]) as string, // name
+            decode(array[1]) as number, // start
+            decode(array[2]) as number, // size
+            decode(array[3]) as boolean,// byte order
+            decode(array[4]) as boolean,// valtype
+            decode(array[5]) as number, // factor
+            decode(array[6]) as number, // offset
+            decode(array[7]) as number, // min
+            decode(array[8]) as number, // max
+            decode(array[9]) as string, // unit
+            decode(array[10]) as string[] // receivers
+        );
+        ret.valTable = decode(array[11]) as ValTable | null;
+        ret.comment = decode(array[12]) as string;
+        ret.attributes = decode(array[13]) as Map<string,Attribute>;
+        return ret;
+    }
+});
+
+// signalType
+extensionCodec.register({
+    type: 8,
+    encode: (object: unknown): Uint8Array | null =>{
+        if(object instanceof SignalType){
+            const name: Uint8Array = encode(object.name);
+            const size: Uint8Array = encode(object.size);
+            const byteOrder: Uint8Array = encode(object.byteOrder);
+            const valueType: Uint8Array = encode(object.valueType);
+            const factor: Uint8Array = encode(object.factor);
+            const offset: Uint8Array = encode(object.offset);
+            const minimum: Uint8Array = encode(object.minimum);
+            const maximum: Uint8Array = encode(object.maximum);
+            const unit: Uint8Array = encode(object.unit);
+            const defaultVal: Uint8Array = encode(object.default);
+            const valTable: Uint8Array = encode(object.valTable);
+            return encode([
+                name,
+                size,
+                byteOrder,
+                valueType,
+                factor,
+                offset,
+                minimum,
+                maximum,
+                unit,
+                defaultVal,
+                valTable
+            ]);
+        }else
+            return null;
+    },
+    decode: (data: Uint8Array) => {
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new SignalType(
+            decode(array[0]) as string, // name
+            decode(array[1]) as number, // size
+            decode(array[2]) as boolean,// byte order
+            decode(array[3]) as boolean,// valtype
+            decode(array[4]) as number, // factor
+            decode(array[5]) as number, // offset
+            decode(array[6]) as number, // min
+            decode(array[7]) as number, // max
+            decode(array[8]) as string, // unit
+            decode(array[9]) as number, // defaultVal
+            decode(array[10]) as string // valTable
+        );
+        return ret;
+    }
+});
+
+// SignalGroup
+extensionCodec.register({
+    type: 9,
+    encode: (object: unknown): Uint8Array | null => {
+        if(object instanceof SignalGroup){
+            return encode([
+                encode(object.messageId),
+                encode(object.name),
+                encode(object.repetitions),
+                encode(object.signals)
+            ]);
+        }else
+            return null;
+    },
+    decode: (data: Uint8Array) => {
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new SignalGroup();
+
+        ret.messageId = decode(array[0]) as number;
+        ret.name = decode(array[1]) as string;
+        ret.repetitions = decode(array[2]) as number;
+        ret.signals = decode(array[3]) as string[];
+        return ret;
+    }
+});
+
+// ValTable
+extensionCodec.register({
+    type: 10,
+    encode: (object: unknown): Uint8Array | null =>{
+        if(object instanceof ValTable){
+            return encode([
+                encode(object.name),
+                encode(object.descriptions)
+            ]);
+        }else
+            return null;
+    },
+    decode: (data: Uint8Array) =>{
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new ValTable(
+            decode(array[0]) as string
+        );
+        ret.descriptions = decode(array[1]) as Map<any,any>;
+        return ret;
+    }
+
+});
+
+// ValueType
+extensionCodec.register({
+    type: 11,
+    encode: (object: unknown): Uint8Array | null => {
+        if(object instanceof ValueType){
+            return encode([
+                encode(object.type),
+                encode(object.min),
+                encode(object.max),
+                encode(object.enumVals)
+            ]);
+        }else
+            return null
+    },
+    decode: (data: Uint8Array) => {
+        const array = decode(data) as Array<Uint8Array>;
+        var ret = new ValueType(decode(array[0]) as number);
+        ret.min = decode(array[1]) as number;
+        ret.max = decode(array[2]) as number;
+        ret.enumVals = decode(array[3]) as string[];
+        return ret;
+    }
+});
+
+
+export function encodeDb(db: Database): string{
+    var encoded: Uint8Array = encode(db, {extensionCodec});
+    var encoded64 = b64.Base64.fromUint8Array(encoded);
+    return encoded64;
+}
+
+export function decodeDb(data: string): Database{
+    var u8array = b64.Base64.toUint8Array(data);
+    var decoded = decode(u8array, {extensionCodec}) as Database;
+    return decoded;
+}

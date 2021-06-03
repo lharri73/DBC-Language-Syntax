@@ -14,8 +14,6 @@
  * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
 */
 
-import { decode, encode } from "js-base64";
-import { replacer, reviver } from "../mapTools";
 import { Attribute } from "./attributes";
 import { Signal, SignalGroup } from "./signal";
 
@@ -36,10 +34,10 @@ export class Message{
         this.signalGroups = new Map();
         this.attributes = new Map();
         this.endNum = endLineNum;
-        this.signalStr = "";
-        this.sigGroupStr = "";
-        this.attributeStr = "";
-        this.transmitterStr = "";
+        // this.signalStr = "";
+        // this.sigGroupStr = "";
+        // this.attributeStr = "";
+        // this.transmitterStr = "";
     }
 
     public id: number;
@@ -66,26 +64,26 @@ export class Message{
         `
     }
 
-    public signalStr: string;
-    public sigGroupStr: string;
-    public attributeStr: string;
-    public transmitterStr: string;
+    // public signalStr: string;
+    // public sigGroupStr: string;
+    // public attributeStr: string;
+    // public transmitterStr: string;
 
-    public toString(){
-        this.signalStr = encode(JSON.stringify(this.signals, replacer));
-        this.sigGroupStr = encode(JSON.stringify(this.signalGroups, replacer));
-        this.attributeStr = encode(JSON.stringify(this.attributes, replacer));
-        this.transmitterStr = encode(JSON.stringify(this.transmitters, replacer));
-    }
-    public fromString(value: string){
-        this.id = parseInt(value[0]);
-        this.name = value[1];
-        this.size = parseInt(value[2]);
-        this.transmitter = value[3];
-        this.transmitters = JSON.parse(decode(value[4]), reviver);
-        this.signals = JSON.parse(decode(value[5]), reviver);
-        this.comment = value[6];
-        this.signalGroups = JSON.parse(decode(value[7]), reviver);
-        this.attributes = JSON.parse(decode(value[8]), reviver);
-    }
+    // public toString(){
+    //     this.signalStr = encode(JSON.stringify(this.signals, replacer));
+    //     this.sigGroupStr = encode(JSON.stringify(this.signalGroups, replacer));
+    //     this.attributeStr = encode(JSON.stringify(this.attributes, replacer));
+    //     this.transmitterStr = encode(JSON.stringify(this.transmitters, replacer));
+    // }
+    // public fromString(value: string){
+    //     this.id = parseInt(value[0]);
+    //     this.name = value[1];
+    //     this.size = parseInt(value[2]);
+    //     this.transmitter = value[3];
+    //     this.transmitters = JSON.parse(decode(value[4]), reviver);
+    //     this.signals = JSON.parse(decode(value[5]), reviver);
+    //     this.comment = value[6];
+    //     this.signalGroups = JSON.parse(decode(value[7]), reviver);
+    //     this.attributes = JSON.parse(decode(value[8]), reviver);
+    // }
 }

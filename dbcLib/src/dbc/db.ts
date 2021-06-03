@@ -15,7 +15,6 @@
 */
 
 import { DBCError } from "./errors";
-import { replacer, reviver } from "../mapTools";
 import { AttributeDef, Attribute } from "./attributes";
 import { EnvironmentVariable } from "./ev";
 import { Message } from "./message"
