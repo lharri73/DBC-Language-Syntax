@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2021 Landon Harris
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see 
+ * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
+*/
+
 import { encode, decode, ExtensionCodec } from '@msgpack/msgpack'
 
 import { Database } from "./dbc/db";
@@ -15,73 +31,8 @@ import { EnvironmentVariable } from "./dbc/ev";
 import { Signal, SignalGroup, SignalType } from "./dbc/signal";
 import * as b64 from 'js-base64';
 
-// export function replacer(key: any, value: any) {
-//     if(value instanceof Map) {
-//         return {
-//             dataType: 'Map',
-//             value: Array.from(value.entries()), // or with spread: value: [...value]
-//         };
-//     } else if (value instanceof Database){
-//         value.toString();
-//         var dbret = "";
-//         dbret += '[';
-//         dbret += value.messagesStr + ",";
-//         dbret += value.valTablesStr + ",";
-//         dbret += value.nodesStr + ",";
-//         dbret += value.environmentVariablesStr + ",";
-//         dbret += value.signalTypesStr + ",";
-//         dbret += value.attrDefsStr + ",";
-//         dbret += value.attributesStr + ",";
-//         dbret += value.version + ",";
-//         dbret += value.comment + ",";
-//         dbret += value.fileName + "]";
-//         return {
-//             dataType: 'Database',
-//             value: dbret,
-//         };
-//     } else if (value instanceof Message) {
-//         value.toString();
-//         var ret = new Array();
-//         ret.push(value.id);
-//         ret.push(value.name);
-//         ret.push(value.size);
-//         ret.push(value.transmitter);
-//         ret.push(value.transmitterStr);
-//         ret.push(value.signalStr);
-//         ret.push(value.comment);
-//         ret.push(value.sigGroupStr);
-//         ret.push(value.attributeStr);
-//         return {
-//             dataType: 'Message',
-//             value: ret,
-//         };
-//     }else {
-//         return value;
-//     }
-// }
-
-// export function reviver(key: any, value: any) {
-//     if(value !== null) {
-//         if (value.dataType === 'Map') {
-//             var map = new Map(value.value);
-//             return new Map(value.value);
-//         }else if (value.dataType === 'Database'){
-//             var db = new Database();
-//             db.fromString(value.value);
-//             return db;
-//         }else if (value.dataType === 'Message'){
-//             var msg = new Message(0,0,"",0,"",new Map());
-//             msg.fromString(value.value);
-//             return msg;
-
-//         }
-//     }
-//     return value;
-// }
-
 
 // DBCError elided
-
 export const extensionCodec = new ExtensionCodec();
 
 extensionCodec.register({

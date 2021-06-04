@@ -34,10 +34,6 @@ export class Message{
         this.signalGroups = new Map();
         this.attributes = new Map();
         this.endNum = endLineNum;
-        // this.signalStr = "";
-        // this.sigGroupStr = "";
-        // this.attributeStr = "";
-        // this.transmitterStr = "";
     }
 
     public id: number;
@@ -59,31 +55,6 @@ export class Message{
     public represent(): string{
         var hex = this.id.toString(16).padStart(3, "000");
         var dec = this.id.toString(10).padStart(4, "0000");
-        return `
-        <h2>0x${hex} (${dec}) ${this.name}</h2>
-        `
+        return `<h2>0x${hex} (${dec}) ${this.name}</h2>`
     }
-
-    // public signalStr: string;
-    // public sigGroupStr: string;
-    // public attributeStr: string;
-    // public transmitterStr: string;
-
-    // public toString(){
-    //     this.signalStr = encode(JSON.stringify(this.signals, replacer));
-    //     this.sigGroupStr = encode(JSON.stringify(this.signalGroups, replacer));
-    //     this.attributeStr = encode(JSON.stringify(this.attributes, replacer));
-    //     this.transmitterStr = encode(JSON.stringify(this.transmitters, replacer));
-    // }
-    // public fromString(value: string){
-    //     this.id = parseInt(value[0]);
-    //     this.name = value[1];
-    //     this.size = parseInt(value[2]);
-    //     this.transmitter = value[3];
-    //     this.transmitters = JSON.parse(decode(value[4]), reviver);
-    //     this.signals = JSON.parse(decode(value[5]), reviver);
-    //     this.comment = value[6];
-    //     this.signalGroups = JSON.parse(decode(value[7]), reviver);
-    //     this.attributes = JSON.parse(decode(value[8]), reviver);
-    // }
 }
