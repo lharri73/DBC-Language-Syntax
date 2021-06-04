@@ -23,7 +23,8 @@ import {
     WorkspaceFoldersChangeEvent,
     TextDocumentChangeEvent,
     DidChangeConfigurationParams,
-    DidChangeTextDocumentParams
+    DidChangeTextDocumentParams,
+    DidCloseTextDocumentParams
 } from 'vscode-languageserver';
 
 import {
@@ -91,35 +92,23 @@ export class DBCServer {
             this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
         }
         
-        if(this.capabilities.workspaceFolder){
-            this.connection.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
-        }
-        
-        this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
-        this.connection.onDidChangeTextDocument((params)=>{
-            // console.log("text doc change", params);
-            this.onDocumentChange(params);
+        this.connection.onDidChangeTextDocument((change: DidChangeTextDocumentParams)=>{
+                    // console.log("top of parse");
+            this.getDocumentSettings(change.textDocument.uri).then((settings) =>{
+                this.parser.addConfig(settings);
+                
+                this.parser.parse(change.contentChanges[0].text, change.textDocument.uri);
+            });
         });
         
-        this.documents.onDidClose(this.onDocumentClose.bind(this));
-        
-        // set the document text in the contents map
-        // this.documents.onDidOpen((event) => {
-        //     var contents: string[] = [];
-        //     for(var i = 0; i < event.document.lineCount; i++){
-        //         contents.push(event.document.);
-        //     }
-        //     this.contents.set(event.document.uri, event.document.getText());
-        // })
-        
-        this.documents.onDidChangeContent((change)=>{
-            console.log("content change");
-            // this.onDocumentChange(change);
+        this.documents.onDidClose((event: TextDocumentChangeEvent<TextDocument>) => {
+            console.log("close");
+            this.documentSettings.delete(event.document.uri);
         });
+       
 
-        // apparently this can't be a function?
         this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
-            console.log("config change");
+            console.debug("config change");
             this.globalSettings = {
                 silenceMapWarnings: change.settings.dbc.silenceMapWarnings
             }
@@ -132,15 +121,21 @@ export class DBCServer {
             });
         });
 
-        this.connection.onNotification("dbc/parseRequest", this.onForceParse.bind(this));
-    }
-
-    private onWatchFileChange(change: DidChangeWatchedFilesParams){
-        console.log('watched files change event received');
-    }
-
-    private workspaceChange(event: WorkspaceFoldersChangeEvent){
-        console.log('workspace folder change event received');
+        this.connection.onNotification("dbc/parseRequest", (uri: string) => {
+            // console.log("force parse");
+            this.getDocumentSettings(uri).then((settings) =>{
+                this.parser.addConfig(settings);
+                var text = this.documents.get(uri)?.getText();
+                if(text === undefined){
+                    return;
+                }
+                this.parser.parse(text, uri, true);
+            });
+        });
+        
+        this.connection.onDidCloseTextDocument((params: DidCloseTextDocumentParams) => {
+            this.connection.sendNotification("dbc/closeFile", params.textDocument.uri);
+        });
     }
 
     private getDocumentSettings(uri: string): Thenable<LanguageSettings> {
@@ -160,35 +155,4 @@ export class DBCServer {
         }
     }
 
-    private onDocumentClose(e: TextDocumentChangeEvent<TextDocument>){
-        this.documentSettings.delete(e.document.uri);
-    }
-
-    private async onDocumentChange(change: DidChangeTextDocumentParams){
-        console.log("top of parse");
-        return Promise.race([
-            this.getDocumentSettings(change.textDocument.uri).then((settings) =>{
-                this.parser.addConfig(settings);
-                
-                this.parser.parse(change.contentChanges[0].text, change.textDocument.uri);
-            }),
-            new Promise((resolve,reject) => 
-                setTimeout(reject =>{
-                    console.warn("took too long to parse. Returning early");
-                    return reject;
-                }, 1000))]
-        );
-    }
-
-    private async onForceParse(uri: string){
-        console.log("force parse");
-        this.getDocumentSettings(uri).then((settings) =>{
-            this.parser.addConfig(settings);
-            var text = this.documents.get(uri)?.getText();
-            if(text === undefined){
-                return;
-            }
-            this.parser.parse(text, uri, true);
-        });
-    }
 }

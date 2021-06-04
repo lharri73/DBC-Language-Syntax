@@ -14,12 +14,11 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
     private appDistPath: string;
     public client: LanguageClient | null;
 
-    public static register(context: vscode.ExtensionContext, client: LanguageClient): vscode.Disposable {
-        console.log("register of panel");
+    public static register(context: vscode.ExtensionContext, client: LanguageClient): {a: vscode.Disposable, b: DBCPanel}{
 		const provider = new DBCPanel(context);
         provider.client = client;
 		const providerRegistration = vscode.window.registerCustomEditorProvider(DBCPanel.viewType, provider);
-		return providerRegistration;
+		return {a: providerRegistration, b: provider};
 	}
 
     public constructor(private readonly context: vscode.ExtensionContext){
@@ -45,7 +44,7 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
     }
 
     public parsedDBC(received: string){
-        console.log("received dbc");
+        console.debug("received dbc");
         if(this.panel == null)
             return;
         this.panel.webview.postMessage(received);
@@ -59,6 +58,7 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
         _token: vscode.CancellationToken): 
         Promise<void>
     {
+        // entrypoint
         
         webviewPanel.webview.options = {
             enableScripts: true,
@@ -73,9 +73,13 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
     private registerCallbacks(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel){
         // document change event
         this.client?.onNotification("dbc/fileParsed", (result: string) => {
-            console.log("received event");
             webviewPanel.webview.postMessage(result);
         });
+        this.client?.onNotification("dbc/closeFile", (uri: vscode.Uri) => {
+            if(uri == document.uri){
+                webviewPanel.dispose();
+            }
+        })
         this.client?.sendNotification("dbc/parseRequest", document.uri.toString());
     }
 }

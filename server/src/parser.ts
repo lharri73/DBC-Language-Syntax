@@ -20,12 +20,11 @@ var Lexer = require('jison-lex');   // this is probably bad
 
 import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { ParsedUrlQuery } from 'querystring';
+
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node';
 import { DBCError } from "dbclib";
 import LanguageSettings from './settings';
 import { encodeDb } from 'dbclib';
-import { write } from 'node:fs';
 
 export class DBCParser {
     // private database: Database;
@@ -54,12 +53,11 @@ export class DBCParser {
         parser.lexer = new Lexer(this.lexicon);
 
         if(contents == this.lastContents && !force){
-            console.log("parse elided...content unchanged");
+            console.debug("parse elided...content unchanged");
             return;
         }
         var parseResult;
         try {
-            console.log("try parse");
             parseResult = parser.parse(contents);
         } catch (e) {
             try{
@@ -84,9 +82,7 @@ export class DBCParser {
         }
         // if no error
         parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
-        console.log("parse done!");
         var toSend = encodeDb(parseResult);
-        writeFileSync('/home/landon/Desktop/out.txt', toSend);
         this.connection.sendNotification("dbc/fileParsed", toSend);
     }
 

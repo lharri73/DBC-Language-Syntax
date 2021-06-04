@@ -106,7 +106,7 @@
 		"customEditors": [
 			{
 				"viewType": "dbcLanguage.dbc",
-				"displayName": "DBC",
+				"displayName": "DBC Viewer (ALPHA)",
 				"selector": [
 					{
 						"filenamePattern": "*.dbc"
