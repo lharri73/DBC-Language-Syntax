@@ -117,25 +117,15 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "make && webpack --mode production",
-		"webpack": "cd server && tsc && webpack --mode development && cd ../client && ng build --prod && webpack --mode development",
+		"webpack": "cd server && tsc && webpack --mode development && cd ../client && npm run build && webpack --mode development",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install && tsc"
 	},
 	"devDependencies": {
-		"@types/mocha": "^8.0.3",
-		"@types/node": "^12.19.9",
-		"@typescript-eslint/parser": "^2.3.0",
-		"eslint": "^6.4.0",
 		"js-yaml": "^3.14.1",
-		"mocha": "^8.1.1",
 		"ts-loader": "^8.1.0",
-		"webpack": "^5.31.2",
-		"webpack-cli": "^4.6.0"
-	},
-	"dependencies": {
-		"@angular/cli": "^11.2.1",
-		"jison": "^0.4.18",
-		"typescript": "^4.3.2"
+		"webpack": "4.44.2",
+		"webpack-cli": "^4.7.2"
 	},
 	"__metadata": {
 		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",

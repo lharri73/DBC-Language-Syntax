@@ -1,0 +1,41 @@
+{
+  "name": "dbc-client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lharri73/DBC-Language-Syntax"
+  },
+  "description": "DBC language server client",
+  "license": "GPL-2.0-only",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "publisher": "lharri73",
+  "activationEvents": [
+    "onCommand:dbc.showWebview"
+  ],
+  "dependencies": {
+    "eslint": "^7.11.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "^10.1.2",
+    "@types/react-dom": "^17.0.8",
+    "@types/react": "^17.0.11",
+    "@types/vscode": "^1.1.17",
+    "rewire": "^4.0.1",
+    "typescript": "^3.7.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "scripts": {
+    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json"
+  }
+}
