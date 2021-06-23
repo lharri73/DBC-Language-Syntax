@@ -107,19 +107,19 @@ export class DBCServer {
         });
        
 
-        this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
-            console.debug("config change");
-            this.globalSettings = {
-                silenceMapWarnings: change.settings.dbc.silenceMapWarnings
-            }
+        // this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
+        //     console.debug("config change", change);
+        //     this.globalSettings = {
+        //         silenceMapWarnings: change.settings.dbc.silenceMapWarnings
+        //     }
     
-            this.parser.addConfig(this.globalSettings);
-            // recheck all files
-            this.documents.all().forEach((doc) =>{
-                this.parser.clearDiag(doc.uri);
-                this.parser.parse(doc.getText(), doc.uri);
-            });
-        });
+        //     this.parser.addConfig(this.globalSettings);
+        //     // recheck all files
+        //     this.documents.all().forEach((doc) =>{
+        //         this.parser.clearDiag(doc.uri);
+        //         this.parser.parse(doc.getText(), doc.uri);
+        //     });
+        // });
 
         this.connection.onNotification("dbc/parseRequest", (uri: string) => {
             // console.log("force parse");
