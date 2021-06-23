@@ -33,7 +33,7 @@
 	"activationEvents": [
 		"onLanguage:dbc"
 	],
-	"main": "./client/webpack/extension",
+	"main": "./client/build/ext-src/extension",
 	"contributes": {
 		"languages": [
 			{
