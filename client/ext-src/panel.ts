@@ -1,94 +1,47 @@
-import * as path from 'path';
-import * as vscode from 'vscode';
+import { readFileSync } from "fs";
+import { join } from "path";
+import * as vscode from 'vscode'
+import { LanguageClient } from "vscode-languageclient/node";
+import { 
+    Database,
+} from "dbclib"
 
-export default class ReactPanel {
-	/**
-	 * Track the currently panel. Only allow a single panel to exist at a time.
-	 */
-	public static currentPanel: ReactPanel | undefined;
 
-	private static readonly viewType = 'react';
+class DBCPanel implements vscode.CustomTextEditorProvider {
+    private static readonly viewType = 'dbcLanguage.dbc';
+    public panel: vscode.WebviewPanel | null;
+    private _extensionPath: string;
+    public client: LanguageClient | null;
 
-	private readonly _panel: vscode.WebviewPanel;
-	private readonly _extensionPath: string;
-	private _disposables: vscode.Disposable[] = [];
-
-	public static createOrShow(extensionPath: string) {
-		const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
-
-		// If we already have a panel, show it.
-		// Otherwise, create a new panel.
-		if (ReactPanel.currentPanel) {
-			ReactPanel.currentPanel._panel.reveal(column);
-		} else {
-			ReactPanel.currentPanel = new ReactPanel(extensionPath, column || vscode.ViewColumn.One);
-		}
+    public static register(context: vscode.ExtensionContext, client: LanguageClient): {a: vscode.Disposable, b: DBCPanel}{
+		const provider = new DBCPanel(context);
+        provider.client = client;
+		const providerRegistration = vscode.window.registerCustomEditorProvider(DBCPanel.viewType, provider);
+		return {a: providerRegistration, b: provider};
 	}
 
-	private constructor(extensionPath: string, column: vscode.ViewColumn) {
-		this._extensionPath = extensionPath;
+    public constructor(private readonly context: vscode.ExtensionContext){
+        this._extensionPath = context.asAbsolutePath(join('client', 'build'));
+        this.panel = null;
+        this.client = null;
+    }
 
-		// Create and show a new webview panel
-		this._panel = vscode.window.createWebviewPanel(ReactPanel.viewType, "React", column, {
-			// Enable javascript in the webview
-			enableScripts: true,
-
-			// And restric the webview to only loading content from our extension's `media` directory.
-			localResourceRoots: [
-				vscode.Uri.file(path.join(this._extensionPath, 'build'))
-			]
-		});
-		
-		// Set the webview's initial html content 
-		this._panel.webview.html = this._getHtmlForWebview();
-
-		// Listen for when the panel is disposed
-		// This happens when the user closes the panel or when the panel is closed programatically
-		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-
-		// Handle messages from the webview
-		this._panel.webview.onDidReceiveMessage(message => {
-			switch (message.command) {
-				case 'alert':
-					vscode.window.showErrorMessage(message.text);
-					return;
-			}
-		}, null, this._disposables);
-	}
-
-	public doRefactor() {
-		// Send a message to the webview webview.
-		// You can send any JSON serializable data.
-		this._panel.webview.postMessage({ command: 'refactor' });
-	}
-
-	public dispose() {
-		ReactPanel.currentPanel = undefined;
-
-		// Clean up our resources
-		this._panel.dispose();
-
-		while (this._disposables.length) {
-			const x = this._disposables.pop();
-			if (x) {
-				x.dispose();
-			}
-		}
-	}
+    // public getPanel(){
+    //     return this.panel;
+    // }
 
 	private _getHtmlForWebview() {
-		const manifest = require(path.join(this._extensionPath, 'build', 'asset-manifest.json'));
-		const mainScript = manifest['main.js'];
-		const mainStyle = manifest['main.css'];
+		const manifest = JSON.parse(readFileSync(join(this._extensionPath, 'asset-manifest.json'), {encoding: 'utf8'}));
+		const mainScript:string = manifest['files']['main.js'];
+		const mainStyle:string = manifest['files']['main.css'];
 
-		const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'build', mainScript));
+		const scriptPathOnDisk = vscode.Uri.file(join(this._extensionPath, mainScript));
 		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
-		const stylePathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'build', mainStyle));
+		const stylePathOnDisk = vscode.Uri.file(join(this._extensionPath, mainStyle));
 		const styleUri = stylePathOnDisk.with({ scheme: 'vscode-resource' });
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
-
 		return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -98,9 +51,8 @@ export default class ReactPanel {
 				<title>React App</title>
 				<link rel="stylesheet" type="text/css" href="${styleUri}">
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'nonce-${nonce}';style-src vscode-resource: 'unsafe-inline' http: https: data:;">
-				<base href="${vscode.Uri.file(path.join(this._extensionPath, 'build')).with({ scheme: 'vscode-resource' })}/">
+				<base href="${vscode.Uri.file(this._extensionPath).with({ scheme: 'vscode-resource' })}/">
 			</head>
-
 			<body>
 				<noscript>You need to enable JavaScript to run this app.</noscript>
 				<div id="root"></div>
@@ -109,7 +61,52 @@ export default class ReactPanel {
 			</body>
 			</html>`;
 	}
+
+    public parsedDBC(received: string){
+        console.debug("received dbc");
+        if(this.panel == null)
+            return;
+        this.panel.webview.postMessage(received);
+        this.panel.webview.html = this._getHtmlForWebview();
+        // can we force a refresh here?
+    }
+
+    public async resolveCustomTextEditor(
+        document: vscode.TextDocument, 
+        webviewPanel: vscode.WebviewPanel, 
+        _token: vscode.CancellationToken): 
+        Promise<void>
+    {
+        // entrypoint
+        
+        webviewPanel.webview.options = {
+            enableScripts: true,
+			localResourceRoots: [
+				vscode.Uri.file(this._extensionPath)
+			]
+        };
+        
+        this.panel = webviewPanel;
+        webviewPanel.webview.html = this._getHtmlForWebview();
+
+        this.registerCallbacks(document, webviewPanel);      
+    }
+
+    private registerCallbacks(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel){
+        // document change event
+        this.client?.onNotification("dbc/fileParsed", (result: string) => {
+            webviewPanel.webview.postMessage(result);
+        });
+        this.client?.onNotification("dbc/closeFile", (uri: vscode.Uri) => {
+            if(uri == document.uri){
+                webviewPanel.dispose();
+            }
+        })
+        this.client?.sendNotification("dbc/parseRequest", document.uri.toString());
+    }
 }
+
+export default DBCPanel;
 
 function getNonce() {
 	let text = "";

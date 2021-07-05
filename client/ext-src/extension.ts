@@ -1,12 +1,28 @@
+/**
+ * Copyright (C) 2021 Landon Harris
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see 
+ * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
+*/
+
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
-import ReactPanel from './panel';
+import DBCPanel from './panel';
 
 let client: LanguageClient;
 
-export function activate(context: vscode.ExtensionContext) {
-	let serverModule = context.asAbsolutePath(path.join("server", "dist", "serverPack.js"));
+export function activate(context: vscode.ExtensionContext){
+    let serverModule = context.asAbsolutePath(path.join('server', 'dist', 'serverPack.js'));
     let debugOptions = {execArgv: ['--nolazy', '--inspect=6009']}; //runs in node's inspector mode so vscode can attach for debugging
     let serverOptions: ServerOptions = {
         run: {
@@ -34,9 +50,13 @@ export function activate(context: vscode.ExtensionContext) {
         serverOptions,
         clientOptions
     );
-	client.start();
-
-	var {a: registration, b: panel} = DBCPanel.register(context,client);
+    // bind the callback function
+    // client.onReady().then(()=> {
+    // });
+    
+    client.start();
+    
+    var {a: registration, b: panel} = DBCPanel.register(context,client);
     context.subscriptions.push(registration);
     // register showPreview command for button
     context.subscriptions.push(
@@ -60,12 +80,11 @@ export function activate(context: vscode.ExtensionContext) {
             }
         })
     );
-
-	context.subscriptions.push(vscode.commands.registerCommand('react-webview.start', () => {
-		ReactPanel.createOrShow(context.extensionPath);
-	}));
 }
-
-/**
- * Manages react webview panels
- */
+    
+export function deactivate(): Thenable<void> | undefined {
+    console.log("deactivate");
+    if(!client)
+        return undefined;
+    return client.stop();
+}
