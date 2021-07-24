@@ -103,6 +103,9 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
             }
         })
         this.client?.sendNotification("dbc/parseRequest", document.uri.toString());
+        this.panel?.onDidDispose(() => {
+            this.panel = null;
+        });
     }
 }
 

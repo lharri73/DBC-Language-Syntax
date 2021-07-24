@@ -16,7 +16,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
+import { DidChangeWorkspaceFoldersNotification, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import DBCPanel from './panel';
 
 let client: LanguageClient;
@@ -61,22 +61,13 @@ export function activate(context: vscode.ExtensionContext){
     // register showPreview command for button
     context.subscriptions.push(
         vscode.commands.registerCommand('dbc.showPreview', ()=>{
-
-            if(!vscode.window.activeTextEditor?.document){
-                console.log("bad things")
-                return; // this should never happen with correct activation events
-            }
-                
-            var openUri: vscode.Uri = vscode.window.activeTextEditor.document.uri;
-            if(panel.client){
-                panel.panel?.reveal(vscode.ViewColumn.Beside, true);
-                client.sendNotification("dbc/parseRequest", openUri);
-            }else{
-                vscode.workspace.openTextDocument(openUri).then((doc: vscode.TextDocument) => {
-                    var webPanel = vscode.window.createWebviewPanel('dbcPreview', 'DBC Preview', vscode.ViewColumn.Beside, {enableScripts: true});
-                    var token = new vscode.CancellationTokenSource(); 
-                    panel.resolveCustomTextEditor(doc, webPanel, token.token);
-                });
+            if(!vscode.window.activeTextEditor) return;
+            console.log("show preview", vscode.window.activeTextEditor.document.uri);
+            if(!panel.panel){
+                vscode.workspace.openTextDocument(vscode.window.activeTextEditor.document.uri).then(doc => {
+                    const viewPanel = vscode.window.createWebviewPanel("dbc", "DBC Editor", {preserveFocus: true, viewColumn: vscode.ViewColumn.Beside});
+                    panel.resolveCustomTextEditor(doc, viewPanel, <vscode.CancellationToken><unknown>null);
+                });              
             }
         })
     );
