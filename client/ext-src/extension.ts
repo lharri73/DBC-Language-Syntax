@@ -55,6 +55,7 @@ export function activate(context: vscode.ExtensionContext){
     // });
     
     client.start();
+    console.log("Activated!");
     
     var {a: registration, b: panel} = DBCPanel.register(context,client);
     context.subscriptions.push(registration);
