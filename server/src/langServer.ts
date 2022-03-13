@@ -59,6 +59,7 @@ export class DBCServer {
     private documentSettings: Map<string, Thenable<LanguageSettings>>;
 
     private parser: DBCParser;
+    private working: boolean;
 
     private constructor(con: Connection, params: InitializeParams){
         let capabilities = params.capabilities;
@@ -83,6 +84,7 @@ export class DBCServer {
         this.globalSettings = this.defaultSettings;
         this.documentSettings = new Map();
         this.parser = new DBCParser(con);
+        this.working = false;
     }
     
     public register(): void{
@@ -93,16 +95,17 @@ export class DBCServer {
         }
         
         this.connection.onDidChangeTextDocument((change: DidChangeTextDocumentParams)=>{
-                    // console.log("top of parse");
+            if(this.working) return; // really this should stop the current parse job but that's difficult so...this works. 
+            this.working = true;
             this.getDocumentSettings(change.textDocument.uri).then((settings) =>{
                 this.parser.addConfig(settings);
                 
                 this.parser.parse(change.contentChanges[0].text, change.textDocument.uri);
+                this.working = false;
             });
         });
         
         this.documents.onDidClose((event: TextDocumentChangeEvent<TextDocument>) => {
-            console.log("close");
             this.documentSettings.delete(event.document.uri);
         });
        
