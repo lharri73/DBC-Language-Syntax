@@ -63,7 +63,6 @@ export function activate(context: vscode.ExtensionContext){
     context.subscriptions.push(
         vscode.commands.registerCommand('dbc.showPreview', ()=>{
             if(!vscode.window.activeTextEditor) return;
-            console.log("show preview", vscode.window.activeTextEditor.document.uri);
             if(!panel.panel){
                 vscode.workspace.openTextDocument(vscode.window.activeTextEditor.document.uri).then(doc => {
                     const viewPanel = vscode.window.createWebviewPanel("dbc", "DBC Editor", {preserveFocus: true, viewColumn: vscode.ViewColumn.Beside});
