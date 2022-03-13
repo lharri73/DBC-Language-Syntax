@@ -102,22 +102,11 @@
 					"group": "navigation@1"
 				}
 			]
-		},
-		"customEditors": [
-			{
-				"viewType": "dbcLanguage.dbc",
-				"displayName": "DBC Viewer (ALPHA)",
-				"selector": [
-					{
-						"filenamePattern": "*.dbc"
-					}
-				]
-			}
-		]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "make && webpack --mode production",
-		"webpack": "cd server && tsc && webpack --mode development && cd ../client && npm run build",
+		"webpack": "cd dbcLib && tsc && cd ../server && tsc && webpack --mode development && cd ../client && npm run build",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install && tsc"
 	},
