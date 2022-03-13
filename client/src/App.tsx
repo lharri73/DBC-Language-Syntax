@@ -1,7 +1,6 @@
 import React from "react";
 import './App.css';
 
-import logo from './logo.svg'
 import loading from './loading.svg'
 import { decodeDb,Database, Message } from 'dbclib';
 import {URI, Utils} from 'vscode-uri';
@@ -55,7 +54,9 @@ class App extends React.Component<Props,State> {
                         value={this.state.searchValue}
                         onChange={e => this.setState({searchValue: e.target.value})}
                         placeholder="Search Filter"
+                        className="searchBox"
                     />
+                    <hr className="bigSeperator" />
                     {this.state.messages.map(componenet => componenet)}
                 </header>
             </div>

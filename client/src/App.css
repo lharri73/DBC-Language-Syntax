@@ -1,6 +1,7 @@
 .App {
   /* text-align: center; */
   padding-left: 30px;
+  padding-right: 30px;
 }
 
 .Loading{
@@ -8,12 +9,7 @@
 }
 
 .Error{
-  color: #ff1764;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  color: var(--vscode-errorForeground);
 }
 
 .App-header {
@@ -25,3 +21,17 @@
   height: 80px;
 }
 
+.searchBox{
+  width: 100%;
+  margin-bottom: 10px;
+  height: 1.5em;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font-size: 1.5em;
+  border: solid var(--vscode-input-border);
+}
+
+
+.bigSeperator{
+  color: var(--vscode-contrastBorder);
+}

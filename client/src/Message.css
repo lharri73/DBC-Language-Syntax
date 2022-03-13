@@ -1,3 +1,20 @@
 .MessageName{
-    
+    display: inline;
 }
+
+.MessageID{
+    display: inline;
+}
+
+.nameContainer{
+    margin-top: 10px;
+}
+
+.arrow-right {
+    width: 0; 
+    height: 0; 
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid var(--vscode-dropdown-foreground);
+    display: inline-block;
+  }
