@@ -1,4 +1,9 @@
 .App {
+  /* text-align: center; */
+  padding-left: 30px;
+}
+
+.Loading{
   text-align: center;
 }
 
@@ -12,25 +17,11 @@
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
 }
 
 .LoadingSVG{
   height: 80px;
 }
 
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}

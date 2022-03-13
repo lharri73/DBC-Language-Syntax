@@ -416,8 +416,8 @@ extensionCodec.register({
 
 export function encodeDb(db: Database): string{
     db.parseErrors = [];
+    console.log("encode", db.messages);
     var encoded: Uint8Array = encode(db, {extensionCodec});
-    console.log(JSON.stringify(db));
     if(encoded.byteLength*8/6 > 0x1fffffe7){
         // cannot create string longer than 512Mb
         console.error("String too large!")
@@ -435,5 +435,6 @@ export function decodeDb(data: string): Database{
     }
     var u8array = b64.Base64.toUint8Array(data);
     var decoded = decode(u8array, {extensionCodec}) as Database;
+    console.log("decoded", decoded.messages);
     return decoded;
 }

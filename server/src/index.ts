@@ -22,7 +22,7 @@ import {
     InitializeParams,
     ProposedFeatures,
     InitializeResult,
-    TextDocumentSyncKind
+    TextDocumentSyncKind,
 } from 'vscode-languageserver/node'
 
 
@@ -63,11 +63,9 @@ connection.onInitialized(() =>{
 
 connection.onShutdown(() =>{
     // server.unregister();
-    console.log("shutdown?");
 })
 
 connection.onDidChangeTextDocument(() => {
-    console.log('changed text document');
 })
 
 connection.listen();

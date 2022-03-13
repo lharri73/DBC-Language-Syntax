@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext){
     // });
     
     client.start();
-    console.log("Activated!");
+    vscode.commands.executeCommand('setContext', 'dbcLangSyntax.clientActive', true);
     
     var {a: registration, b: panel} = DBCPanel.register(context,client);
     context.subscriptions.push(registration);
@@ -74,7 +74,6 @@ export function activate(context: vscode.ExtensionContext){
 }
     
 export function deactivate(): Thenable<void> | undefined {
-    console.log("deactivate");
     if(!client)
         return undefined;
     return client.stop();

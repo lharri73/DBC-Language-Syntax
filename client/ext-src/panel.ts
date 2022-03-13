@@ -67,8 +67,7 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
         if(this.panel == null)
             return;
         this.panel.webview.postMessage(received);
-        this.panel.webview.html = this._getHtmlForWebview();
-        // can we force a refresh here?
+        // this.panel.webview.html = this._getHtmlForWebview();
     }
 
     public async resolveCustomTextEditor(

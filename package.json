@@ -97,7 +97,7 @@
 		"menus": {
 			"editor/title": [
 				{
-					"when": "editorLangId == 'dbc'",
+					"when": "editorLangId == 'dbc' && dbcLangSyntax.clientActive",
 					"command": "dbc.showPreview",
 					"group": "navigation@1"
 				}
