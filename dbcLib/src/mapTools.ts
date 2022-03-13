@@ -415,12 +415,24 @@ extensionCodec.register({
 
 
 export function encodeDb(db: Database): string{
+    db.parseErrors = [];
     var encoded: Uint8Array = encode(db, {extensionCodec});
+    console.log(JSON.stringify(db));
+    if(encoded.byteLength*8/6 > 0x1fffffe7){
+        // cannot create string longer than 512Mb
+        console.error("String too large!")
+        return "OVERLOADED STRING";
+    }
     var encoded64 = b64.Base64.fromUint8Array(encoded);
     return encoded64;
 }
 
 export function decodeDb(data: string): Database{
+    if(data == "OVERLOADED STRING"){
+        let ret = new Database();
+        ret.version = "Too large for parsing.";
+        return ret;
+    }
     var u8array = b64.Base64.toUint8Array(data);
     var decoded = decode(u8array, {extensionCodec}) as Database;
     return decoded;
