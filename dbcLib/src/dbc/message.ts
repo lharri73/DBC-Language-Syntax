@@ -55,8 +55,8 @@ export class Message{
     }
 
     public represent(): string{
-        var hex = this.id.toString(16).padStart(3, "000");
+        var hex = this.id.toString(16).padStart(3, "000").toUpperCase();
         var dec = this.id.toString(10).padStart(4, "0000");
-        return `<h2>0x${hex} (${dec}) ${this.name}</h2>`
+        return `0x${hex} (${dec}) ${this.name}`;
     }
 }

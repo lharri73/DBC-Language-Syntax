@@ -63,7 +63,7 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
 	}
 
     public parsedDBC(received: string){
-        console.debug("received dbc");
+        console.log("received dbc");
         if(this.panel == null)
             return;
         this.panel.webview.postMessage(received);

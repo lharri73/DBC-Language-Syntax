@@ -75,6 +75,7 @@ class App extends React.Component<Props,State> {
                 }else{
                     let db = decodeDb(ev.data);
                     var messages:JSX.Element[] = [];
+                    console.log("decoded here", db);
                     db.messages.forEach((msg) =>{
                         messages.push(
                             <MessageComp msg={msg} />

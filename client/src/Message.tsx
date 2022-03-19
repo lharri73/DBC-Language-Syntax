@@ -15,15 +15,16 @@ class MessageComp extends React.Component<Props,State>{
     }
 
     render(): React.ReactNode {
-        console.log(this.props);
         return(
             <div>
-                <div className="nameContainer">
-                    <h1 className="MessageID">{this.props.msg.id} (0x{this.props.msg.id.toString(16)}): </h1>
-                    <h1 className="MessageName">{this.props.msg.name}</h1> <br/>
+                <h1 className="MessageID">{this.props.msg.represent()}: </h1>
+                <div className="arrow-right expandSignal"/>
+                <p className="signalNum expandSignal">{this.props.msg.signals.size} signals</p>
+                <div className="signalDetails">
+                    <p>Some garbage</p>
+                    <p>Some garbage</p>
+                    <p>Some garbage</p>
                 </div>
-                <div className="arrow-right"/>
-                <p className="signalNum">{this.props.msg.signals.size} signals</p>
             </div>
         )
     }

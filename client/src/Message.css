@@ -1,17 +1,10 @@
-.MessageName{
-    display: inline;
-}
-
 .MessageID{
-    display: inline;
-}
-
-.nameContainer{
     margin-top: 10px;
+    margin-bottom: 0;
 }
 
 .arrow-right {
-    width: 0; 
+    width: 5px; 
     height: 0; 
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
@@ -21,4 +14,14 @@
 
 .signalNum{
     display: inline;
+}
+
+.expandSignal {
+    cursor: pointer;
+}
+
+.signalDetails{
+    margin-left: 10px;
+    border-left: solid var(--vscode-dropdown-border) 2px; 
+    padding-left: 5px;
 }
