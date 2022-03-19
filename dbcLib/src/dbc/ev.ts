@@ -31,6 +31,7 @@ export class EnvironmentVariable{
         this.dataSize = 0; // used when ENVVAR_DATA is present
         this.comment = "";
         this.attributes = new Map();
+        this.clsType = "environmentVariable";
     }
     public name: string;
     public type: number; // 0: integer, 1: float, 2: string, 3: data(ENVVAR_DATA)
@@ -44,4 +45,5 @@ export class EnvironmentVariable{
     public dataSize: number;
     public comment: string;
     public attributes: Map<string,Attribute>;
+    public clsType: string;
 }

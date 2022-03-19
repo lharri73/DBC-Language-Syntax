@@ -28,7 +28,7 @@ const dbclib = require('dbclib');
 // const { DBCError }                          = require(path.join(dbcSrcDir,
 // "../errors.js"));
 // const Database = require('db')
-var db = new dbclib.Database();
+const db = new dbclib.Database();
 
 %}
 

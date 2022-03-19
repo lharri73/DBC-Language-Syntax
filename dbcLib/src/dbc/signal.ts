@@ -45,6 +45,7 @@ export class Signal {
         this.comment = "";
         this.attributes = new Map();
         this.lineNum = lineNo;
+        this.clsType = "signal";
     }
 
     public name: string;
@@ -62,6 +63,7 @@ export class Signal {
     public comment: string;
     public attributes: Map<string,Attribute>;
     public lineNum: number;
+    public clsType: string;
 }
 
 export class SignalType{
@@ -87,6 +89,7 @@ export class SignalType{
         this.unit = unit;
         this.default = defaultVal;
         this.valTable = valTable;
+        this.clsType = "signalType";
 
     }
     public name: string;
@@ -100,6 +103,7 @@ export class SignalType{
     public unit: string;
     public default: number;
     public valTable: string;    // name of valtable
+    public clsType: string;
 }
 
 export class SignalGroup{
@@ -108,9 +112,11 @@ export class SignalGroup{
         this.name = "";
         this.repetitions = 0;
         this.signals = [];
+        this.clsType = "signalGroup";
     }
     public messageId: number;
     public name: string;
     public repetitions: number;
     public signals: string[];
+    public clsType: string;
 }

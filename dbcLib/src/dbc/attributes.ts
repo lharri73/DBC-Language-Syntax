@@ -23,10 +23,12 @@ export class Attribute{
         this.name = name;
         this.type = objectType;
         this.value = value;
+        this.clsType = "attribute";
     }
     public name: string;
     public type: number;
     public value: any;
+    public clsType: string;
 }
 
 export class AttributeDef{
@@ -34,8 +36,10 @@ export class AttributeDef{
         this.name = name;
         this.objType = objType;
         this.valType = valType;
+        this.clsType = "attributeDef";
     }
     public name: string;
     public objType: number;
     public valType: ValueType;
+    public clsType: string;
 }

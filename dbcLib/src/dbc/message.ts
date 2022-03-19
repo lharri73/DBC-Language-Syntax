@@ -34,6 +34,7 @@ export class Message{
         this.signalGroups = new Map();
         this.attributes = new Map();
         this.endNum = endLineNum;
+        this.clsType = "message";
     }
 
     public id: number;
@@ -45,6 +46,7 @@ export class Message{
     public comment: string;
     public signalGroups: Map<string,SignalGroup>;
     public attributes: Map<string,Attribute>;
+    public clsType: string;
 
     private endNum: number;
 

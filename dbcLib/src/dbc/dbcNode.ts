@@ -21,10 +21,12 @@ export class Node{
         this.name = name;
         this.comment = "";
         this.attributes = new Map();
+        this.clsType = "node";
     }
 
     public name: string;
     public comment: string;
     public attributes: Map<string,Attribute>;
+    public clsType: string;
 }
 

@@ -48,6 +48,7 @@ export class Database{
         this.attrDefs = new Map();
         this.attributes = new Map();
         this.fileName = "";
+        this.type = "database";
     }
 
     public messagesStr: string;
@@ -72,4 +73,5 @@ export class Database{
     public attributes: Map<string,Attribute>;
 
     public fileName: string;
+    public type: string;
 }

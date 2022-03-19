@@ -18,9 +18,11 @@ export class ValTable{
     public constructor(name: string){
         this.name = name;
         this.descriptions = new Map();
+        this.clsType = "valTable";
     }
     public name: string;
     public descriptions: Map<any,any>;
+    public clsType: string;
 }
 
 export class ValueType{

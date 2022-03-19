@@ -22,9 +22,8 @@ import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
 import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node';
-import { DBCError } from "dbclib";
 import LanguageSettings from './settings';
-import { encodeDb } from 'dbclib';
+import { encodeDb, DBCError, Database } from 'dbclib';
 
 export class DBCParser {
     // private database: Database;
@@ -56,7 +55,7 @@ export class DBCParser {
             console.debug("parse elided...content unchanged");
             return;
         }
-        var parseResult;
+        let parseResult: Database;
         try {
             parseResult = parser.parse(contents);
         } catch (e) {

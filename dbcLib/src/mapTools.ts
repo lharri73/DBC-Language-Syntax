@@ -33,28 +33,30 @@ import * as b64 from 'js-base64';
 
 
 // DBCError elided
-export const extensionCodec = new ExtensionCodec();
+export var extensionCodec = new ExtensionCodec();
 
 extensionCodec.register({
     type: 0,
-    encode: (object: unknown): Uint8Array => {
-      if (object instanceof Map) {
-        return encode([...object]);
-      } else {
-        return null;
-      }
+    encode: (object: unknown): Uint8Array | null=> {
+        if (object instanceof Map) {
+            return encode([...object]);
+        } else {
+            return null;
+        }
     },
     decode: (data: Uint8Array) => {
-      const array = decode(data) as Array<[unknown, unknown]>;
-      return new Map(array);
+        const array = decode(data) as Array<[unknown, unknown]>;
+        return new Map(array);
     },
   });
 
 // Database
 extensionCodec.register({
     type: 1,
-    encode: (object: unknown): Uint8Array | null => {
-        if (object instanceof Database){
+    encode: (input: any): Uint8Array | null => {
+        if (input?.type == "database"){
+            let object = input as Database;
+            console.log("DATABASE", object);
             var msgs: Uint8Array = encode(object.messages);
             var valTables: Uint8Array = encode(object.valTables);
             var nodes: Uint8Array = encode(object.nodes);
@@ -67,6 +69,7 @@ extensionCodec.register({
             var filename: Uint8Array = encode(object.fileName);
             return encode([version, filename, comment, msgs, valTables, nodes, environmentVariables, signalTypes, attrDefs, attrs]);
         } else {
+            console.log("NOT DATABASE", input);
             return null;
         }
     },
@@ -90,8 +93,9 @@ extensionCodec.register({
 // Attribute
 extensionCodec.register({
     type: 2,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof Attribute){
+    encode: (input: any): Uint8Array | null => {
+        if (input?.clsType == "attribute"){
+            let object = input as Attribute;
             var name: Uint8Array = encode(object.name);
             var type: Uint8Array = encode(object.type);
             var value: Uint8Array = encode(object.value);
@@ -112,8 +116,10 @@ extensionCodec.register({
 // AttributeDef
 extensionCodec.register({
     type: 3,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof AttributeDef){
+    encode: (input: any): Uint8Array | null => {
+
+        if (input?.clsType == "attributeDef"){
+            let object = input as AttributeDef;
             var name: Uint8Array = encode(object.name);
             var type: Uint8Array = encode(object.objType);
             var value: Uint8Array = encode(object.valType);
@@ -134,8 +140,9 @@ extensionCodec.register({
 // Node
 extensionCodec.register({
     type: 4,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof Node){
+    encode: (input: any): Uint8Array | null => {
+        if (input?.clsType == "node"){
+            let object = input as Node;
             var name: Uint8Array = encode(object.name);
             var comment: Uint8Array = encode(object.comment);
             var attributes: Uint8Array = encode(object.attributes);
@@ -152,10 +159,12 @@ extensionCodec.register({
     }
 })
 
+// Environment Variable
 extensionCodec.register({
     type: 5,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof EnvironmentVariable){
+    encode: (input: any): Uint8Array | null => {
+        if(input?.clsType == "environmentVariable"){
+            let object = input as EnvironmentVariable;
             var name: Uint8Array = encode(object.name);
             var type: Uint8Array = encode(object.type);
             var min: Uint8Array = encode(object.min);
@@ -193,14 +202,16 @@ extensionCodec.register({
 // message
 extensionCodec.register({
     type: 6,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof Message){
+    encode: (input: any): Uint8Array | null => {
+        if(input?.clsType == "message"){
+            let object = input as Message;
             const id: Uint8Array = encode(object.id);
             const name: Uint8Array = encode(object.name);
             const size: Uint8Array = encode(object.size);
             const transmitter: Uint8Array = encode(object.transmitter);
             const transmitters: Uint8Array = encode(object.transmitters);
             const signals: Uint8Array = encode(object.signals);
+            console.log("HERE", object.signals, signals);
             const comment: Uint8Array = encode(object.comment);
             const signalGroups: Uint8Array = encode(object.signalGroups);
             const attributes: Uint8Array = encode(object.attributes);
@@ -212,16 +223,17 @@ extensionCodec.register({
         const array = decode(data) as Array<Uint8Array>;
         var ret = new Message(
             0, // endLineNum
-            decode(array[0]) as number,
-            decode(array[1]) as string,
-            decode(array[2]) as number,
-            decode(array[3]) as string,
-            decode(array[5]) as Map<string,Signal>
+            decode(array[0]) as number,         // id
+            decode(array[1]) as string,         // name
+            decode(array[2]) as number,         // size
+            decode(array[3]) as string,         // transmitter
+            decode(array[5]) as Map<string,Signal>  // signals
         );
         ret.transmitters = decode(array[4]) as string[];
         ret.comment = decode(array[6]) as string;
         ret.signalGroups = decode(array[7]) as Map<string,SignalGroup>;
         ret.attributes = decode(array[8]) as Map<string,Attribute>;
+
         return ret;
     }
 });
@@ -229,8 +241,9 @@ extensionCodec.register({
 // signal
 extensionCodec.register({
     type: 7,
-    encode: (object: unknown): Uint8Array | null =>{
-        if(object instanceof Signal){
+    encode: (input: any): Uint8Array | null =>{
+        if(input?.clsType == "signal"){
+            let object = input as Signal;
             const name: Uint8Array = encode(object.name);
             const startBit: Uint8Array = encode(object.startBit);
             const bitSize: Uint8Array = encode(object.bitSize);
@@ -292,8 +305,9 @@ extensionCodec.register({
 // signalType
 extensionCodec.register({
     type: 8,
-    encode: (object: unknown): Uint8Array | null =>{
-        if(object instanceof SignalType){
+    encode: (input: any): Uint8Array | null =>{
+        if(input?.clsType == "signalType"){
+            let object = input as SignalType;
             const name: Uint8Array = encode(object.name);
             const size: Uint8Array = encode(object.size);
             const byteOrder: Uint8Array = encode(object.byteOrder);
@@ -343,8 +357,9 @@ extensionCodec.register({
 // SignalGroup
 extensionCodec.register({
     type: 9,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof SignalGroup){
+    encode: (input: any): Uint8Array | null => {
+        if(input?.clsType == "signalGroup"){
+            let object = input as SignalGroup;
             return encode([
                 encode(object.messageId),
                 encode(object.name),
@@ -369,8 +384,9 @@ extensionCodec.register({
 // ValTable
 extensionCodec.register({
     type: 10,
-    encode: (object: unknown): Uint8Array | null =>{
-        if(object instanceof ValTable){
+    encode: (input: any): Uint8Array | null =>{
+        if(input?.clsType == "valTable"){
+            let object = input as ValTable;
             return encode([
                 encode(object.name),
                 encode(object.descriptions)
@@ -392,8 +408,9 @@ extensionCodec.register({
 // ValueType
 extensionCodec.register({
     type: 11,
-    encode: (object: unknown): Uint8Array | null => {
-        if(object instanceof ValueType){
+    encode: (input: any): Uint8Array | null => {
+        if(input?.clsType == "valueType"){
+            let object = input as ValueType;
             return encode([
                 encode(object.type),
                 encode(object.min),
