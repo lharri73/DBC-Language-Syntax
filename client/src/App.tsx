@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2022 Landon Harris
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see 
+ * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
+ */
 import React from "react";
 import './App.css';
 
@@ -15,6 +30,7 @@ interface State {
     errorState: number;
     searchValue: string;
     messages: JSX.Element[];
+    msgRefs: React.RefObject<MessageComp>[];
 }
 
 class App extends React.Component<Props,State> {
@@ -27,6 +43,7 @@ class App extends React.Component<Props,State> {
             errorState: 0,
             searchValue: "",
             messages: [],
+            msgRefs: []
         };
         this.timer = null;
     }
@@ -55,22 +72,42 @@ class App extends React.Component<Props,State> {
                 </div>
             )
         }
+
+        // used when there is no version on the file so there's not just empty space.
+        var version_placeholder = <i>None</i>;
         return (
             <div className="App">
                 <header className="App-header">
                     <h1 className="App-title">File: {Utils.basename(URI.parse(this.state.db.fileName))}</h1>
-                    <h2>Version: {this.state.db.version}</h2>
+                    <h2>Version: {this.state.db.version == "" ? version_placeholder : this.state.db.version}</h2>
                     <input
                         value={this.state.searchValue}
-                        onChange={e => this.setState({searchValue: e.target.value})}
-                        placeholder="Search Filter"
+                        onChange={e => this.filterChange(e.target.value)}
+                        placeholder="Search (Message Name, id_hex, id_dec)"
                         className="searchBox"
                     />
                     <hr className="bigSeperator" />
-                    {this.state.messages.map(componenet => componenet)}
+                    
+                    {this.state.messages.map(component => component)}
                 </header>
             </div>
         );
+    }
+
+    filterChange(newVal: string){
+        this.setState({searchValue: newVal});
+        if(newVal == ""){
+            this.state.msgRefs.forEach((ref) =>{
+                ref.current?.setState({enabled: true});
+            });
+            return;
+        }
+        this.state.msgRefs.forEach((ref) =>{
+            if(ref.current?.search(newVal))
+                ref.current?.setState({enabled: true});
+            else
+                ref.current?.setState({enabled: false});
+        })
     }
 
     componentDidMount() {
@@ -86,15 +123,19 @@ class App extends React.Component<Props,State> {
                 }else{
                     let db = decodeDb(ev.data);
                     var messages:JSX.Element[] = [];
+                    var msgRefs: React.RefObject<MessageComp>[] = [];
                     console.log("decoded here", db);
                     db.messages.forEach((msg) =>{
+                        let curRef:React.RefObject<MessageComp> = React.createRef();
                         messages.push(
-                            <MessageComp msg={msg} />
+                            <MessageComp msg={msg} ref={curRef}/>
                         );
+                        msgRefs.push(curRef);
                     });
                     messages.sort((a,b)=>{return a.props.msg.id  - b.props.msg.id});
                     this.setState({
                         messages: messages,
+                        msgRefs: msgRefs,
                         db: db,
                         loading: false,
                         errorState: 0,

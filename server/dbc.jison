@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Landon Harris
+ * Copyright (C) 2022 Landon Harris
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as 
  * published by the Free Software Foundation; version 2.
@@ -212,7 +212,7 @@ signals
 signal
     : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
       byte_order signal_val_type OPEN_PAREN number COMMA number CLOSE_PAREN
-      OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL{
+      OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL {
           $$ = new dbclib.Signal(yylineno,
                           /*name:  */$2, 
                           /*start: */Number($4), 

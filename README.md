@@ -22,27 +22,6 @@ expressions to match syntax.
 ## Commonly Used Snippets
 <img src="res/snippets.gif" width="800">
 
-## Supported keywords
-- BA
-- BA_DEF
-- BA_DEF_DEF
-- BA_DEF_DEF_REL
-- BA_DEF_REL
-- BA_REL
-- BO
-- BO_TX_BU
-- BS
-- BU
-- BU_SG_REL
-- CM
-- EV
-- NS
-- SG
-- SGTYPE
-- SIG_GROUP
-- VAL
-- VAL_TABLE
-- VERSION
 ## Known Issues
 1. Attribute definitions that wrap lines may not be highlighted on the following
    lines. 
@@ -59,6 +38,18 @@ expressions to match syntax.
   - Contains the editor and viewer
 - `dbcLib`
   - basic type descriptions of each element/class of the dbc language
+
+## 3rd Party Libraries
+- [Vector DBC file format](https://bitbucket.org/tobylorenz/vector_dbc/src/master/).
+  - Although no code from this repository is used in this extension, this served
+    as a reference for the DBC format and syntax. 
+- [jison](https://github.com/zaach/jison)
+  - The parser and lexer used on the server side to parse dbc files
+- [React.js](https://reactjs.org/)
+  - Used to display the parsed message/signal data in the vscode browser panel. 
+- [MessagePack](https://msgpack.org/)
+  - Serializes the parsed DBC file's intermediate representation into a packed
+    binary before sending to the browser panel.
 
 ## License
 GNU General Public License v2.0 only
