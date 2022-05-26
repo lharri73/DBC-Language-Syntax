@@ -18,6 +18,7 @@
 
 .expandSignal {
     cursor: pointer;
+    user-select: none;
 }
 
 .signalDetails{

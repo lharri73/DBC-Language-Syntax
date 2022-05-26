@@ -5,7 +5,7 @@ import loading from './loading.svg'
 import { decodeDb,Database, Message } from 'dbclib';
 import {URI, Utils} from 'vscode-uri';
 
-import MessageComp from './Message'
+import MessageComp from './dbcParts/Message'
 
 interface Props {}
 
@@ -18,6 +18,7 @@ interface State {
 }
 
 class App extends React.Component<Props,State> {
+    timer: any;
     constructor(props: Props) {
         super(props);
         this.state={
@@ -27,7 +28,9 @@ class App extends React.Component<Props,State> {
             searchValue: "",
             messages: [],
         };
+        this.timer = null;
     }
+
     render() {
         if(this.state.loading){
             return(
@@ -36,12 +39,19 @@ class App extends React.Component<Props,State> {
                     <h1 className="App-title">Loading DBC</h1>
                 </div>
             )
-        }
-        if(this.state.errorState == 1){
+        }else if(this.state.errorState == 1){
             return(
                 <div className="Loading">
                     <h1 className="Error">DBC too large to parse (known bug)</h1>
                     <p>Encoded representation of parsed DBC is too large for VSCode message passing</p>
+                </div>
+            )
+        }else if(this.state.errorState == 2){
+            return(
+                <div className="Loading">
+                    <h1 className="Error">Uh oh...Something strange is afoot</h1>
+                    <p>It seems the parser gave up on sending your file to the display panel. Have you tried turning it off and back on?</p>
+                    <p>(Just close this window and open it again with the inspect icon)</p>
                 </div>
             )
         }
@@ -67,6 +77,7 @@ class App extends React.Component<Props,State> {
         window.addEventListener(
             "message",
             (ev: MessageEvent) => {
+                clearTimeout(this.timer);
                 if(ev.data == "OVERLOADED STRING"){
                     this.setState({
                         errorState: 1,
@@ -91,6 +102,9 @@ class App extends React.Component<Props,State> {
                 }
             }
         );
+        this.timer = setTimeout(()=>{
+            this.setState({errorState: 2, loading: false});
+        }, 5000);
     }
 }
 

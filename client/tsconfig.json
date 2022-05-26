@@ -19,6 +19,7 @@
     "noEmit": true,
     "jsx": "react",
     "noFallthroughCasesInSwitch": true,
+    "downlevelIteration": true,
     "typeRoots": ["node_modules/@types"]
   },
   "include": [
