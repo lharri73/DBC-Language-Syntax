@@ -51,7 +51,7 @@ class MessageComp extends React.Component<Props,State>{
             return(
                 <div>
                     <h1 className="MessageID">{this.props.msg.represent()}: </h1>
-                    <div className="arrow-right expandSignal" onClick={(e)=>this.expandDiv()}/>
+                    <div className={`arrow-right expandSignal ${this.state.expanded ? "rotateArrow" : ""}`} onClick={(e)=>this.expandDiv()}/>
                     <p className="signalNum expandSignal" onClick={(e)=>this.expandDiv()}
                     >{this.props.msg.signals.size} signal{this.props.msg.signals.size > 1 ? 's' : ''}</p>
                     <div className="signalDetails" style={{display: (this.state.expanded ? "block" : "none")}}>

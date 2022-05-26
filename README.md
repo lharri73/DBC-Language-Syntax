@@ -3,8 +3,8 @@
 ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/lharri73.dbc?style=flat-square)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/lharri73/DBC-Language-Syntax/DBC%20language%20CI?style=flat-square)
 
-This extension provides basic syntax highlighting, bracket completion, code snippets 
-and lexer/parser errors for the Vector DBC file format. 
+This extension provides basic syntax highlighting, bracket completion, code
+snippets, lexer/parser errors, and a preview window for the Vector DBC file format. 
 This is created to work with version 2 of the [Vector DBC file format](https://bitbucket.org/tobylorenz/vector_dbc/src/master/).
 
 Although DBC files are often programmatically generated, it can be useful to
@@ -13,8 +13,17 @@ Syntax highlighting is handled locally through VSCode's
 integrated TextMates language parsing engine, using PCRE regular 
 expressions to match syntax. 
 
+This extension also provides a sidebar to preview messages in the current, open
+DBC file. While this doesn't allow editing, it takes information from various
+parts of the DBC and makes it easily readable and searchable. 
+
+*The preview window is still a work in progress!*
+
 ## Syntax Highlighting
 <img src="res/syntax.png" width="500">
+
+## Message and Signal Preview
+<img src="res/sidebar.gif" width="800">
 
 ## Lexicographic and Parser Errors
 <img src="res/errors.gif" width="800">
@@ -29,7 +38,8 @@ expressions to match syntax.
 
 ## Todo items
 - Include debugging (invalid offset, start bit, min, max, etc)
-- Hover box to show all related fields as a hint
+- Show more information about each signal (val tables, comments, etc.)
+- Show the byte structure of the message
 
 ## Organization
 - `server`

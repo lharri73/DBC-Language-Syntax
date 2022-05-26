@@ -7,7 +7,7 @@
 		"url": "https://github.com/lharri73/DBC-Language-Syntax"
 	},
 	"license": "GPL-2.0-only",
-	"version": "1.2.3",
+	"version": "2.0.0",
 	"publisher": "lharri73",
 	"engines": {
 		"vscode": "^1.43.0"

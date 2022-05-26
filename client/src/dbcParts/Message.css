@@ -41,3 +41,7 @@
     border-left: solid var(--vscode-dropdown-border) 2px; 
     padding-left: 5px;
 }
+
+.rotateArrow{
+    transform: rotate(90deg) translateY(2px);
+}

@@ -83,13 +83,17 @@ class App extends React.Component<Props,State> {
                     <input
                         value={this.state.searchValue}
                         onChange={e => this.filterChange(e.target.value)}
-                        placeholder="Search (Message Name, id_hex, id_dec)"
+                        placeholder="Search (Message Name, Hex ID, Decimal ID)"
                         className="searchBox"
                     />
                     <hr className="bigSeperator" />
-                    
-                    {this.state.messages.map(component => component)}
                 </header>
+                <body>
+                    {this.state.messages.map(component => component)}
+                </body>
+                <footer className="footer">
+                    {/* <p>footer text</p> */}
+                </footer>
             </div>
         );
     }
