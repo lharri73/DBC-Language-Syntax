@@ -121,5 +121,11 @@
 		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",
 		"publisherDisplayName": "Landon Harris",
 		"publisherId": "8bcdfeae-f8a0-4401-944b-f6c335536b5a"
+	},
+	"dependencies": {
+		"ansi-regex": "^6.0.1",
+		"glob-parent": "^6.0.2",
+		"lodash": "^4.17.21",
+		"minimist": "^1.2.6"
 	}
 }
