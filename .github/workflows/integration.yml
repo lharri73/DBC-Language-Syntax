@@ -31,4 +31,7 @@ jobs:
       
       - run: make package
         name: Build Extension
+        with: 
+          name: Extension Content
+          path: dbc-*.vsix
   
