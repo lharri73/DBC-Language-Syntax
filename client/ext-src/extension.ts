@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext){
             if(!vscode.window.activeTextEditor) return;
             if(!panel.panel){
                 vscode.workspace.openTextDocument(vscode.window.activeTextEditor.document.uri).then(doc => {
-                    const viewPanel = vscode.window.createWebviewPanel("dbc", "DBC Editor", {preserveFocus: true, viewColumn: vscode.ViewColumn.Beside});
+                    const viewPanel = vscode.window.createWebviewPanel("dbc", "DBC Preview", {preserveFocus: true, viewColumn: vscode.ViewColumn.Beside});
                     panel.resolveCustomTextEditor(doc, viewPanel, <vscode.CancellationToken><unknown>null);
                 });              
             }
