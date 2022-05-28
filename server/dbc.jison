@@ -17,7 +17,7 @@
 %{
 
 const path = require("path");
-const dbclib = require('dbclib');
+const dbclib = require(path.resolve(path.join(__dirname, '../../dbcLib/build/serverPack.js')));
 // const { Database }                          = require(path.join(dbcSrcDir, "db.js"));
 // const { Attribute, AttributeDef }           = require(path.join(dbcSrcDir, "attributes.js"));
 // const { EnvironmentVariable }               = require(path.join(dbcSrcDir, "ev.js"));

@@ -19,3 +19,11 @@ client/**
 !client/build
 !client/package.json
 !client/package-lock.json
+
+dbcLib/**
+!dbcLib/dist
+!dbcLib/build
+
+changelog.md
+Makefile
+syntaxSrc

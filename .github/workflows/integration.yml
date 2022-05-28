@@ -9,15 +9,6 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: configure
-      run: npm install
-    - name: make
-      run: make
-
   compile:
     runs-on: ubuntu-latest
     strategy:
@@ -33,19 +24,11 @@ jobs:
           node-version: ${{matrix.node-version}}
 
       - run: npm install
-        name: install dependencies
+        name: Install Dependencies
       
-      - run: npm run webpack
-        name: Compile verification
-
-      ## TODO: unit tests
+      - run: make
+        name: Compile and Build
+      
+      - run: make package
+        name: Build Extension
   
-  # disabled because syntax not generated on master
-  # syntax_tests:
-  #   name: Run Syntax Tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: SublimeText/syntax-test-action@v2
-  #       with:
-  #         build: latest

@@ -106,10 +106,8 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "make",
-		"webpack": "cd server && tsc && webpack --mode development && cd ../client && npm run build",
-		"watch": "tsc -b -w",
-		"build": "cd dbcLib && tsc && cd ../server && tsc && webpack --mode development && cd ../client && npm run build",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install && tsc"
+		"build": "make",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install"
 	},
 	"devDependencies": {
 		"js-yaml": "^3.14.1",
