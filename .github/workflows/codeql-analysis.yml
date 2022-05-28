@@ -32,7 +32,7 @@ jobs:
     - run: npm install
       name: install dependencies
       
-    - run: npm run compile
+    - run: npm run webpack
       name: Compile verification
 
     # Initializes the CodeQL tools for scanning.

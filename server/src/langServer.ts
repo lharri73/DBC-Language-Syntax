@@ -17,25 +17,22 @@
 import {
     Connection, 
     TextDocuments,
-    Diagnostic,
-    DiagnosticSeverity,
     InitializeParams,
     DidChangeConfigurationNotification,
-    CompletionItem,
-    CompletionItemKind,
-    TextDocumentPositionParams,
     DidChangeWatchedFilesParams,
     WorkspaceFoldersChangeEvent,
     TextDocumentChangeEvent,
-    DidChangeConfigurationParams
+    DidChangeConfigurationParams,
+    DidChangeTextDocumentParams,
+    DidCloseTextDocumentParams
 } from 'vscode-languageserver';
 
 import {
     TextDocument
 } from 'vscode-languageserver-textdocument';
-import { resolve } from 'vscode-languageserver/lib/files';
 import { DBCParser } from './parser';
 import LanguageSettings from './settings';
+
 
 // create connection for the server
 
@@ -45,9 +42,26 @@ interface serverCapabilities{
     diagnosticInformation: boolean
 }
 
-export default class DBCServer{
-    public static initialize(con: Connection, params: InitializeParams): DBCServer{
-        // create analyser here too
+export class DBCServer {
+
+    public static initialize(con: Connection, params: InitializeParams){
+        return new DBCServer(con, params);
+    }
+
+    private capabilities: serverCapabilities;
+    
+    private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+    private connection: Connection;
+    // private analyzer;
+    private defaultSettings: LanguageSettings;
+    private globalSettings: LanguageSettings;
+    
+    private documentSettings: Map<string, Thenable<LanguageSettings>>;
+
+    private parser: DBCParser;
+    private working: boolean;
+
+    private constructor(con: Connection, params: InitializeParams){
         let capabilities = params.capabilities;
 
         let hasConfigurationCapability: boolean = !!(capabilities.workspace && !!capabilities.workspace.configuration);
@@ -63,28 +77,14 @@ export default class DBCServer{
             workspaceFolder: hasWorkspaceFolderCapability,
             diagnosticInformation: hasDiagnosticRelatedInformationCapability
         }
-        return new DBCServer(con, caps);
-    }
 
-    private capabilities: serverCapabilities;
-    
-    private documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-    private connection: Connection;
-    // private analyzer;
-    private defaultSettings: LanguageSettings;
-    private globalSettings: LanguageSettings;
-    
-    private documentSettings: Map<string, Thenable<LanguageSettings>>;
-
-    private parser: DBCParser;
-
-    private constructor(con: Connection, caps: serverCapabilities){
         this.capabilities = caps;
         this.connection = con;
         this.defaultSettings = {silenceMapWarnings: false};
         this.globalSettings = this.defaultSettings;
         this.documentSettings = new Map();
         this.parser = new DBCParser(con);
+        this.working = false;
     }
     
     public register(): void{
@@ -94,36 +94,51 @@ export default class DBCServer{
             this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
         }
         
-        if(this.capabilities.workspaceFolder){
-            this.connection.workspace.onDidChangeWorkspaceFolders(this.workspaceChange.bind(this));
-        }
-        
-        this.connection.onDidChangeWatchedFiles(this.onWatchFileChange.bind(this));
-        
-        this.documents.onDidClose(this.onDocumentClose.bind(this));
-        this.documents.onDidChangeContent(this.onDocumentChange.bind(this));
-
-        // apparently this can't be a function?
-        this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
-            this.globalSettings = {
-                silenceMapWarnings: change.settings.dbc.silenceMapWarnings
-            }
-    
-            this.parser.addConfig(this.globalSettings);
-            // recheck all files
-            this.documents.all().forEach((doc) =>{
-                this.parser.clearDiag(doc.uri);
-                this.parser.parse(doc.getText(), doc.uri);
+        this.connection.onDidChangeTextDocument((change: DidChangeTextDocumentParams)=>{
+            if(this.working) return; // really this should stop the current parse job but that's difficult so...this works. 
+            this.working = true;
+            this.getDocumentSettings(change.textDocument.uri).then((settings) =>{
+                this.parser.addConfig(settings);
+                
+                this.parser.parse(change.contentChanges[0].text, change.textDocument.uri);
+                this.working = false;
             });
         });
-    }
+        
+        this.documents.onDidClose((event: TextDocumentChangeEvent<TextDocument>) => {
+            this.documentSettings.delete(event.document.uri);
+        });
+       
 
-    private onWatchFileChange(change: DidChangeWatchedFilesParams){
-        console.log('watched files change event received');
-    }
+        // this.connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) =>{
+        //     console.debug("config change", change);
+        //     this.globalSettings = {
+        //         silenceMapWarnings: change.settings.dbc.silenceMapWarnings
+        //     }
+    
+        //     this.parser.addConfig(this.globalSettings);
+        //     // recheck all files
+        //     this.documents.all().forEach((doc) =>{
+        //         this.parser.clearDiag(doc.uri);
+        //         this.parser.parse(doc.getText(), doc.uri);
+        //     });
+        // });
 
-    private workspaceChange(event: WorkspaceFoldersChangeEvent){
-        console.log('workspace folder change event received');
+        this.connection.onNotification("dbc/parseRequest", (uri: string) => {
+            // console.log("force parse");
+            this.getDocumentSettings(uri).then((settings) =>{
+                this.parser.addConfig(settings);
+                var text = this.documents.get(uri)?.getText();
+                if(text === undefined){
+                    return;
+                }
+                this.parser.parse(text, uri, true);
+            });
+        });
+        
+        this.connection.onDidCloseTextDocument((params: DidCloseTextDocumentParams) => {
+            this.connection.sendNotification("dbc/closeFile", params.textDocument.uri);
+        });
     }
 
     private getDocumentSettings(uri: string): Thenable<LanguageSettings> {
@@ -143,15 +158,4 @@ export default class DBCServer{
         }
     }
 
-    private onDocumentClose(e: TextDocumentChangeEvent<TextDocument>){
-        this.documentSettings.delete(e.document.uri);
-    }
-
-    private async onDocumentChange(change: TextDocumentChangeEvent<TextDocument>){
-        this.getDocumentSettings(change.document.uri).then((settings) =>{
-            this.parser.addConfig(settings);
-            console.log(settings);
-            this.parser.parse(change.document.getText(), change.document.uri);
-        });
-    }
 }

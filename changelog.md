@@ -32,3 +32,9 @@
 # 1.2.3
 - Fixed crashing issue that prevented parsing
 - Added option to silence warnings from undefined objects
+
+# 2.0.0
+- Restructure of entire extension
+- Added DBCLib to contain all components of dbc file
+- Separated client and server code
+- Added react-based side window that shows basic preview of messages & signals

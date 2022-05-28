@@ -75,7 +75,7 @@ DEFINER         (?![a-zA-Z])
 "["                             {return "OPEN_BRACK"}
 "]"                             {return "CLOSE_BRACK"}
 
-([ ]*[\r\n]+)+                  {return "EOL"}
+(\s*[\r\n]+)+                   {return "EOL"}
 {HEX_PREFIX}{HEX_DIGIT}+        {return "HEX"}
 {UNSAFE_WORD}                   {return "UNSAFE_WORD"}
 {DIGIT}+"."?{DIGIT}*{EPONENT}   {return "DECIMAL_EXP"}

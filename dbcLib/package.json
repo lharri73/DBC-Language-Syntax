@@ -1,0 +1,14 @@
+{
+    "name": "dbclib",
+    "version": "1.0.0",
+    "description": "library of all dbc class members",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "./dist"
+    ],
+    "dependencies": {
+        "@msgpack/msgpack": "^2.7.0",
+        "js-base64": "^3.6.1"
+    }
+}

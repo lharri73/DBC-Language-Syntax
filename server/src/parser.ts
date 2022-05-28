@@ -15,65 +15,74 @@
 */
 
 
-import { Parser } from 'jison';
+import { Parser, Generator } from 'jison';
 var Lexer = require('jison-lex');   // this is probably bad
 
 import { fstat, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import { ParsedUrlQuery } from 'querystring';
-import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DBCError } from "./errors";
+
+import { Connection, Diagnostic, DiagnosticSeverity } from 'vscode-languageserver/node';
 import LanguageSettings from './settings';
+import { encodeDb, DBCError, Database } from 'dbclib';
 
 export class DBCParser {
     // private database: Database;
     private tokens: string;
     private lexicon: string;
     private connection: Connection;
-    private lexer;
+    // private lexer;
     private lastContents: string;
     private silenceMap: boolean;
 
     public constructor(connection: Connection){
         this.tokens = readFileSync(resolve(__dirname,"..","dbc.jison"), "utf8");
         this.lexicon = readFileSync(resolve(__dirname,"..","dbc.lex"), "utf8");
-        this.lexer = new Lexer(this.lexicon);
+        // this.lexer = new Lexer(this.lexicon);
+
         this.connection = connection;
         this.lastContents = "";
         this.silenceMap = false;
     }
     
-    public parse(contents: string, uri: string){
-        console.log(this.silenceMap);
+    public parse(contents: string, uri: string, force: boolean = false){
         /* create a new parser to clear the context within
         *  the parser itself. */
         var parser = new Parser(this.tokens);
-        parser.lexer = this.lexer;
+        // this.lexer.
+        parser.lexer = new Lexer(this.lexicon);
 
+        if(contents == this.lastContents && !force){
+            console.debug("parse elided...content unchanged");
+            return;
+        }
+        let parseResult: Database;
         try {
-            var parseResult = parser.parse(contents);
-            this.lastContents = contents;
-            
-            if(parseResult.parseErrors.length != 0){
-                this.sendCustomParseError(uri, parseResult.parseErrors);
-            }else{
-                this.clearDiag(uri);
-            }
-            // if no error
-            console.log(parseResult);
-
+            parseResult = parser.parse(contents);
         } catch (e) {
-            console.log(e);
             try{
                 this.sendDiag(e, uri);
             }catch(_){
                 this.sendBadLine(e, uri);
             }finally{
                 // debug value 
-                console.log("Error: ", JSON.stringify(e));
+                console.error("Parse Error: ", JSON.stringify(e));
+                parser = null;
+                return; // don't have a valid result to send to vscode
             }
         }
+        parser = null;
+
+        this.lastContents = contents;
+        
+        if(parseResult.parseErrors.length != 0){
+            this.sendCustomParseError(uri, parseResult.parseErrors);
+        }else{
+            this.clearDiag(uri);
+        }
+        // if no error
+        parseResult.fileName = uri; // we send the uri into the fileName field so we can decode it on the client side
+        var toSend = encodeDb(parseResult);
+        this.connection.sendNotification("dbc/fileParsed", toSend);
     }
 
     // send errors to vscode

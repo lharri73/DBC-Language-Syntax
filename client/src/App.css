@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2022 Landon Harris
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see 
+ * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
+ */
+.App {
+  /* text-align: center; */
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.Loading{
+  text-align: center;
+}
+
+.Error{
+  color: var(--vscode-errorForeground);
+}
+
+.App-header {
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+.LoadingSVG{
+  height: 80px;
+}
+
+.searchBox{
+  width: 100%;
+  margin-bottom: 10px;
+  height: 1.5em;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font-size: 1.5em;
+  border: solid var(--vscode-input-border);
+}
+
+
+.bigSeperator{
+  color: var(--vscode-contrastBorder);
+  width: 100%;
+}
+
+.footer{
+  position: absolute;
+  bottom: 0px;
+  right: 30px;
+}

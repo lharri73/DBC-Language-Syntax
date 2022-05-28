@@ -1,0 +1,47 @@
+/*
+ * Copyright (C) 2022 Landon Harris
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see 
+ * <https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html>.
+ */
+.MessageID{
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.arrow-right {
+    width: 5px; 
+    height: 0; 
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid var(--vscode-dropdown-foreground);
+    display: inline-block;
+}
+
+.signalNum{
+    display: inline;
+}
+
+.expandSignal {
+    cursor: pointer;
+    user-select: none;
+}
+
+.signalDetails{
+    margin-left: 10px;
+    border-left: solid var(--vscode-dropdown-border) 2px; 
+    padding-left: 5px;
+}
+
+.rotateArrow{
+    transform: rotate(90deg) translateY(2px);
+}
