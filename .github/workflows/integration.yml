@@ -25,6 +25,9 @@ jobs:
 
       - run: npm install --also=dev
         name: Install Dependencies
+
+      - run: npm install -g vsce
+        name: Install Dependencies pt. 2
       
       - run: make
         name: Compile and Build
