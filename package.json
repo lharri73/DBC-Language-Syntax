@@ -33,7 +33,7 @@
 	"activationEvents": [
 		"onLanguage:dbc"
 	],
-	"main": "./client/build/ext-src/extension",
+	"main": "./client/build/ext-src/serverPack.js",
 	"contributes": {
 		"languages": [
 			{
@@ -105,7 +105,7 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "make && webpack --mode production",
+		"vscode:prepublish": "make",
 		"webpack": "cd server && tsc && webpack --mode development && cd ../client && npm run build",
 		"watch": "tsc -b -w",
 		"build": "cd dbcLib && tsc && cd ../server && tsc && webpack --mode development && cd ../client && npm run build",

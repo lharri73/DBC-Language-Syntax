@@ -39,6 +39,6 @@
     "not op_mini all"
   ],
   "scripts": {
-    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json"
+    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json && webpack --mode production"
   }
 }
