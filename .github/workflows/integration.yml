@@ -25,19 +25,7 @@ jobs:
 
       - run: npm install --also=dev
         name: Install Dependencies
-
-      - run: npm install -g vsce
-        name: Install Dependencies pt. 2
       
       - run: make
         name: Compile and Build
-      
-      - run: make package
-        name: Build Extension
-        
-      - name: Save Extension
-        uses: actions/upload-artifact@v2
-        with: 
-          name: Extension Content
-          path: dbc-*.vsix
-  
+ 
