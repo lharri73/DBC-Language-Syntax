@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
 
-      - run: npm install
+      - run: npm install --also=dev
         name: Install Dependencies
       
       - run: make
@@ -31,6 +31,9 @@ jobs:
       
       - run: make package
         name: Build Extension
+        
+      - name: Save Extension
+        uses: actions/upload-artifact@v2
         with: 
           name: Extension Content
           path: dbc-*.vsix
