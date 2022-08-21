@@ -31,7 +31,8 @@
 		"theme": "dark"
 	},
 	"activationEvents": [
-		"onLanguage:dbc"
+		"onLanguage:dbc",
+		"onCustomEditor:dbc.DBCViewer"
 	],
 	"main": "./client/build/ext-src/serverPack.js",
 	"contributes": {
@@ -102,7 +103,19 @@
 					"group": "navigation@1"
 				}
 			]
-		}
+		},
+		"customEditors": [
+			{
+				"viewType": "dbc.DBCViewer",
+				"displayName": "DBC Preview",
+				"selector": [
+					{
+						"filenamePattern": "*.dbc"
+					}
+				],
+				"priority": "default"
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "make",
@@ -113,8 +126,8 @@
 		"js-yaml": "^3.14.1",
 		"ts-loader": "^8.1.0",
 		"vsce": "^2.8.0",
-		"webpack": "^5.68.0",
-		"webpack-cli": "^4.7.2"
+		"webpack": "^5.73.0",
+		"webpack-cli": "^4.10.0"
 	},
 	"__metadata": {
 		"id": "92ea9bed-7f15-4d90-a0ab-8ff9481c55e9",
@@ -125,6 +138,7 @@
 		"ansi-regex": "^6.0.1",
 		"glob-parent": "^6.0.2",
 		"lodash": "^4.17.21",
-		"minimist": "^1.2.6"
+		"minimist": "^1.2.6",
+		"typescript": "^4.7.4"
 	}
 }

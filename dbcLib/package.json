@@ -9,6 +9,10 @@
     ],
     "dependencies": {
         "@msgpack/msgpack": "^2.7.0",
+        "jison": "^0.4.18",
         "js-base64": "^3.6.1"
+    },
+    "devDependencies": {
+        "webpack-cli": "^4.10.0"
     }
 }

@@ -33,6 +33,7 @@ class MessageComp extends React.Component<Props,State>{
         super(props);
 
         let signals: React.ReactNode[] = [];
+        console.log(props.msg.signals);
         for(const signal of props.msg.signals.values()){
             signals.push(
                 <SignalComp sig={signal}/>

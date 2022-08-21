@@ -25,7 +25,7 @@ server: $(server)
 dbclib: $(dbclib)
 
 $(dbclib): $(wildcard dbcLib/*.ts) $(wildcard dbcLib/dbc/*.ts)
-	cd dbcLib && tsc && webpack --mode production
+	cd dbcLib && tsc && ../node_modules/.bin/webpack --mode production
 	rm -rf ./{client,server}/dbcLib
 	mkdir -p client/dbcLib server/dbcLib
 	# cp -r dbcLib/{dist,build,package.json,package-lock.json,node_modules} client/src/dbcLib/
@@ -50,11 +50,11 @@ snippets/snippets.json: syntaxSrc/snippets.yml
 
 .PHONY: clean
 clean:
-	rm -f syntaxes/dbc.tmLanguage.json snippets/snippets.json
-	rm -rf client/build client/dist
-	rm -rf dbcLib/build dbcLib/dist
-	rm -rf server/dist server/out
-	rm *.vsix
+	-rm -f syntaxes/dbc.tmLanguage.json snippets/snippets.json
+	-rm -rf client/build client/dist
+	-rm -rf dbcLib/build dbcLib/dist
+	-rm -rf server/dist server/out
+	-rm *.vsix
 	# rm -rf {client,server}/dbcLib
 
 .PHONY: package

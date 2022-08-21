@@ -24,21 +24,21 @@ import {
 
 
 class DBCPanel implements vscode.CustomTextEditorProvider {
-    private static readonly viewType = 'dbc.DBCViewer';
+    private static readonly viewType = 'dbcLanguage.dbc';
     public panel: vscode.WebviewPanel | null;
     private _extensionPath: string;
     // public client: LanguageClient | null;
 
-    public static register(context: vscode.ExtensionContext): vscode.Disposable{
+    public static register(context: vscode.ExtensionContext): {a: vscode.Disposable, b: DBCPanel}{
 		const provider = new DBCPanel(context);
 		const providerRegistration = vscode.window.registerCustomEditorProvider(DBCPanel.viewType, provider);
-		return providerRegistration;
+		return {a: providerRegistration, b: provider};
 	}
 
     public constructor(private readonly context: vscode.ExtensionContext){
-
         this._extensionPath = context.asAbsolutePath(join('client', 'build'));
         this.panel = null;
+        // this.client = null;
     }
 
     // public getPanel(){
@@ -77,20 +77,21 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
 			</html>`;
 	}
 
-    // public parsedDBC(received: string){
-    //     //console.log("received dbc");
-    //     if(this.panel == null)
-    //         return;
-    //     this.panel.webview.postMessage(received);
-    //     // this.panel.webview.html = this._getHtmlForWebview();
-    // }
+    public parsedDBC(received: string){
+        //console.log("received dbc");
+        if(this.panel == null)
+            return;
+        this.panel.webview.postMessage(received);
+        // this.panel.webview.html = this._getHtmlForWebview();
+    }
 
     public async resolveCustomTextEditor(
         document: vscode.TextDocument, 
         webviewPanel: vscode.WebviewPanel, 
-        _token: vscode.CancellationToken): Promise<void>{
+        _token: vscode.CancellationToken): 
+        Promise<void>
+    {
         // entrypoint
-        // this.panel = webviewPanel;
         
         webviewPanel.webview.options = {
             enableScripts: true,
@@ -98,11 +99,11 @@ class DBCPanel implements vscode.CustomTextEditorProvider {
 				vscode.Uri.file(this._extensionPath)
 			]
         };
-
-        console.log("here");
+        
+        this.panel = webviewPanel;
         webviewPanel.webview.html = this._getHtmlForWebview();
-        console.log("got html");
-        return;
+
+        this.registerCallbacks(document, webviewPanel);      
     }
 
     private registerCallbacks(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel){
