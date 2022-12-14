@@ -604,15 +604,9 @@ repository:
             name: punctuation.terminator.statement.dbc
 
   nonParsedComment:
-    begin: "(\\(\\*)"
-    end: "(\\*\\))"
-    contentName: comment.block.dbc
-    beginCaptures:
-      1:
-        name: comment.block.open.dbc
-    endCaptures:
-      1:
-        name: comment.block.close.dbc
+    patterns: 
+      - match: "//\\.*"
+        name: comment.line.dbc
 
   commentAdditions:
     patterns:
