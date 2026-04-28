@@ -110,10 +110,10 @@
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../dbcLib && npm install"
 	},
 	"devDependencies": {
-		"js-yaml": "^3.14.1",
+		"js-yaml": "^3.14.2",
 		"ts-loader": "^8.1.0",
-		"vsce": "^2.8.0",
-		"webpack": "^5.68.0",
+		"vsce": "^2.15.0",
+		"webpack": "^5.106.2",
 		"webpack-cli": "^4.7.2"
 	},
 	"__metadata": {
@@ -122,9 +122,9 @@
 		"publisherId": "8bcdfeae-f8a0-4401-944b-f6c335536b5a"
 	},
 	"dependencies": {
-		"ansi-regex": "^6.0.1",
+		"ansi-regex": "^6.2.2",
 		"glob-parent": "^6.0.2",
-		"lodash": "^4.17.21",
-		"minimist": "^1.2.6"
+		"lodash": "^4.18.1",
+		"minimist": "^1.2.8"
 	}
 }

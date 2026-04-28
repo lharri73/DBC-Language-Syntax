@@ -16,17 +16,21 @@
         "dbclib": "file:../dbcLib",
         "jison": "^0.4.18",
         "jison-lex": "^0.3.4",
-        "js-base64": "^3.6.0",
+        "js-base64": "^3.7.8",
         "vscode-languageserver": "^7.0.0",
-        "vscode-languageserver-textdocument": "^1.0.1"
+        "vscode-languageserver-textdocument": "^1.0.12"
     },
     "scripts": {
-        "build": "tsc && webpack --mode development"
+        "build": "tsc && webpack --mode development",
+        "lint": "eslint src --ext .ts"
     },
     "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "eslint": "^8.57.1",
         "jison-gho-loader": "^1.0.2",
-        "ts-loader": "^8.1.0",
-        "webpack": "^5.31.2",
-        "webpack-cli": "^4.7.0"
+        "ts-loader": "^8.4.0",
+        "webpack": "^5.106.2",
+        "webpack-cli": "^4.10.0"
     }
 }

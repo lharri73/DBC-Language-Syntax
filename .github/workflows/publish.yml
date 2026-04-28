@@ -1,18 +1,23 @@
-# name: Deploy To Marketplace
+name: Publish to Marketplace
 
-# on:
-#   # Triggers the workflow on push or pull request events but only for the master branch
-#   push:
-#     branches: [ master ]
+on:
+  push:
+    branches: [master]
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#       - run: npm install && npm run compile
-#       - uses: lannonbr/vsce-action@master
-#         with:
-#           args: "publish -p $VSCE_TOKEN"
-#         env:
-#           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish
+        run: npx vsce publish -p ${{ secrets.MARKETPLACE_TOKEN }}

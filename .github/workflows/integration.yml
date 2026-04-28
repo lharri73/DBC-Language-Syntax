@@ -2,11 +2,11 @@ name: DBC language CI
 
 on:
   push:
-    branches: 
+    branches:
       - master
       - develop
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   compile:
@@ -14,18 +14,31 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 13.x
-          - 14.x
+          - 18.x
+          - 20.x
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{matrix.node-version}}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{matrix.node-version}}
+          node-version: ${{ matrix.node-version }}
 
-      - run: npm install --also=dev
-        name: Install Dependencies
-      
-      - run: make
-        name: Compile and Build
- 
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile and Build
+        run: make
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Lint
+        run: cd server && npm run lint
