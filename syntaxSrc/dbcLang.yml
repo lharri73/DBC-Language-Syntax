@@ -162,15 +162,17 @@ repository:
           match: ","
 
     patterns:
-      - match: "^\\s*(SG_)\\s*(\\w*)\\s*(:?)\\s*(.*?[+-])?\\s*(\\(.*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*((?(7).*|))$"
+      - match: "^\\s*(SG_)\\s*(\\w*)\\s*((M|m\\d+)\\s*)?(:?)\\s*(.*?[+-])?\\s*(\\(.*\\))?\\s*(\\[.*\\])?\\s*(\".*\")?\\s*((?(9).*|))$"
         captures:
           1:
             name: keyword.control.signal.dbc
           2: 
             name: variable.parameter.sigName.dbc meta.signal.name.dbc
-          3:
-            name: punctuation.qualifier.dbc
           4:
+            name: meta.signal.multiplexIndicator.dbc
+          5:
+            name: punctuation.qualifier.dbc
+          6:
             patterns:
               - match: "(\\d*)(\\|?)(\\d*)(@?)([01]?)([+-]?)"
                 captures:
@@ -186,7 +188,7 @@ repository:
                     name: constant.numeric.binary.dbc meta.signal.byteOrder.dbc
                   6: 
                     name: punctuation.sign.dbc meta.signal.signed.dbc
-          5:
+          7:
             patterns:
               - match: "(\\(?)((?>-?\\d+\\.?\\d*E?\\+?\\d*)?)\\s*(,?)\\s*((?>-?\\d+\\.?\\d*E?\\+?\\d*)?)\\s*(\\)?)"
                 captures:
@@ -200,7 +202,7 @@ repository:
                     name: constant.numeric.decimal.dbc meta.signal.offset.dbc
                   5:
                     name: punctuation.definition.factorOffset.end.dbc
-          6:
+          8:
             patterns:
               - match: "(\\[?)(-?\\d+\\.?\\d*E?\\+?\\d*)(\\|?)(-?\\d+\\.?\\d*E?\\+?\\d*)(\\]?)"
                 captures:
@@ -214,11 +216,11 @@ repository:
                     name: constant.numeric.decimal.dbc meta.signal.maximum.dbc
                   5:
                     name: punctuation.definition.minMax.end.dbc
-          7:
+          9:
             name: meta.signal.unit.dbc
             patterns:
               - include: "#strings"
-          8:
+          10:
             patterns:
             - name: variable.language.nodeName.dbc
               match: "\\w+"

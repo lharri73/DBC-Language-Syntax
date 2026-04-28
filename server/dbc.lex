@@ -61,6 +61,8 @@ DEFINER         (?![a-zA-Z])
 "VAL_TABLE_"{DEFINER}               {return "VAL_TABLE"}
 "VECTOR_XXX"{DEFINER}               {return "VECTOR_XXX"}
 "VERSION"                           {return "VERSION"}
+"M"{DEFINER}                        {return "MULTIPLEXOR"}
+"m"{DIGIT}+{DEFINER}                {yytext = yytext; return "MULTIPLEXED";}
 
 // punctuation
 "|"                             {return "VBAR"}

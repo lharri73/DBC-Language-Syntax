@@ -48,6 +48,8 @@ const db = new dbclib.Database();
 %token DECIMAL
 // %token DBC_WORD
 %token ENDOFFILE
+%token MULTIPLEXOR
+%token MULTIPLEXED
 
 %%
 
@@ -210,22 +212,31 @@ signals
         $$.set($2.name, $2);
     };
 signal
-    : SG UNSAFE_WORD /*multiplexer*/ COLON DECIMAL VBAR DECIMAL AT 
+    : SG UNSAFE_WORD multiplex_indicator COLON DECIMAL VBAR DECIMAL AT 
       byte_order signal_val_type OPEN_PAREN number COMMA number CLOSE_PAREN
       OPEN_BRACK number VBAR number CLOSE_BRACK QUOTED_STRING receivers EOL {
           $$ = new dbclib.Signal(yylineno,
-                          /*name:  */$2, 
-                          /*start: */Number($4), 
-                          /*size:  */Number($6),
-                          /*order: */$8,
-                          /*type:  */$9,
-                          /*factor:*/$11,
-                          /*offset:*/$13,
-                          /*min:   */$16,
-                          /*max:   */$18,
-                          /*unit:  */$20,
-                          /*recs:  */$21);
+                          /*name:           */$2, 
+                          /*start:          */Number($5), 
+                          /*size:           */Number($7),
+                          /*order:          */$9,
+                          /*type:           */$10,
+                          /*factor:         */$12,
+                          /*offset:         */$14,
+                          /*min:            */$17,
+                          /*max:            */$19,
+                          /*unit:           */$21,
+                          /*recs:           */$22,
+                          /*multiplexInd:   */$3);
       };
+
+multiplex_indicator
+    : %empty {$$ = null;}
+    | multiplex_token {$$ = $1;};
+
+multiplex_token
+    : MULTIPLEXOR {$$ = 'M';}
+    | MULTIPLEXED {$$ = $1;};
 
 byte_order
     : DECIMAL {

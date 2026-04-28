@@ -29,7 +29,8 @@ export class Signal {
                        Min: number, 
                        Max: number, 
                        Unit: string,
-                       Receivers: string[]){
+                       Receivers: string[],
+                       MultiplexIndicator: string | null = null){
         this.name = Name;
         this.startBit = Start;
         this.bitSize = Size;
@@ -46,6 +47,7 @@ export class Signal {
         this.attributes = new Map();
         this.lineNum = lineNo;
         this.clsType = "signal";
+        this.multiplexIndicator = MultiplexIndicator;
     }
 
     public name: string;
@@ -64,6 +66,7 @@ export class Signal {
     public attributes: Map<string,Attribute>;
     public lineNum: number;
     public clsType: string;
+    public multiplexIndicator: string | null; // null: no multiplex, 'M': multiplexor, 'mX': multiplexed signal
 }
 
 export class SignalType{
